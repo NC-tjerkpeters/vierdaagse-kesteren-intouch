@@ -1,0 +1,6 @@
+{
+    "private": true,
+    "scripts": {
+        "build": "echo 'No frontend build required; app uses CDN assets.'"
+    }
+}

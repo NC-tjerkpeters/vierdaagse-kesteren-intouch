@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@yield('title', 'Intouch') – Vierdaagse Kesteren</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --vk-green: #2e7d32;
+            --vk-green-dark: #1b5e20;
+            --vk-green-light: #4caf50;
+            --vk-cream: #f5f5dc;
+        }
+        body { background-color: #f8f9fa; }
+        .navbar-vierdaagse {
+            background: linear-gradient(135deg, var(--vk-green) 0%, var(--vk-green-dark) 100%) !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .navbar-vierdaagse .navbar-brand,
+        .navbar-vierdaagse .nav-link { color: rgba(255,255,255,0.95) !important; }
+        .navbar-vierdaagse .nav-link:hover { color: #fff !important; background-color: rgba(255,255,255,0.1); border-radius: 6px; }
+        .navbar-vierdaagse .dropdown-menu { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; }
+        .navbar-vierdaagse .dropdown-item:hover { background-color: rgba(46, 125, 50, 0.12); }
+        .navbar-vierdaagse .dropdown-divider { border-color: #e0e0e0; }
+        .btn-vierdaagse { background-color: var(--vk-green); color: #fff; border: none; }
+        .btn-vierdaagse:hover { background-color: var(--vk-green-dark); color: #fff; }
+        .card { border-radius: 10px; border: none; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+        .card-header { background: linear-gradient(135deg, var(--vk-green) 0%, var(--vk-green-dark) 100%); color: #fff; border-radius: 10px 10px 0 0; font-weight: 600; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark navbar-vierdaagse">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{{ route('intouch.dashboard') }}">Intouch – Vierdaagse Kesteren</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('intouch.dashboard') }}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('intouch.afstanden.index') }}">Afstanden</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('intouch.registrations.index') }}">Inschrijvingen</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('intouch.scan-overview.index') }}">Loopoverzicht</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="me-1">{{ Auth::user()->name }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        @can('manageUsers')
+                            <li><a class="dropdown-item" href="{{ route('intouch.beheer.users.index') }}">Gebruikers</a></li>
+                        @endcan
+                        @can('manageRoles')
+                            <li><a class="dropdown-item" href="{{ route('intouch.beheer.roles.index') }}">Rollen</a></li>
+                        @endcan
+                        @if(auth()->user()->canManageUsers() || auth()->user()->canManageRoles())
+                            <li><hr class="dropdown-divider"></li>
+                        @endif
+                        <li>
+                            <a class="dropdown-item" href="{{ route('intouch.instellingen.edit') }}">
+                                Instellingen
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="post" action="{{ route('intouch.logout') }}" class="d-inline">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger">Uitloggen</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="container py-4">
+    @if(session('status'))
+        <div class="alert alert-success alert-dismissible fade show">
+            {{ session('status') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if(session('info'))
+        <div class="alert alert-info alert-dismissible fade show">
+            {{ session('info') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @yield('content')
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@stack('scripts')
+</body>
+</html>
