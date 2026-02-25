@@ -3,6 +3,34 @@
 @section('title', 'Scannen')
 @section('header_title', $currentDay ? $currentDay->name : 'QR Scanner')
 
+@section('overview')
+@if($currentDay && count($overview['rows'] ?? []) > 0)
+<div class="overview-row">
+    @foreach($overview['rows'] as $row)
+    <div class="overview-item">
+        <span>{{ $row['distance'] }}:</span>
+        <strong>{{ $row['start'] }}/{{ $row['post'] }}/{{ $row['finish'] }}</strong>
+    </div>
+    @endforeach
+</div>
+<div class="overview-totals overview-row">
+    <div class="overview-item">
+        <span>Start:</span><strong>{{ $overview['totals']['start'] ?? 0 }}</strong>
+    </div>
+    <div class="overview-item">
+        <span>Post:</span><strong>{{ $overview['totals']['post'] ?? 0 }}</strong>
+    </div>
+    <div class="overview-item">
+        <span>Finish:</span><strong>{{ $overview['totals']['finish'] ?? 0 }}</strong>
+    </div>
+</div>
+@elseif($currentDay)
+<div class="overview-row">
+    <span class="text-muted">Geen deelnemers voor {{ $currentDay->name }}</span>
+</div>
+@endif
+@endsection
+
 @section('content')
 <div id="qr-reader"></div>
 <p class="small text-muted mt-2 px-2">Richt de QR-code van het ticket in het kader. Min. {{ config('scanner.min_minutes_between_scans', 5) }} min tussen twee scans.</p>

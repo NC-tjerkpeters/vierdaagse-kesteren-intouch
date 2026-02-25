@@ -13,10 +13,69 @@ class ScanController extends Controller
     public function index()
     {
         $currentDay = EventDay::getCurrent();
+        $overview = $this->buildCompactOverview($currentDay);
 
         return view('scanner.index', [
             'currentDay' => $currentDay,
+            'overview' => $overview,
         ]);
+    }
+
+    protected function buildCompactOverview(?EventDay $currentDay): array
+    {
+        if (! $currentDay) {
+            return ['rows' => [], 'totals' => ['start' => 0, 'post' => 0, 'finish' => 0]];
+        }
+
+        $registrationIds = Registration::query()
+            ->where('mollie_payment_status', 'paid')
+            ->whereNotNull('qr_code')
+            ->pluck('id');
+
+        $registrationsByDistance = Registration::query()
+            ->with('distance')
+            ->whereIn('id', $registrationIds)
+            ->get()
+            ->groupBy('distance_id');
+
+        $distances = \App\Models\Distance::query()->orderBy('sort_order')->get();
+        $points = $currentDay->startPostFinishPointNumbers();
+        $rows = [];
+        $totals = ['start' => 0, 'post' => 0, 'finish' => 0];
+
+        foreach ($distances as $distance) {
+            if (! $distance->runsOnEventDay($currentDay)) {
+                continue;
+            }
+            $regIds = $registrationsByDistance->get($distance->id)?->pluck('id') ?? collect();
+            $total = $regIds->count();
+
+            $startCount = $regIds->isEmpty() ? 0 : Registration::query()
+                ->whereIn('id', $regIds)
+                ->where('usage_count', '>=', $points['start'])
+                ->count();
+            $postCount = $regIds->isEmpty() ? 0 : Registration::query()
+                ->whereIn('id', $regIds)
+                ->where('usage_count', '>=', $points['post'])
+                ->count();
+            $finishCount = $regIds->isEmpty() ? 0 : Registration::query()
+                ->whereIn('id', $regIds)
+                ->where('usage_count', '>=', $points['finish'])
+                ->count();
+
+            $totals['start'] += $startCount;
+            $totals['post'] += $postCount;
+            $totals['finish'] += $finishCount;
+
+            $rows[] = [
+                'distance' => $distance->name,
+                'start' => $startCount,
+                'post' => $postCount,
+                'finish' => $finishCount,
+            ];
+        }
+
+        return ['rows' => $rows, 'totals' => $totals];
     }
 
     public function store(Request $request)

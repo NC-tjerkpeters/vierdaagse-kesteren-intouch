@@ -20,6 +20,12 @@
         .swal2-popup { background: #1a1a1a !important; color: #fff !important; }
         .swal2-title, .swal2-html-container { color: #fff !important; }
         .swal2-confirm { border: none !important; }
+        .scanner-overview { padding: 8px 12px; background: #111; border-bottom: 1px solid #333; font-size: 0.8rem; }
+        .scanner-overview .overview-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .scanner-overview .overview-item { display: flex; align-items: center; gap: 4px; }
+        .scanner-overview .overview-item span { color: #888; }
+        .scanner-overview .overview-item strong { color: #fff; }
+        .scanner-overview .overview-totals { margin-top: 6px; padding-top: 6px; border-top: 1px solid #333; }
     </style>
 </head>
 <body>
@@ -31,6 +37,11 @@
             <button type="submit" class="btn">Uitloggen</button>
         </form>
     </header>
+    @hasSection('overview')
+    <div class="scanner-overview">
+        @yield('overview')
+    </div>
+    @endif
     <main>
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show m-2">
