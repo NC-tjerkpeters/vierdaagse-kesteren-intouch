@@ -69,6 +69,11 @@
                     <a class="nav-link" href="{{ route('intouch.sponsors.index') }}">Sponsors</a>
                 </li>
                 @endcan
+                @can('finances_view')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('intouch.finance.index') }}">Financiën</a>
+                </li>
+                @endcan
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">

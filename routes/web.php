@@ -9,6 +9,7 @@ use App\Http\Controllers\Intouch\RegistrationController as IntouchRegistrationCo
 use App\Http\Controllers\Intouch\ScanOverviewController;
 use App\Http\Controllers\Intouch\SettingsController;
 use App\Http\Controllers\Intouch\EditionController;
+use App\Http\Controllers\Intouch\FinanceController;
 use App\Http\Controllers\Intouch\RoleManagementController;
 use App\Http\Controllers\Intouch\SponsorController;
 use App\Http\Controllers\Intouch\UserManagementController;
@@ -60,6 +61,13 @@ Route::domain(config('app.intouch_domain'))
             Route::get('edities', [EditionController::class, 'index'])->name('editions.index');
             Route::get('edities/aanmaken', [EditionController::class, 'create'])->name('editions.create');
             Route::post('edities', [EditionController::class, 'store'])->name('editions.store');
+            Route::get('financien', [FinanceController::class, 'index'])->name('finance.index');
+            Route::get('financien/kosten/aanmaken', [FinanceController::class, 'createCost'])->name('finance.cost.create');
+            Route::post('financien/kosten', [FinanceController::class, 'storeCost'])->name('finance.cost.store');
+            Route::get('financien/kosten/{cost}/bewerken', [FinanceController::class, 'editCost'])->name('finance.cost.edit');
+            Route::put('financien/kosten/{cost}', [FinanceController::class, 'updateCost'])->name('finance.cost.update');
+            Route::delete('financien/kosten/{cost}', [FinanceController::class, 'destroyCost'])->name('finance.cost.destroy');
+            Route::post('financien/mollie-schatten', [FinanceController::class, 'estimateMollieCosts'])->name('finance.estimate-mollie');
             Route::get('beheer/gebruikers', [UserManagementController::class, 'index'])->name('beheer.users.index');
             Route::get('beheer/gebruikers/aanmaken', [UserManagementController::class, 'create'])->name('beheer.users.create');
             Route::post('beheer/gebruikers', [UserManagementController::class, 'store'])->name('beheer.users.store');

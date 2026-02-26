@@ -38,7 +38,7 @@ class PermissionSeeder extends Seeder
                     'inschrijvingen_view', 'inschrijvingen_export', 'inschrijvingen_medal_overview',
                     'loopoverzicht_view',
                     'sponsors_view', 'sponsors_create', 'sponsors_edit', 'sponsors_delete',
-                    'manage_users', 'instellingen_edit', 'editions_manage',
+                    'manage_users', 'instellingen_edit', 'editions_manage', 'finances_view', 'finances_edit',
                 ])->pluck('id')
             );
         }
@@ -48,7 +48,7 @@ class PermissionSeeder extends Seeder
             $viewer->permissions()->sync(
                 Permission::whereIn('slug', [
                     'dashboard_view', 'afstanden_view', 'inschrijvingen_view', 'inschrijvingen_medal_overview', 'loopoverzicht_view',
-                    'sponsors_view', 'instellingen_edit',
+                    'sponsors_view', 'instellingen_edit', 'finances_view',
                 ])->pluck('id')
             );
         }
