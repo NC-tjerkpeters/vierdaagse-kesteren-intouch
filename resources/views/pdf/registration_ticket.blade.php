@@ -81,7 +81,7 @@
         <div style="font-size:22px; font-weight:bold; margin-bottom:6px;">
           Noodnummers:
         </div>
-        @foreach(explode(', ', config('app.noodnummers')) as $num)
+        @foreach(explode(', ', \App\Services\AppSettings::appNoodnummers()) as $num)
           <div style="font-size:20px; line-height:1.2;">
             {{ trim($num) }}
           </div>

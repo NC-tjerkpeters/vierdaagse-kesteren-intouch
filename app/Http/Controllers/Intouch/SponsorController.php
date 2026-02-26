@@ -42,7 +42,7 @@ class SponsorController extends Controller
             ->orderByDesc('id')
             ->paginate(25);
 
-        $doelbedrag = config('sponsors.doelbedrag', 1850);
+        $doelbedrag = \App\Services\AppSettings::sponsorsDoelbedrag();
         $totaalOpgehaald = (float) Sponsor::query()->forActiveEdition()->where('betaalstatus', 'paid')->sum('bedrag');
         $aantalBetaald = Sponsor::query()->forActiveEdition()->where('betaalstatus', 'paid')->count();
         $progress = $doelbedrag > 0 ? min(100, ($totaalOpgehaald / $doelbedrag) * 100) : 0;

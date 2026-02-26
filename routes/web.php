@@ -8,6 +8,7 @@ use App\Http\Controllers\Intouch\DistanceController;
 use App\Http\Controllers\Intouch\RegistrationController as IntouchRegistrationController;
 use App\Http\Controllers\Intouch\ScanOverviewController;
 use App\Http\Controllers\Intouch\SettingsController;
+use App\Http\Controllers\Intouch\AppSettingsController;
 use App\Http\Controllers\Intouch\EditionController;
 use App\Http\Controllers\Intouch\FinanceController;
 use App\Http\Controllers\Intouch\RoleManagementController;
@@ -59,6 +60,8 @@ Route::domain(config('app.intouch_domain'))
             Route::get('instellingen', [SettingsController::class, 'edit'])->name('instellingen.edit');
             Route::put('instellingen', [SettingsController::class, 'update'])->name('instellingen.update');
             Route::post('edition/set', [\App\Http\Controllers\Intouch\EditionSelectorController::class, 'set'])->name('edition.set');
+            Route::get('beheer/instellingen', [AppSettingsController::class, 'edit'])->name('beheer.instellingen.edit');
+            Route::put('beheer/instellingen', [AppSettingsController::class, 'update'])->name('beheer.instellingen.update');
             Route::get('beheer/edities', [EditionController::class, 'index'])->name('beheer.editions.index');
             Route::get('beheer/edities/aanmaken', [EditionController::class, 'create'])->name('beheer.editions.create');
             Route::post('beheer/edities', [EditionController::class, 'store'])->name('beheer.editions.store');

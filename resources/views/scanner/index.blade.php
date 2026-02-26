@@ -33,7 +33,7 @@
 
 @section('content')
 <div id="qr-reader"></div>
-<p class="small text-muted mt-2 px-2">Richt de QR-code van het ticket in het kader. Min. {{ config('scanner.min_minutes_between_scans', 5) }} min tussen twee scans.</p>
+<p class="small text-muted mt-2 px-2">Richt de QR-code van het ticket in het kader. Min. {{ \App\Services\AppSettings::scannerMinMinutes() }} min tussen twee scans.</p>
 @endsection
 
 @push('scripts')

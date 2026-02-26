@@ -118,7 +118,7 @@ class ScanController extends Controller
                 ->with('info', $registration->first_name . ' ' . $registration->last_name . ' heeft ' . $currentDay->name . ' al voltooid (alle punten gescand).');
         }
 
-        $minMinutes = (int) config('scanner.min_minutes_between_scans', 5);
+        $minMinutes = \App\Services\AppSettings::scannerMinMinutes();
         if ($minMinutes > 0 && $registration->last_scan_at) {
             $minNextAt = $registration->last_scan_at->addMinutes($minMinutes);
             if (now()->lt($minNextAt)) {
@@ -133,7 +133,8 @@ class ScanController extends Controller
             'last_scan_at' => now(),
         ]);
 
-        $pointName = config('scanner.point_names.' . $pointNumber, 'Punt ' . $pointNumber);
+        $pointNames = \App\Services\AppSettings::scannerPointNames();
+        $pointName = $pointNames[$pointNumber] ?? ('Punt ' . $pointNumber);
         $medalInfo = $registration->wants_medal && $registration->medal_number
             ? ' (medaille ' . $registration->medal_number . ')'
             : '';
@@ -176,7 +177,7 @@ class ScanController extends Controller
             ]);
         }
 
-        $minMinutes = (int) config('scanner.min_minutes_between_scans', 5);
+        $minMinutes = \App\Services\AppSettings::scannerMinMinutes();
         if ($minMinutes > 0 && $registration->last_scan_at) {
             $minNextAt = $registration->last_scan_at->addMinutes($minMinutes);
             if (now()->lt($minNextAt)) {
@@ -193,7 +194,8 @@ class ScanController extends Controller
             'last_scan_at' => now(),
         ]);
 
-        $pointName = config('scanner.point_names.' . $pointNumber, 'Punt ' . $pointNumber);
+        $pointNames = \App\Services\AppSettings::scannerPointNames();
+        $pointName = $pointNames[$pointNumber] ?? ('Punt ' . $pointNumber);
         $medalInfo = $registration->wants_medal && $registration->medal_number
             ? ' (medaille ' . $registration->medal_number . ')'
             : '';

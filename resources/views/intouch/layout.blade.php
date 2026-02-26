@@ -75,7 +75,7 @@
                     <a class="nav-link" href="{{ route('intouch.finance.index') }}">Financiën</a>
                 </li>
                 @endcan
-                @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles') || auth()->user()->hasPermission('editions_manage') || auth()->user()->hasPermission('afstanden_view'))
+                @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles') || auth()->user()->hasPermission('editions_manage') || auth()->user()->hasPermission('afstanden_view') || auth()->user()->hasPermission('instellingen_edit'))
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Beheer</a>
                     <ul class="dropdown-menu">
@@ -90,6 +90,9 @@
                         @endcan
                         @can('editions_manage')
                         <li><a class="dropdown-item" href="{{ route('intouch.beheer.editions.index') }}">Edities</a></li>
+                        @endcan
+                        @can('instellingen_edit')
+                        <li><a class="dropdown-item" href="{{ route('intouch.beheer.instellingen.edit') }}">Instellingen</a></li>
                         @endcan
                     </ul>
                 </li>

@@ -20,7 +20,7 @@ class MollieFeeCalculator
 
         $amount = (float) $payment->amount->value;
         $method = strtolower($payment->method ?? 'default');
-        $fees = config('mollie_fees.' . $method, config('mollie_fees.default'));
+        $fees = \App\Services\AppSettings::mollieFees($method);
 
         $fee = $fees['fixed'] ?? 0;
         if (isset($fees['percentage']) && $fees['percentage'] > 0) {
