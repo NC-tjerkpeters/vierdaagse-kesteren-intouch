@@ -30,6 +30,24 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="postcode" class="form-label">Postcode</label>
+                    <input type="text" id="postcode" name="postcode" class="form-control @error('postcode') is-invalid @enderror" value="{{ old('postcode', $sponsor->postcode) }}">
+                    @error('postcode')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="huisnummer" class="form-label">Huisnummer</label>
+                    <input type="text" id="huisnummer" name="huisnummer" class="form-control @error('huisnummer') is-invalid @enderror" value="{{ old('huisnummer', $sponsor->huisnummer) }}">
+                    @error('huisnummer')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="telefoonnummer" class="form-label">Telefoonnummer</label>
+                    <input type="text" id="telefoonnummer" name="telefoonnummer" class="form-control @error('telefoonnummer') is-invalid @enderror" value="{{ old('telefoonnummer', $sponsor->telefoonnummer) }}">
+                    @error('telefoonnummer')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail *</label>
                 <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $sponsor->email) }}" required>

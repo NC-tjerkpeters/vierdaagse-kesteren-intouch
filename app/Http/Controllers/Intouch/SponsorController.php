@@ -29,6 +29,8 @@ class SponsorController extends Controller
                     ->orWhere('voornaam', 'like', "%{$q}%")
                     ->orWhere('achternaam', 'like', "%{$q}%")
                     ->orWhere('email', 'like', "%{$q}%")
+                    ->orWhere('postcode', 'like', "%{$q}%")
+                    ->orWhere('telefoonnummer', 'like', "%{$q}%")
                     ->orWhere('betaling_id', 'like', "%{$q}%");
             });
         }
@@ -66,6 +68,9 @@ class SponsorController extends Controller
             'bedrijfsnaam' => ['nullable', 'string', 'max:255'],
             'voornaam' => ['required', 'string', 'max:255'],
             'achternaam' => ['required', 'string', 'max:255'],
+            'postcode' => ['nullable', 'string', 'max:20'],
+            'huisnummer' => ['nullable', 'string', 'max:20'],
+            'telefoonnummer' => ['nullable', 'string', 'max:30'],
             'email' => ['required', 'email'],
             'bedrag' => ['required', 'numeric', 'min:0'],
             'betaalstatus' => ['required', 'string', 'in:paid,open,pending,authorized,failed,canceled,expired'],
@@ -93,6 +98,9 @@ class SponsorController extends Controller
             'bedrijfsnaam' => ['nullable', 'string', 'max:255'],
             'voornaam' => ['required', 'string', 'max:255'],
             'achternaam' => ['required', 'string', 'max:255'],
+            'postcode' => ['nullable', 'string', 'max:20'],
+            'huisnummer' => ['nullable', 'string', 'max:20'],
+            'telefoonnummer' => ['nullable', 'string', 'max:30'],
             'email' => ['required', 'email'],
             'bedrag' => ['required', 'numeric', 'min:0'],
             'betaalstatus' => ['required', 'string', 'in:paid,open,pending,authorized,failed,canceled,expired'],
