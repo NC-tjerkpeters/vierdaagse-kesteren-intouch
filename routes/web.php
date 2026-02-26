@@ -24,7 +24,13 @@ Route::domain(config('app.inschrijven_domain'))
 
         Route::get('/bedankt/{registration}', [RegistrationController::class, 'thankyou'])
             ->name('inschrijven.thankyou');
+
+        Route::post('/vrienden/aanmelden', [\App\Http\Controllers\Inschrijven\SponsorRegistrationController::class, 'store'])
+            ->name('inschrijven.sponsors.store');
     });
+
+Route::post('/webhooks/mollie/sponsors', \App\Http\Controllers\Inschrijven\SponsorWebhookController::class)
+    ->name('webhooks.mollie.sponsors');
 
 Route::domain(config('app.intouch_domain'))
     ->name('intouch.')

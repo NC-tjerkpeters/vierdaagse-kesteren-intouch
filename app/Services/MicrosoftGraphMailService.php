@@ -82,7 +82,7 @@ class MicrosoftGraphMailService
         return base64_encode($response->body());
     }
 
-    protected function getAccessToken(): string
+    public function getAccessToken(): string
     {
         $tenantId = config('services.msgraph.tenant_id');
         $clientId = config('services.msgraph.client_id');
