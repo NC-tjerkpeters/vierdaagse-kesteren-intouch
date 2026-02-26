@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Kwitantie {{ $filename }}</title>
-
 <style>
 @page { margin: 0; }
 
@@ -13,28 +12,61 @@ body{
   font-size:16px; color:#000;
 }
 
-p{ margin: 0 0 6px 0; }
 .header-img{ width:100%; display:block; }
 
-/* BELANGRIJK: reserveer ruimte voor footer */
+/* Content (ruimte voor footer inbegrepen) */
 .page{
-  padding: 28px 44px 110px 44px; /* bottom padding omhoog */
+  padding: 26px 44px 92px 44px;
 }
 
+.small-gap{ margin-top: 10px; }
+.mid-gap{ margin-top: 16px; }
+.big-gap{ margin-top: 22px; }
+
+.addr p{ margin: 0 0 5px 0; }
+
+.kwitantie-title{
+  font-size: 26px;
+  color: #2e74b5;
+  font-weight: 500;
+  margin: 0;
+}
+
+.meta p{ margin: 0 0 6px 0; }
+
+.highlight{
+  margin-top: 10px;
+  font-weight: 700;
+  color: #ff0000;
+  line-height: 1.15;
+}
+
+table{
+  width:100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  border: 1px solid #000;
+}
+th, td{ padding: 7px; border: 1px solid #000; }
+th{ background:#f5f5f5; text-align:left; }
+tfoot th{ border-top: 2px solid #000; text-align:right; }
+
+.paragraph{
+  margin-top: 14px;
+  line-height: 1.25;
+}
+
+.signoff p{ margin: 0 0 5px 0; }
+
+/* Footer */
 .footer{
   position: fixed;
-  left: 0;
-  right: 0;
-
-  /* Zet ’m iets omhoog zodat hij niet in de “niet-printbare” zone valt */
-  bottom: 12mm;
-
-  padding: 6px 0;
+  left: 0; right: 0; bottom: 0;
+  height: 45px;
+  line-height: 45px;
   text-align: center;
   font-size: 12px;
-  color: #666;
-
-  /* Zorgt dat tekst altijd leesbaar is */
+  color: #777;
   background: #fff;
 }
 </style>
@@ -43,64 +75,77 @@ p{ margin: 0 0 6px 0; }
 <body>
 
 @if(!empty($topBannerBase64))
-<img src="data:image/png;base64,{{ $topBannerBase64 }}" class="header-img" alt="">
+  <img src="data:image/png;base64,{{ $topBannerBase64 }}" class="header-img" alt="">
 @endif
 
 <div class="page">
 
+  <!-- Adresblok -->
+  <div class="addr">
     <p>{{ $sponsor->bedrijfsnaam ?? '' }}</p>
     <p>{{ $sponsor->voornaam }} {{ $sponsor->achternaam }}</p>
     <p>{{ $sponsor->postcode }} {{ $sponsor->huisnummer }}</p>
     <p>{{ $sponsor->email }}</p>
+  </div>
 
-    <div class="kwitantie-title">Kwitantie</div>
+  <!-- Titel + meta -->
+  <div class="big-gap">
+    <p class="kwitantie-title">Kwitantie</p>
+  </div>
 
+  <div class="meta small-gap">
     <p>Kwitantie datum: {{ $datum }}</p>
     <p>Kwitantie nummer: {{ $filename }}</p>
+  </div>
 
-    <div class="highlight">
-        Deze kwitantie is middels iDeal betaald met transactieID:
-        {{ $sponsor->betaling_id }}
-    </div>
+  <!-- Highlight -->
+  <div class="highlight">
+    Deze kwitantie is middels iDeal betaald met transactieID: {{ $sponsor->betaling_id }}
+  </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th style="width:80%;">Omschrijving</th>
-                <th style="width:20%;">Bedrag</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Vriend van de vierdaagse Kesteren {{ date('Y') }}</td>
-                <td>€ {{ $bedrag }}</td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr>
-                <th>Totaal</th>
-                <th>€ {{ $bedrag }}</th>
-            </tr>
-        </tfoot>
-    </table>
+  <!-- Tabel -->
+  <table>
+    <thead>
+      <tr>
+        <th style="width:80%;">Omschrijving</th>
+        <th style="width:20%;">Bedrag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Vriend van de vierdaagse Kesteren {{ date('Y') }}</td>
+        <td>€ {{ $bedrag }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Totaal</th>
+        <th>€ {{ $bedrag }}</th>
+      </tr>
+    </tfoot>
+  </table>
 
-    <p style="margin-top:10px;">
-        De Vrienden van de Vierdaagse Kesteren zijn een groep enthousiaste en loyale sponsors die ons helpen om dit prachtige evenement jaarlijks te organiseren.
-    </p>
+  <!-- Tekst -->
+  <p class="paragraph">
+    De Vrienden van de Vierdaagse Kesteren zijn een groep enthousiaste en loyale sponsors die ons helpen om dit prachtige evenement jaarlijks te organiseren.
+  </p>
 
-    <p style="margin-top:10px;">Met vriendelijke groet,</p>
+  <!-- Afsluiting -->
+  <div class="signoff mid-gap">
+    <p>Met vriendelijke groet,</p>
     <p>Namens stichting De Hoenderik</p>
+  </div>
 
-    <p style="margin-top:10px;">
-        Tjerk Peters<br>
-        0640893740<br>
-        mail@vierdaagsekesteren.nl
-    </p>
+  <div class="signoff small-gap">
+    <p>Tjerk Peters</p>
+    <p>0640893740</p>
+    <p>mail@vierdaagsekesteren.nl</p>
+  </div>
 
 </div>
 
 <div class="footer">
-    Stichting De Hoenderik | Schuilenburg 2, 4041BK Kesteren | KVK-nummer: 11059622
+  Stichting De Hoenderik | Schuilenburg 2, 4041BK Kesteren | KVK-nummer: 11059622
 </div>
 
 </body>
