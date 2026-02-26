@@ -47,7 +47,7 @@ class DistanceController extends Controller
 
         Distance::create($validated);
 
-        return redirect()->route('intouch.afstanden.index')
+        return redirect()->route('intouch.beheer.afstanden.index')
             ->with('status', 'Afstand opgeslagen.');
     }
 
@@ -55,7 +55,7 @@ class DistanceController extends Controller
     {
         $this->authorize('afstanden_view');
 
-        return redirect()->route('intouch.afstanden.edit', $distance);
+        return redirect()->route('intouch.beheer.afstanden.edit', $distance);
     }
 
     public function edit(Distance $distance)
@@ -87,7 +87,7 @@ class DistanceController extends Controller
 
         $distance->update($validated);
 
-        return redirect()->route('intouch.afstanden.index')
+        return redirect()->route('intouch.beheer.afstanden.index')
             ->with('status', 'Afstand bijgewerkt.');
     }
 
@@ -96,13 +96,13 @@ class DistanceController extends Controller
         $this->authorize('afstanden_delete');
 
         if ($distance->registrations()->exists()) {
-            return redirect()->route('intouch.afstanden.index')
+            return redirect()->route('intouch.beheer.afstanden.index')
                 ->with('error', 'Deze afstand heeft nog inschrijvingen en kan niet worden verwijderd.');
         }
 
         $distance->delete();
 
-        return redirect()->route('intouch.afstanden.index')
+        return redirect()->route('intouch.beheer.afstanden.index')
             ->with('status', 'Afstand verwijderd.');
     }
 

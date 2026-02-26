@@ -7,11 +7,11 @@
 
 <div class="card">
     <div class="card-body">
-        <form method="post" action="{{ route('intouch.afstanden.store') }}">
+        <form method="post" action="{{ route('intouch.beheer.afstanden.store') }}">
             @csrf
             @include('intouch.afstanden._form')
             <button type="submit" class="btn btn-primary">Opslaan</button>
-            <a href="{{ route('intouch.afstanden.index') }}" class="btn btn-outline-secondary">Annuleren</a>
+            <a href="{{ route('intouch.beheer.afstanden.index') }}" class="btn btn-outline-secondary">Annuleren</a>
         </form>
     </div>
 </div>

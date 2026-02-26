@@ -16,6 +16,7 @@
         .navbar-vierdaagse {
             background: linear-gradient(135deg, var(--vk-green) 0%, var(--vk-green-dark) 100%) !important;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1030;
         }
         .navbar-vierdaagse .navbar-brand,
         .navbar-vierdaagse .nav-link { color: rgba(255,255,255,0.95) !important; }
@@ -32,7 +33,7 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark navbar-vierdaagse">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-vierdaagse sticky-top">
     <div class="container">
         <a class="navbar-brand fw-bold" href="{{ route('intouch.dashboard') }}">Intouch – Vierdaagse Kesteren</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -43,11 +44,6 @@
                 @can('dashboard_view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('intouch.dashboard') }}">Dashboard</a>
-                </li>
-                @endcan
-                @can('afstanden_view')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('intouch.afstanden.index') }}">Afstanden</a>
                 </li>
                 @endcan
                 @can('inschrijvingen_view')
@@ -79,10 +75,13 @@
                     <a class="nav-link" href="{{ route('intouch.finance.index') }}">Financiën</a>
                 </li>
                 @endcan
-                @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles') || auth()->user()->hasPermission('editions_manage'))
+                @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles') || auth()->user()->hasPermission('editions_manage') || auth()->user()->hasPermission('afstanden_view'))
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Beheer</a>
                     <ul class="dropdown-menu">
+                        @can('afstanden_view')
+                        <li><a class="dropdown-item" href="{{ route('intouch.beheer.afstanden.index') }}">Afstanden</a></li>
+                        @endcan
                         @can('manage_users')
                         <li><a class="dropdown-item" href="{{ route('intouch.beheer.users.index') }}">Gebruikers</a></li>
                         @endcan

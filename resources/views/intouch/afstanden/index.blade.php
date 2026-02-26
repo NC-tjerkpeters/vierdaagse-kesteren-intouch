@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Afstanden</h1>
     @can('afstanden_create')
-    <a href="{{ route('intouch.afstanden.create') }}" class="btn btn-primary">Nieuwe afstand</a>
+    <a href="{{ route('intouch.beheer.afstanden.create') }}" class="btn btn-primary">Nieuwe afstand</a>
     @endcan
 </div>
 
@@ -44,10 +44,10 @@
                         <td>{{ $d->is_active ? 'Ja' : 'Nee' }}</td>
                         <td class="text-end">
                             @can('afstanden_edit')
-                            <a href="{{ route('intouch.afstanden.edit', $d) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
+                            <a href="{{ route('intouch.beheer.afstanden.edit', $d) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
                             @endcan
                             @can('afstanden_delete')
-                            <form method="post" action="{{ route('intouch.afstanden.destroy', $d) }}" class="d-inline" onsubmit="return confirm('Weet je het zeker?');">
+                            <form method="post" action="{{ route('intouch.beheer.afstanden.destroy', $d) }}" class="d-inline" onsubmit="return confirm('Weet je het zeker?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Verwijderen</button>
