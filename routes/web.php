@@ -48,6 +48,7 @@ Route::domain(config('app.intouch_domain'))
             Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
             Route::resource('afstanden', DistanceController::class)->parameters(['afstanden' => 'distance']);
             Route::get('inschrijvingen', [IntouchRegistrationController::class, 'index'])->name('registrations.index');
+            Route::get('inschrijvingen/medaille-overzicht', [\App\Http\Controllers\Intouch\MedalOverviewController::class, 'index'])->name('registrations.medal-overview');
             Route::get('inschrijvingen/export', [IntouchRegistrationController::class, 'export'])->name('registrations.export');
             Route::get('inschrijvingen/{registration}', [IntouchRegistrationController::class, 'show'])->name('registrations.show');
             Route::get('loopoverzicht', [ScanOverviewController::class, 'index'])->name('scan-overview.index');

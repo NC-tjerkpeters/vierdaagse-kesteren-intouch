@@ -49,8 +49,14 @@
                 </li>
                 @endcan
                 @can('inschrijvingen_view')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('intouch.registrations.index') }}">Inschrijvingen</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Inschrijvingen</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('intouch.registrations.index') }}">Overzicht</a></li>
+                        @can('inschrijvingen_medal_overview')
+                        <li><a class="dropdown-item" href="{{ route('intouch.registrations.medal-overview') }}">Medaille-bestelling</a></li>
+                        @endcan
+                    </ul>
                 </li>
                 @endcan
                 @can('loopoverzicht_view')
