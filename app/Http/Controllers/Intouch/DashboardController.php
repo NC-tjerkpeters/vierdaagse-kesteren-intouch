@@ -60,7 +60,7 @@ class DashboardController extends Controller
             ->sum('bedrag');
         $totalCosts = CostEntry::query()->where('edition_id', $edition->id)->sum('amount');
         $result = ($revenueDeelnemers + $revenueSponsors) - $totalCosts;
-        $closingBalance = (float) ($edition->opening_balance ?? 0) + $result;
+        $closingBalance = (float) $edition->closing_balance;
 
         $sponsorDoel = config('sponsors.doelbedrag', 1850);
         $sponsorTotaal = Sponsor::query()

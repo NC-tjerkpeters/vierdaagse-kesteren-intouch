@@ -11,9 +11,18 @@ class CostEntry extends Model
         'edition_id',
         'description',
         'amount',
+        'payment_method',
         'category',
         'cost_date',
     ];
+
+    public static function paymentMethods(): array
+    {
+        return [
+            'bank' => 'Bank',
+            'kas' => 'Kas',
+        ];
+    }
 
     protected function casts(): array
     {

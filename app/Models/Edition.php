@@ -12,7 +12,8 @@ class Edition extends Model
         'start_date',
         'end_date',
         'is_active',
-        'opening_balance',
+        'opening_balance_bank',
+        'opening_balance_cash',
     ];
 
     protected function casts(): array
@@ -21,7 +22,8 @@ class Edition extends Model
             'start_date' => 'date',
             'end_date' => 'date',
             'is_active' => 'boolean',
-            'opening_balance' => 'decimal:2',
+            'opening_balance_bank' => 'decimal:2',
+            'opening_balance_cash' => 'decimal:2',
         ];
     }
 
@@ -65,7 +67,13 @@ class Edition extends Model
     }
 
     /** Eindsaldo: startsaldo + opbrengsten - kosten. Gebruikt bij overdracht naar volgende editie. */
-    public function getClosingBalanceAttribute(): float
+    public function getOpeningBalanceAttribute(): float
+    {
+        return (float) ($this->opening_balance_bank ?? 0) + (float) ($this->opening_balance_cash ?? 0);
+    }
+
+    /** Eindsaldo: startsaldo + opbrengsten - kosten. Gebruikt bij overdracht naar volgende editie. */
+    public function getClosingBankAttribute(): float
     {
         $revenue = $this->registrations()
             ->where('mollie_payment_status', 'paid')
@@ -73,9 +81,21 @@ class Edition extends Model
             ->get()
             ->sum(fn ($r) => (float) ($r->distance->price ?? 0));
         $revenue += $this->sponsors()->where('betaalstatus', 'paid')->sum('bedrag');
-        $costs = $this->costEntries()->sum('amount');
+        $costsBank = $this->costEntries()->where('payment_method', 'bank')->sum('amount');
 
-        return (float) $this->opening_balance + $revenue - $costs;
+        return (float) ($this->opening_balance_bank ?? 0) + (float) $revenue - (float) $costsBank;
+    }
+
+    public function getClosingCashAttribute(): float
+    {
+        $costsCash = $this->costEntries()->where('payment_method', 'kas')->sum('amount');
+
+        return (float) ($this->opening_balance_cash ?? 0) - (float) $costsCash;
+    }
+
+    public function getClosingBalanceAttribute(): float
+    {
+        return $this->closing_bank + $this->closing_cash;
     }
 
     public function costEntries(): \Illuminate\Database\Eloquent\Relations\HasMany

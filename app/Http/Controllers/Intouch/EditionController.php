@@ -31,10 +31,12 @@ class EditionController extends Controller
         $this->authorize('editions_manage');
 
         $previousEdition = Edition::query()->orderByDesc('start_date')->first();
-        $suggestedOpeningBalance = $previousEdition ? (float) $previousEdition->closing_balance : 0;
+        $suggestedBank = $previousEdition ? (float) $previousEdition->closing_bank : 0;
+        $suggestedCash = $previousEdition ? (float) $previousEdition->closing_cash : 0;
 
         return view('intouch.editions.create', [
-            'suggestedOpeningBalance' => $suggestedOpeningBalance,
+            'suggestedBank' => $suggestedBank,
+            'suggestedCash' => $suggestedCash,
             'previousEdition' => $previousEdition,
         ]);
     }
@@ -47,7 +49,8 @@ class EditionController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'opening_balance' => ['nullable', 'numeric'],
+            'opening_balance_bank' => ['nullable', 'numeric'],
+            'opening_balance_cash' => ['nullable', 'numeric'],
         ]);
 
         $edition = Edition::create([
@@ -55,7 +58,8 @@ class EditionController extends Controller
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'is_active' => false,
-            'opening_balance' => $validated['opening_balance'] ?? 0,
+            'opening_balance_bank' => $validated['opening_balance_bank'] ?? 0,
+            'opening_balance_cash' => $validated['opening_balance_cash'] ?? 0,
         ]);
 
         foreach (['Dag 1', 'Dag 2', 'Dag 3', 'Dag 4'] as $i => $name) {

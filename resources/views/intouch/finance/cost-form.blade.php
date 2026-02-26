@@ -40,6 +40,17 @@
             </div>
 
             <div class="mb-3">
+                <label for="payment_method" class="form-label">Betaald via *</label>
+                <select name="payment_method" id="payment_method" class="form-select @error('payment_method') is-invalid @enderror" required>
+                    @foreach(\App\Models\CostEntry::paymentMethods() as $key => $label)
+                        <option value="{{ $key }}" @selected(old('payment_method', $cost?->payment_method ?? 'bank') === $key)>{{ $label }}</option>
+                    @endforeach
+                </select>
+                @error('payment_method')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                <small class="text-muted">Is deze kost via de bank of contant (kas) betaald?</small>
+            </div>
+
+            <div class="mb-3">
                 <label for="category" class="form-label">Categorie *</label>
                 <select name="category" id="category" class="form-select @error('category') is-invalid @enderror" required>
                     @foreach(\App\Models\CostEntry::categories() as $key => $label)

@@ -38,18 +38,27 @@
             </div>
 
             <div class="mb-4">
-                <label for="opening_balance" class="form-label">Startsaldo (€)</label>
+                <label class="form-label">Startsaldo (€)</label>
                 <div class="d-flex gap-2 align-items-center flex-wrap">
-                    <input type="number" id="opening_balance" name="opening_balance" class="form-control @error('opening_balance') is-invalid @enderror"
-                        value="{{ old('opening_balance', $suggestedOpeningBalance ?? 0) }}" step="0.01" min="0" placeholder="0,00" style="max-width: 140px">
+                    <div>
+                        <label for="opening_balance_bank" class="form-label small mb-0">Bank</label>
+                        <input type="number" id="opening_balance_bank" name="opening_balance_bank" class="form-control @error('opening_balance_bank') is-invalid @enderror"
+                            value="{{ old('opening_balance_bank', $suggestedBank ?? 0) }}" step="0.01" min="0" placeholder="0,00" style="max-width: 120px">
+                    </div>
+                    <div>
+                        <label for="opening_balance_cash" class="form-label small mb-0">Kas</label>
+                        <input type="number" id="opening_balance_cash" name="opening_balance_cash" class="form-control @error('opening_balance_cash') is-invalid @enderror"
+                            value="{{ old('opening_balance_cash', $suggestedCash ?? 0) }}" step="0.01" min="0" placeholder="0,00" style="max-width: 120px">
+                    </div>
                     @if($previousEdition ?? null)
-                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('opening_balance').value = {{ number_format($suggestedOpeningBalance, 2, '.', '') }}">Neem over van {{ $previousEdition->name }}</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm align-self-end" onclick="document.getElementById('opening_balance_bank').value = {{ number_format($suggestedBank, 2, '.', '') }}; document.getElementById('opening_balance_cash').value = {{ number_format($suggestedCash, 2, '.', '') }}">Neem over van {{ $previousEdition->name }}</button>
                     @endif
                 </div>
-                @error('opening_balance')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                @error('opening_balance_bank')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                @error('opening_balance_cash')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 <small class="text-muted d-block mt-1">
                     @if($previousEdition ?? null)
-                        Eindsaldo {{ $previousEdition->name }}: € {{ number_format($suggestedOpeningBalance, 2, ',', '.') }}. Klik de knop om over te nemen.
+                        Eindsaldo {{ $previousEdition->name }}: bank € {{ number_format($suggestedBank, 2, ',', '.') }}, kas € {{ number_format($suggestedCash, 2, ',', '.') }}. Klik om over te nemen.
                     @else
                         Bij de eerste editie: voer bank + kas in. Daarna ook wijzigbaar via Financiën.
                     @endif

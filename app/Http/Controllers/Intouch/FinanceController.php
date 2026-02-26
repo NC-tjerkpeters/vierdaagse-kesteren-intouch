@@ -45,9 +45,24 @@ class FinanceController extends Controller
             ->where('edition_id', $edition->id)
             ->sum('amount');
 
+        $costsBank = CostEntry::query()
+            ->where('edition_id', $edition->id)
+            ->where('payment_method', 'bank')
+            ->sum('amount');
+
+        $costsCash = CostEntry::query()
+            ->where('edition_id', $edition->id)
+            ->where('payment_method', 'kas')
+            ->sum('amount');
+
+        $openingBank = (float) ($edition->opening_balance_bank ?? 0);
+        $openingCash = (float) ($edition->opening_balance_cash ?? 0);
+        $openingBalance = $openingBank + $openingCash;
+
+        $closingBank = $openingBank + $totalRevenue - $costsBank;
+        $closingCash = $openingCash - $costsCash;
         $resultEdition = $totalRevenue - $totalCosts;
-        $openingBalance = (float) ($edition->opening_balance ?? 0);
-        $closingBalance = $openingBalance + $resultEdition;
+        $closingBalance = $closingBank + $closingCash;
 
         $editions = Edition::query()->orderByDesc('start_date')->get();
 
@@ -59,8 +74,14 @@ class FinanceController extends Controller
             'totalRevenue' => $totalRevenue,
             'costsByCategory' => $costsByCategory,
             'totalCosts' => $totalCosts,
+            'costsBank' => $costsBank,
+            'costsCash' => $costsCash,
             'resultEdition' => $resultEdition,
+            'openingBank' => $openingBank,
+            'openingCash' => $openingCash,
             'openingBalance' => $openingBalance,
+            'closingBank' => $closingBank,
+            'closingCash' => $closingCash,
             'closingBalance' => $closingBalance,
         ]);
     }
@@ -91,6 +112,7 @@ class FinanceController extends Controller
             'edition_id' => ['required', 'exists:editions,id'],
             'description' => ['required', 'string', 'max:255'],
             'amount' => ['required', 'numeric', 'min:0'],
+            'payment_method' => ['required', 'string', 'in:bank,kas'],
             'category' => ['required', 'string', 'in:mollie,medailles,overig'],
             'cost_date' => ['required', 'date'],
         ]);
@@ -121,6 +143,7 @@ class FinanceController extends Controller
         $validated = $request->validate([
             'description' => ['required', 'string', 'max:255'],
             'amount' => ['required', 'numeric', 'min:0'],
+            'payment_method' => ['required', 'string', 'in:bank,kas'],
             'category' => ['required', 'string', 'in:mollie,medailles,overig'],
             'cost_date' => ['required', 'date'],
         ]);
@@ -197,6 +220,7 @@ class FinanceController extends Controller
             ],
             [
                 'amount' => round($totalFee, 2),
+                'payment_method' => 'bank',
                 'cost_date' => now()->toDateString(),
             ]
         );
@@ -211,11 +235,15 @@ class FinanceController extends Controller
 
         $validated = $request->validate([
             'edition_id' => ['required', 'exists:editions,id'],
-            'opening_balance' => ['required', 'numeric'],
+            'opening_balance_bank' => ['required', 'numeric'],
+            'opening_balance_cash' => ['required', 'numeric'],
         ]);
 
         $edition = Edition::query()->findOrFail($validated['edition_id']);
-        $edition->update(['opening_balance' => $validated['opening_balance']]);
+        $edition->update([
+            'opening_balance_bank' => $validated['opening_balance_bank'],
+            'opening_balance_cash' => $validated['opening_balance_cash'],
+        ]);
 
         return redirect()->route('intouch.finance.index', ['edition_id' => $edition->id])
             ->with('status', 'Startsaldo bijgewerkt.');
