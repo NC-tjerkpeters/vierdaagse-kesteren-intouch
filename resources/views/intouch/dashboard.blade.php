@@ -21,7 +21,7 @@
 
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Inschrijvingen</h5>
                 <p class="mb-0 display-6">{{ $totalRegistrations }}</p>
@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Met medaille</h5>
                 <p class="mb-0 display-6">{{ $withMedal }}</p>
@@ -39,7 +39,7 @@
     </div>
     @can('finances_view')
     <div class="col-md-3">
-        <div class="card border-success">
+        <div class="card border-success h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Eindsaldo</h5>
                 <p class="mb-0 display-6 {{ ($closingBalance ?? $result) >= 0 ? 'text-success' : 'text-danger' }}">
@@ -52,7 +52,7 @@
     @endcan
     @can('sponsors_view')
     <div class="col-md-3">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Sponsors</h5>
                 <p class="mb-0 display-6">€ {{ number_format($sponsorTotaal, 0, ',', '.') }}</p>

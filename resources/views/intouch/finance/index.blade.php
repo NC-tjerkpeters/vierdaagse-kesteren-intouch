@@ -20,7 +20,7 @@
 
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card border-primary">
+        <div class="card border-primary h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Startsaldo</h5>
                 <p class="mb-0 display-6">€ {{ number_format($openingBalance, 2, ',', '.') }}</p>
@@ -33,7 +33,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-success">
+        <div class="card border-success h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Opbrengst deelnemers</h5>
                 <p class="mb-0 display-6 text-success">€ {{ number_format($revenueDeelnemers, 2, ',', '.') }}</p>
@@ -41,7 +41,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-success">
+        <div class="card border-success h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Opbrengst sponsors</h5>
                 <p class="mb-0 display-6 text-success">€ {{ number_format($revenueSponsors, 2, ',', '.') }}</p>
@@ -49,7 +49,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-danger">
+        <div class="card border-danger h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Totale kosten</h5>
                 <p class="mb-0 display-6 text-danger">€ {{ number_format($totalCosts, 2, ',', '.') }}</p>
@@ -87,7 +87,7 @@
 
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card {{ $resultEdition >= 0 ? 'border-success' : 'border-danger' }}">
+        <div class="card {{ $resultEdition >= 0 ? 'border-success' : 'border-danger' }} h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Resultaat deze editie</h5>
                 <p class="mb-0 display-6 {{ $resultEdition >= 0 ? 'text-success' : 'text-danger' }}">
@@ -98,7 +98,7 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card {{ $closingBalance >= 0 ? 'border-success' : 'border-danger' }}">
+        <div class="card {{ $closingBalance >= 0 ? 'border-success' : 'border-danger' }} h-100">
             <div class="card-body">
                 <h5 class="card-title text-muted small">Eindsaldo / Totaal</h5>
                 <p class="mb-0 display-6 {{ $closingBalance >= 0 ? 'text-success' : 'text-danger' }}">
