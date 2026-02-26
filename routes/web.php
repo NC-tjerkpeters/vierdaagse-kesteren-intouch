@@ -69,6 +69,7 @@ Route::domain(config('app.intouch_domain'))
             Route::put('financien/kosten/{cost}', [FinanceController::class, 'updateCost'])->name('finance.cost.update');
             Route::delete('financien/kosten/{cost}', [FinanceController::class, 'destroyCost'])->name('finance.cost.destroy');
             Route::post('financien/mollie-schatten', [FinanceController::class, 'estimateMollieCosts'])->name('finance.estimate-mollie');
+            Route::put('financien/startsaldo', [FinanceController::class, 'updateOpeningBalance'])->name('finance.update-opening-balance');
             Route::get('beheer/gebruikers', [UserManagementController::class, 'index'])->name('beheer.users.index');
             Route::get('beheer/gebruikers/aanmaken', [UserManagementController::class, 'create'])->name('beheer.users.create');
             Route::post('beheer/gebruikers', [UserManagementController::class, 'store'])->name('beheer.users.store');

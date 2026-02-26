@@ -46,6 +46,11 @@
                     <a class="nav-link" href="{{ route('intouch.dashboard') }}">Dashboard</a>
                 </li>
                 @endcan
+                @can('sponsors_view')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('intouch.sponsors.index') }}">Sponsors</a>
+                </li>
+                @endcan
                 @can('inschrijvingen_view')
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Inschrijvingen</a>
@@ -63,11 +68,6 @@
                 @can('loopoverzicht_view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('intouch.scan-overview.index') }}">Loopoverzicht</a>
-                </li>
-                @endcan
-                @can('sponsors_view')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('intouch.sponsors.index') }}">Sponsors</a>
                 </li>
                 @endcan
                 @can('finances_view')

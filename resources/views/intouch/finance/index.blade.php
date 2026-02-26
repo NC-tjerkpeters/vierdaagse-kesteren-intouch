@@ -19,48 +19,85 @@
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <div class="card border-primary">
+            <div class="card-body">
+                <h5 class="card-title text-muted small">Startsaldo</h5>
+                <p class="mb-0 display-6">€ {{ number_format($openingBalance, 2, ',', '.') }}</p>
+                <small class="text-muted">Bank + kas (resultaat vorige edities)</small>
+                @can('finances_edit')
+                <button type="button" class="btn btn-link btn-sm p-0 mt-1" data-bs-toggle="collapse" data-bs-target="#edit-opening-balance">Wijzigen</button>
+                @endcan
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
         <div class="card border-success">
             <div class="card-body">
-                <h5 class="card-title text-muted">Opbrengst deelnemers</h5>
+                <h5 class="card-title text-muted small">Opbrengst deelnemers</h5>
                 <p class="mb-0 display-6 text-success">€ {{ number_format($revenueDeelnemers, 2, ',', '.') }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card border-success">
             <div class="card-body">
-                <h5 class="card-title text-muted">Opbrengst sponsors</h5>
+                <h5 class="card-title text-muted small">Opbrengst sponsors</h5>
                 <p class="mb-0 display-6 text-success">€ {{ number_format($revenueSponsors, 2, ',', '.') }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card border-success">
+    <div class="col-md-3">
+        <div class="card border-danger">
             <div class="card-body">
-                <h5 class="card-title text-muted">Totale opbrengsten</h5>
-                <p class="mb-0 display-6 text-success">€ {{ number_format($totalRevenue, 2, ',', '.') }}</p>
+                <h5 class="card-title text-muted small">Totale kosten</h5>
+                <p class="mb-0 display-6 text-danger">€ {{ number_format($totalCosts, 2, ',', '.') }}</p>
             </div>
         </div>
     </div>
 </div>
 
+@can('finances_edit')
+<div class="collapse mb-4" id="edit-opening-balance">
+    <div class="card">
+        <div class="card-body">
+            <h6 class="card-title">Startsaldo wijzigen</h6>
+            <p class="text-muted small">Voer het bedrag in dat je aan het begin van deze editie had (bank + kas). Bij de eerste editie: je huidige saldo. Bij volgende edities: het eindsaldo van de vorige editie.</p>
+            <form method="post" action="{{ route('intouch.finance.update-opening-balance') }}" class="d-flex gap-2 align-items-end">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="edition_id" value="{{ $edition->id }}">
+                <div class="mb-0">
+                    <label for="opening_balance" class="form-label small">Bedrag (€)</label>
+                    <input type="number" name="opening_balance" id="opening_balance" class="form-control" step="0.01" value="{{ $openingBalance }}" style="width: 140px">
+                </div>
+                <button type="submit" class="btn btn-vierdaagse">Opslaan</button>
+            </form>
+        </div>
+    </div>
+</div>
+@endcan
+
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card border-danger">
+        <div class="card {{ $resultEdition >= 0 ? 'border-success' : 'border-danger' }}">
             <div class="card-body">
-                <h5 class="card-title text-muted">Totale kosten</h5>
-                <p class="mb-0 display-6 text-danger">€ {{ number_format($totalCosts, 2, ',', '.') }}</p>
+                <h5 class="card-title text-muted small">Resultaat deze editie</h5>
+                <p class="mb-0 display-6 {{ $resultEdition >= 0 ? 'text-success' : 'text-danger' }}">
+                    € {{ number_format($resultEdition, 2, ',', '.') }}
+                </p>
+                <small class="text-muted">Opbrengsten − kosten</small>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card {{ $result >= 0 ? 'border-success' : 'border-danger' }}">
+        <div class="card {{ $closingBalance >= 0 ? 'border-success' : 'border-danger' }}">
             <div class="card-body">
-                <h5 class="card-title text-muted">Resultaat</h5>
-                <p class="mb-0 display-6 {{ $result >= 0 ? 'text-success' : 'text-danger' }}">
-                    € {{ number_format($result, 2, ',', '.') }}
+                <h5 class="card-title text-muted small">Eindsaldo / Totaal</h5>
+                <p class="mb-0 display-6 {{ $closingBalance >= 0 ? 'text-success' : 'text-danger' }}">
+                    € {{ number_format($closingBalance, 2, ',', '.') }}
                 </p>
+                <small class="text-muted">Startsaldo + resultaat editie</small>
             </div>
         </div>
     </div>
@@ -124,6 +161,6 @@
 </div>
 
 <p class="text-muted">
-    <small>Opbrengsten worden berekend uit betaalde inschrijvingen (afstandsprijs) en betaalde sponsors. Kosten voer je handmatig in. Gebruik "Mollie-kosten schatten" voor een indicatie van transactiekosten op basis van betaalmethode.</small>
+    <small>Startsaldo = wat je aan het begin had (bank + kas). Bij de eerste editie: voer eenmalig je huidige saldo in. Bij een nieuwe editie: neem het eindsaldo van de vorige over. Opbrengsten uit betaalde inschrijvingen en sponsors. Kosten handmatig of via Mollie-schatting.</small>
 </p>
 @endsection

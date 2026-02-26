@@ -41,9 +41,9 @@
     <div class="col-md-3">
         <div class="card border-success">
             <div class="card-body">
-                <h5 class="card-title text-muted small">Resultaat</h5>
-                <p class="mb-0 display-6 {{ $result >= 0 ? 'text-success' : 'text-danger' }}">
-                    € {{ number_format($result, 0, ',', '.') }}
+                <h5 class="card-title text-muted small">Eindsaldo</h5>
+                <p class="mb-0 display-6 {{ ($closingBalance ?? $result) >= 0 ? 'text-success' : 'text-danger' }}">
+                    € {{ number_format($closingBalance ?? $result, 0, ',', '.') }}
                 </p>
                 <a href="{{ route('intouch.finance.index') }}" class="small">Financiën →</a>
             </div>

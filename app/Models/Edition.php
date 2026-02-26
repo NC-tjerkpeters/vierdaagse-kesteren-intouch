@@ -12,6 +12,7 @@ class Edition extends Model
         'start_date',
         'end_date',
         'is_active',
+        'opening_balance',
     ];
 
     protected function casts(): array
@@ -20,6 +21,7 @@ class Edition extends Model
             'start_date' => 'date',
             'end_date' => 'date',
             'is_active' => 'boolean',
+            'opening_balance' => 'decimal:2',
         ];
     }
 
@@ -60,5 +62,24 @@ class Edition extends Model
     {
         static::query()->update(['is_active' => false]);
         $edition->update(['is_active' => true]);
+    }
+
+    /** Eindsaldo: startsaldo + opbrengsten - kosten. Gebruikt bij overdracht naar volgende editie. */
+    public function getClosingBalanceAttribute(): float
+    {
+        $revenue = $this->registrations()
+            ->where('mollie_payment_status', 'paid')
+            ->with('distance')
+            ->get()
+            ->sum(fn ($r) => (float) ($r->distance->price ?? 0));
+        $revenue += $this->sponsors()->where('betaalstatus', 'paid')->sum('bedrag');
+        $costs = $this->costEntries()->sum('amount');
+
+        return (float) $this->opening_balance + $revenue - $costs;
+    }
+
+    public function costEntries(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(CostEntry::class);
     }
 }

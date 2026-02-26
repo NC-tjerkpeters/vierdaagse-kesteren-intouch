@@ -28,6 +28,7 @@ class DashboardController extends Controller
                 'revenueSponsors' => 0,
                 'totalCosts' => 0,
                 'result' => 0,
+                'closingBalance' => 0,
                 'sponsorTotaal' => 0,
                 'sponsorDoel' => config('sponsors.doelbedrag', 1850),
                 'sponsorProgress' => 0,
@@ -59,6 +60,7 @@ class DashboardController extends Controller
             ->sum('bedrag');
         $totalCosts = CostEntry::query()->where('edition_id', $edition->id)->sum('amount');
         $result = ($revenueDeelnemers + $revenueSponsors) - $totalCosts;
+        $closingBalance = (float) ($edition->opening_balance ?? 0) + $result;
 
         $sponsorDoel = config('sponsors.doelbedrag', 1850);
         $sponsorTotaal = Sponsor::query()
@@ -76,8 +78,9 @@ class DashboardController extends Controller
             'distances' => Distance::query()->orderBy('sort_order')->get(['id', 'name']),
             'revenueDeelnemers' => $revenueDeelnemers,
             'revenueSponsors' => $revenueSponsors,
-            'totalCosts' => $totalCosts,
-            'result' => $result,
+'totalCosts' => $totalCosts,
+                'result' => $result,
+                'closingBalance' => $closingBalance,
             'sponsorTotaal' => $sponsorTotaal,
             'sponsorDoel' => $sponsorDoel,
             'sponsorProgress' => $sponsorProgress,

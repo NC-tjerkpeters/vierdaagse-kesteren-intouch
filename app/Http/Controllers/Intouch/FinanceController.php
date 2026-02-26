@@ -45,7 +45,9 @@ class FinanceController extends Controller
             ->where('edition_id', $edition->id)
             ->sum('amount');
 
-        $result = $totalRevenue - $totalCosts;
+        $resultEdition = $totalRevenue - $totalCosts;
+        $openingBalance = (float) ($edition->opening_balance ?? 0);
+        $closingBalance = $openingBalance + $resultEdition;
 
         $editions = Edition::query()->orderByDesc('start_date')->get();
 
@@ -57,7 +59,9 @@ class FinanceController extends Controller
             'totalRevenue' => $totalRevenue,
             'costsByCategory' => $costsByCategory,
             'totalCosts' => $totalCosts,
-            'result' => $result,
+            'resultEdition' => $resultEdition,
+            'openingBalance' => $openingBalance,
+            'closingBalance' => $closingBalance,
         ]);
     }
 
@@ -199,6 +203,22 @@ class FinanceController extends Controller
 
         return redirect()->route('intouch.finance.index', ['edition_id' => $edition->id])
             ->with('status', "Mollie-kosten geschat: € " . number_format($totalFee, 2, ',', '.') . " op basis van {$count} betalingen.");
+    }
+
+    public function updateOpeningBalance(Request $request)
+    {
+        $this->authorize('finances_edit');
+
+        $validated = $request->validate([
+            'edition_id' => ['required', 'exists:editions,id'],
+            'opening_balance' => ['required', 'numeric'],
+        ]);
+
+        $edition = Edition::query()->findOrFail($validated['edition_id']);
+        $edition->update(['opening_balance' => $validated['opening_balance']]);
+
+        return redirect()->route('intouch.finance.index', ['edition_id' => $edition->id])
+            ->with('status', 'Startsaldo bijgewerkt.');
     }
 
     private function resolveEdition(Request $request): ?Edition
