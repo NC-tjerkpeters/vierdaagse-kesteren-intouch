@@ -18,5 +18,6 @@ return [
         ['group' => 'Gebruikers', 'slug' => 'manage_users', 'name' => 'Beheren'],
         ['group' => 'Rollen', 'slug' => 'manage_roles', 'name' => 'Beheren'],
         ['group' => 'Instellingen', 'slug' => 'instellingen_edit', 'name' => 'Bewerken'],
+        ['group' => 'Edities', 'slug' => 'editions_manage', 'name' => 'Beheren'],
     ],
 ];

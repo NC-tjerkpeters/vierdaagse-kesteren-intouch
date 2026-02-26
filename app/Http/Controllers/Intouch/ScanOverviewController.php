@@ -13,7 +13,7 @@ class ScanOverviewController extends Controller
     {
         $this->authorize('loopoverzicht_view');
 
-        $eventDays = EventDay::query()->orderBy('sort_order')->get();
+        $eventDays = EventDay::query()->forActiveEdition()->orderBy('sort_order')->get();
         $currentDay = EventDay::getCurrent();
 
         $registrationIds = Registration::query()
@@ -22,6 +22,7 @@ class ScanOverviewController extends Controller
             ->pluck('id');
 
         $registrationsByDistance = Registration::query()
+            ->forActiveEdition()
             ->with('distance')
             ->whereIn('id', $registrationIds)
             ->get()
@@ -106,8 +107,12 @@ class ScanOverviewController extends Controller
             'event_day_id' => ['required', 'exists:event_days,id'],
         ]);
 
-        EventDay::query()->update(['is_current' => false]);
-        $newCurrentDay = EventDay::query()->findOrFail($request->event_day_id);
+        $activeEdition = \App\Models\Edition::active();
+        if (!$activeEdition) {
+            return redirect()->route('intouch.scan-overview.index')->with('error', 'Geen actieve editie.');
+        }
+        $newCurrentDay = EventDay::query()->where('edition_id', $activeEdition->id)->findOrFail($request->event_day_id);
+        EventDay::query()->where('edition_id', $activeEdition->id)->update(['is_current' => false]);
         $newCurrentDay->update(['is_current' => true]);
 
         $activationPoint = match ((int) $newCurrentDay->sort_order) {
@@ -120,6 +125,7 @@ class ScanOverviewController extends Controller
 
         if ($activationPoint !== null) {
             Registration::query()
+                ->forActiveEdition()
                 ->where('mollie_payment_status', 'paid')
                 ->whereNotNull('qr_code')
                 ->update(['usage_count' => $activationPoint]);

@@ -31,6 +31,7 @@ class SponsorRegistrationController extends Controller
         }
         $amountValue = number_format($bedrag, 2, '.', '');
 
+        $edition = \App\Models\Edition::active();
         $sponsor = Sponsor::create([
             'bedrijfsnaam' => $validated['bedrijfsnaam'] ?: null,
             'voornaam' => $validated['voornaam'],
@@ -41,6 +42,7 @@ class SponsorRegistrationController extends Controller
             'email' => $validated['email'],
             'bedrag' => $amountValue,
             'betaalstatus' => 'open',
+            'edition_id' => $edition?->id,
         ]);
 
         $webhookUrl = config('sponsors.webhook_url') ?? (config('app.url') . config('sponsors.webhook_path'));

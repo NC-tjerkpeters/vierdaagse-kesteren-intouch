@@ -18,7 +18,7 @@ class SponsorController extends Controller
             $filter = 'all';
         }
 
-        $query = Sponsor::query();
+        $query = Sponsor::query()->forActiveEdition();
 
         if ($filter !== 'all') {
             $query->where('betaalstatus', $filter);
@@ -43,8 +43,8 @@ class SponsorController extends Controller
             ->paginate(25);
 
         $doelbedrag = config('sponsors.doelbedrag', 1850);
-        $totaalOpgehaald = (float) Sponsor::where('betaalstatus', 'paid')->sum('bedrag');
-        $aantalBetaald = Sponsor::where('betaalstatus', 'paid')->count();
+        $totaalOpgehaald = (float) Sponsor::query()->forActiveEdition()->where('betaalstatus', 'paid')->sum('bedrag');
+        $aantalBetaald = Sponsor::query()->forActiveEdition()->where('betaalstatus', 'paid')->count();
         $progress = $doelbedrag > 0 ? min(100, ($totaalOpgehaald / $doelbedrag) * 100) : 0;
         $nogNodig = max(0, $doelbedrag - $totaalOpgehaald);
 
@@ -87,7 +87,10 @@ class SponsorController extends Controller
             'bedrag.required' => 'Bedrag is verplicht.',
         ]);
 
-        Sponsor::create($validated);
+        $edition = \App\Models\Edition::active();
+        Sponsor::create(array_merge($validated, [
+            'edition_id' => $edition?->id,
+        ]));
 
         return redirect()->route('intouch.sponsors.index')
             ->with('status', 'Sponsor toegevoegd.');

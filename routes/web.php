@@ -8,6 +8,7 @@ use App\Http\Controllers\Intouch\DistanceController;
 use App\Http\Controllers\Intouch\RegistrationController as IntouchRegistrationController;
 use App\Http\Controllers\Intouch\ScanOverviewController;
 use App\Http\Controllers\Intouch\SettingsController;
+use App\Http\Controllers\Intouch\EditionController;
 use App\Http\Controllers\Intouch\RoleManagementController;
 use App\Http\Controllers\Intouch\SponsorController;
 use App\Http\Controllers\Intouch\UserManagementController;
@@ -56,6 +57,9 @@ Route::domain(config('app.intouch_domain'))
             Route::post('loopoverzicht/huidige-dag', [ScanOverviewController::class, 'setCurrentDay'])->name('scan-overview.set-current-day');
             Route::get('instellingen', [SettingsController::class, 'edit'])->name('instellingen.edit');
             Route::put('instellingen', [SettingsController::class, 'update'])->name('instellingen.update');
+            Route::get('edities', [EditionController::class, 'index'])->name('editions.index');
+            Route::get('edities/aanmaken', [EditionController::class, 'create'])->name('editions.create');
+            Route::post('edities', [EditionController::class, 'store'])->name('editions.store');
             Route::get('beheer/gebruikers', [UserManagementController::class, 'index'])->name('beheer.users.index');
             Route::get('beheer/gebruikers/aanmaken', [UserManagementController::class, 'create'])->name('beheer.users.create');
             Route::post('beheer/gebruikers', [UserManagementController::class, 'store'])->name('beheer.users.store');

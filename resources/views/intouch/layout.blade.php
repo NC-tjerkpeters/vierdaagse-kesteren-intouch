@@ -82,9 +82,16 @@
                         @can('manage_roles')
                             <li><a class="dropdown-item" href="{{ route('intouch.beheer.roles.index') }}">Rollen</a></li>
                         @endcan
-                        @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles'))
+                        @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles') || auth()->user()->hasPermission('editions_manage'))
                             <li><hr class="dropdown-divider"></li>
                         @endif
+                        @can('editions_manage')
+                        <li>
+                            <a class="dropdown-item" href="{{ route('intouch.editions.index') }}">
+                                Edities
+                            </a>
+                        </li>
+                        @endcan
                         @can('instellingen_edit')
                         <li>
                             <a class="dropdown-item" href="{{ route('intouch.instellingen.edit') }}">

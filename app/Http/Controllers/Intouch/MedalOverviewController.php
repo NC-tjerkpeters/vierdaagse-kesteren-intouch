@@ -13,6 +13,7 @@ class MedalOverviewController extends Controller
         $this->authorize('inschrijvingen_medal_overview');
 
         $medals = Registration::query()
+            ->forActiveEdition()
             ->where('mollie_payment_status', 'paid')
             ->where('wants_medal', true)
             ->select('medal_number', DB::raw('COUNT(*) as aantal'))
@@ -40,6 +41,7 @@ class MedalOverviewController extends Controller
 
         $totaalMedailles = $medals->sum('aantal');
         $totaalMetMedaille = Registration::query()
+            ->forActiveEdition()
             ->where('mollie_payment_status', 'paid')
             ->where('wants_medal', true)
             ->count();

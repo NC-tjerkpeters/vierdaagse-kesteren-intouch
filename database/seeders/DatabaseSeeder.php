@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Edition;
 use App\Models\Distance;
 use App\Models\EventDay;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -71,9 +72,16 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
+        $edition = Edition::active() ?? Edition::query()->create([
+            'name' => 'Editie ' . date('Y'),
+            'start_date' => (date('Y') - 1) . '-10-01',
+            'end_date' => date('Y') . '-09-30',
+            'is_active' => true,
+        ]);
+
         foreach (['Dag 1', 'Dag 2', 'Dag 3', 'Dag 4'] as $i => $name) {
             EventDay::query()->updateOrCreate(
-                ['name' => $name],
+                ['edition_id' => $edition->id, 'name' => $name],
                 [
                     'sort_order' => $i + 1,
                     'is_current' => $i === 0,

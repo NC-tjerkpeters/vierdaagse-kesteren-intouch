@@ -40,7 +40,10 @@ class RegistrationController extends Controller
 
         $distance = Distance::query()->findOrFail($validated['distance_id']);
 
-        $registration = Registration::create($validated);
+        $edition = \App\Models\Edition::active();
+        $registration = Registration::create(array_merge($validated, [
+            'edition_id' => $edition?->id,
+        ]));
 
         $amountValue = number_format($distance->price, 2, '.', '');
 

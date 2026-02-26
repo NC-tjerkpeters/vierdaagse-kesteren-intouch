@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventDay extends Model
 {
     protected $fillable = [
+        'edition_id',
         'name',
         'is_current',
         'sort_order',
@@ -21,9 +23,30 @@ class EventDay extends Model
         ];
     }
 
+    public function edition(): BelongsTo
+    {
+        return $this->belongsTo(Edition::class);
+    }
+
+    public function scopeForActiveEdition($query)
+    {
+        $edition = Edition::active();
+        if ($edition) {
+            return $query->where('edition_id', $edition->id);
+        }
+        return $query;
+    }
+
     public static function getCurrent(): ?self
     {
-        return static::query()->where('is_current', true)->first();
+        $active = Edition::active();
+        if (! $active) {
+            return static::query()->where('is_current', true)->first();
+        }
+        return static::query()
+            ->where('edition_id', $active->id)
+            ->where('is_current', true)
+            ->first();
     }
 
     /** Punten die bij deze avond horen: Dag 1 = 1–4, Dag 2 = 5–7, Dag 3 = 8–10, Dag 4 = 11–13 */

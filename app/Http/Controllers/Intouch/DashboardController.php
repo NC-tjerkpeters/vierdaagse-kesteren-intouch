@@ -12,11 +12,12 @@ class DashboardController extends Controller
     {
         $this->authorize('dashboard_view');
 
-        $totalRegistrations = Registration::query()->count();
-        $paidCount = Registration::query()->where('mollie_payment_status', 'paid')->count();
-        $withMedal = Registration::query()->where('wants_medal', true)->count();
+        $totalRegistrations = Registration::query()->forActiveEdition()->count();
+        $paidCount = Registration::query()->forActiveEdition()->where('mollie_payment_status', 'paid')->count();
+        $withMedal = Registration::query()->forActiveEdition()->where('wants_medal', true)->count();
 
         $byDistance = Registration::query()
+            ->forActiveEdition()
             ->selectRaw('distance_id, count(*) as total')
             ->where('mollie_payment_status', 'paid')
             ->groupBy('distance_id')

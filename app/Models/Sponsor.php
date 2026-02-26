@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Sponsor extends Model
 {
     protected $table = 'sponsors';
 
     protected $fillable = [
+        'edition_id',
         'bedrijfsnaam',
         'voornaam',
         'achternaam',
@@ -27,6 +29,20 @@ class Sponsor extends Model
         return [
             'bedrag' => 'decimal:2',
         ];
+    }
+
+    public function edition(): BelongsTo
+    {
+        return $this->belongsTo(Edition::class);
+    }
+
+    public function scopeForActiveEdition($query)
+    {
+        $edition = Edition::active();
+        if ($edition) {
+            return $query->where('edition_id', $edition->id);
+        }
+        return $query;
     }
 
     public function getDisplayNameAttribute(): string

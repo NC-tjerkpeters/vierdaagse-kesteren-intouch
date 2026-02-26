@@ -13,7 +13,7 @@ class RegistrationController extends Controller
     {
         $this->authorize('inschrijvingen_view');
 
-        $query = Registration::query()->with('distance');
+        $query = Registration::query()->forActiveEdition()->with('distance');
 
         if ($request->filled('distance_id')) {
             $query->where('distance_id', $request->distance_id);
@@ -66,7 +66,7 @@ class RegistrationController extends Controller
     {
         $this->authorize('inschrijvingen_export');
 
-        $query = Registration::query()->with('distance');
+        $query = Registration::query()->forActiveEdition()->with('distance');
 
         if ($request->filled('distance_id')) {
             $query->where('distance_id', $request->distance_id);
