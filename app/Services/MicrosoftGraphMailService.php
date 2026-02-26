@@ -161,5 +161,67 @@ class MicrosoftGraphMailService
             throw new \RuntimeException('Sending mail via Microsoft Graph failed: ' . $response->body());
         }
     }
+
+    public function sendHtmlMail(
+        string $toAddress,
+        string $toName,
+        string $subject,
+        string $htmlBody,
+    ): void {
+        $accessToken = $this->getAccessToken();
+        $sender = config('services.msgraph.sender_address');
+        $endpoint = "https://graph.microsoft.com/v1.0/users/{$sender}/sendMail";
+
+        $payload = [
+            'message' => [
+                'subject' => $subject,
+                'body' => [
+                    'contentType' => 'HTML',
+                    'content' => $htmlBody,
+                ],
+                'toRecipients' => [
+                    [
+                        'emailAddress' => [
+                            'address' => $toAddress,
+                            'name' => $toName,
+                        ],
+                    ],
+                ],
+                'from' => [
+                    'emailAddress' => [
+                        'address' => $sender,
+                    ],
+                ],
+            ],
+            'saveToSentItems' => true,
+        ];
+
+        $response = Http::withToken($accessToken)->post($endpoint, $payload);
+
+        if (! $response->successful()) {
+            Log::error('Microsoft Graph: sendHtmlMail failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            throw new \RuntimeException('Verzenden mail mislukt: ' . $response->body());
+        }
+    }
+
+    public function sendPasswordResetMail(\App\Models\User $user, string $resetUrl): void
+    {
+        $expireMinutes = config('auth.passwords.' . config('auth.defaults.passwords') . '.expire', 60);
+        $htmlBody = 'Beste ' . e($user->name) . ',<br><br>' .
+            'Je ontvangt deze e-mail omdat we een wachtwoordherstelverzoek hebben ontvangen voor je account.<br><br>' .
+            '<a href="' . e($resetUrl) . '" style="display:inline-block;padding:12px 24px;background:#2e7d32;color:#fff;text-decoration:none;border-radius:6px;">Wachtwoord herstellen</a><br><br>' .
+            'Deze link verloopt over ' . $expireMinutes . ' minuten.<br><br>' .
+            'Als je geen wachtwoordherstel hebt aangevraagd, kun je deze e-mail negeren.';
+
+        $this->sendHtmlMail(
+            toAddress: $user->getEmailForPasswordReset(),
+            toName: $user->name,
+            subject: 'Wachtwoord herstellen – Intouch Vierdaagse Kesteren',
+            htmlBody: $htmlBody,
+        );
+    }
 }
 

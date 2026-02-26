@@ -3,7 +3,6 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Notifications\IntouchResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -52,7 +51,12 @@ class User extends Authenticatable
 
     public function sendPasswordResetNotification($token): void
     {
-        $this->notify(new IntouchResetPasswordNotification($token));
+        $baseUrl = config('app.intouch_password_reset_url')
+            ?? (parse_url(config('app.url'), PHP_URL_SCHEME) ?: 'https') . '://' . config('app.intouch_domain');
+        $baseUrl = rtrim($baseUrl, '/');
+        $resetUrl = $baseUrl . '/wachtwoord-herstellen/' . $token . '?email=' . urlencode($this->getEmailForPasswordReset());
+
+        app(\App\Services\MicrosoftGraphMailService::class)->sendPasswordResetMail($this, $resetUrl);
     }
 
     /**
