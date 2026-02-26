@@ -61,7 +61,7 @@ class EditionController extends Controller
 
         Edition::activate($edition);
 
-        return redirect()->route('intouch.editions.index')
+        return redirect()->route('intouch.beheer.editions.index')
             ->with('status', "Editie {$edition->name} is aangemaakt en actief.");
     }
 }

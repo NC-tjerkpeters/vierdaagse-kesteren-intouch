@@ -58,9 +58,10 @@ Route::domain(config('app.intouch_domain'))
             Route::post('loopoverzicht/huidige-dag', [ScanOverviewController::class, 'setCurrentDay'])->name('scan-overview.set-current-day');
             Route::get('instellingen', [SettingsController::class, 'edit'])->name('instellingen.edit');
             Route::put('instellingen', [SettingsController::class, 'update'])->name('instellingen.update');
-            Route::get('edities', [EditionController::class, 'index'])->name('editions.index');
-            Route::get('edities/aanmaken', [EditionController::class, 'create'])->name('editions.create');
-            Route::post('edities', [EditionController::class, 'store'])->name('editions.store');
+            Route::post('edition/set', [\App\Http\Controllers\Intouch\EditionSelectorController::class, 'set'])->name('edition.set');
+            Route::get('beheer/edities', [EditionController::class, 'index'])->name('beheer.editions.index');
+            Route::get('beheer/edities/aanmaken', [EditionController::class, 'create'])->name('beheer.editions.create');
+            Route::post('beheer/edities', [EditionController::class, 'store'])->name('beheer.editions.store');
             Route::get('financien', [FinanceController::class, 'index'])->name('finance.index');
             Route::get('financien/kosten/aanmaken', [FinanceController::class, 'createCost'])->name('finance.cost.create');
             Route::post('financien/kosten', [FinanceController::class, 'storeCost'])->name('finance.cost.store');

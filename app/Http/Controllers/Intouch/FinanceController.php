@@ -204,9 +204,10 @@ class FinanceController extends Controller
     private function resolveEdition(Request $request): ?Edition
     {
         if ($request->filled('edition_id')) {
+            session(['edition_id' => (int) $request->edition_id]);
             return Edition::query()->find($request->edition_id);
         }
 
-        return Edition::active();
+        return Edition::current();
     }
 }

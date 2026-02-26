@@ -23,6 +23,8 @@
         .navbar-vierdaagse .dropdown-menu { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; }
         .navbar-vierdaagse .dropdown-item:hover { background-color: rgba(46, 125, 50, 0.12); }
         .navbar-vierdaagse .dropdown-divider { border-color: #e0e0e0; }
+        #edition-select-form select { cursor: pointer; }
+        #edition-select-form select option { color: #333; }
         .btn-vierdaagse { background-color: var(--vk-green); color: #fff; border: none; }
         .btn-vierdaagse:hover { background-color: var(--vk-green-dark); color: #fff; }
         .card { border-radius: 10px; border: none; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
@@ -56,6 +58,9 @@
                         @can('inschrijvingen_medal_overview')
                         <li><a class="dropdown-item" href="{{ route('intouch.registrations.medal-overview') }}">Medaille-bestelling</a></li>
                         @endcan
+                        @can('inschrijvingen_export')
+                        <li><a class="dropdown-item" href="{{ route('intouch.registrations.export') }}">Exporteren</a></li>
+                        @endcan
                     </ul>
                 </li>
                 @endcan
@@ -74,37 +79,52 @@
                     <a class="nav-link" href="{{ route('intouch.finance.index') }}">Financiën</a>
                 </li>
                 @endcan
+                @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles') || auth()->user()->hasPermission('editions_manage'))
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Beheer</a>
+                    <ul class="dropdown-menu">
+                        @can('manage_users')
+                        <li><a class="dropdown-item" href="{{ route('intouch.beheer.users.index') }}">Gebruikers</a></li>
+                        @endcan
+                        @can('manage_roles')
+                        <li><a class="dropdown-item" href="{{ route('intouch.beheer.roles.index') }}">Rollen</a></li>
+                        @endcan
+                        @can('editions_manage')
+                        <li><a class="dropdown-item" href="{{ route('intouch.beheer.editions.index') }}">Edities</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endif
             </ul>
-            <ul class="navbar-nav">
+            <ul class="navbar-nav align-items-center">
+                @if(isset($currentEdition) && $currentEdition)
+                <li class="nav-item">
+                    <form method="post" action="{{ route('intouch.edition.set') }}" class="d-flex align-items-center gap-1" id="edition-select-form">
+                        @csrf
+                        <span class="nav-link py-0 d-flex align-items-center">
+                            <span class="text-white-50 me-1 small">Editie:</span>
+                            <select name="edition_id" class="form-select form-select-sm border-0 bg-transparent text-white" style="width: auto; font-size: 0.9rem" onchange="this.form.submit()">
+                                @php $activeEdition = \App\Models\Edition::active(); @endphp
+                                <option value="" @selected(!session('edition_id'))>Actieve editie</option>
+                                @foreach($editionsForSelector ?? [] as $e)
+                                    <option value="{{ $e->id }}" @selected(session('edition_id') == $e->id)>{{ $e->name }}{{ $e->is_active ? ' (actief)' : '' }}</option>
+                                @endforeach
+                            </select>
+                        </span>
+                    </form>
+                </li>
+                @endif
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="me-1">{{ Auth::user()->name }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        @can('manage_users')
-                            <li><a class="dropdown-item" href="{{ route('intouch.beheer.users.index') }}">Gebruikers</a></li>
-                        @endcan
-                        @can('manage_roles')
-                            <li><a class="dropdown-item" href="{{ route('intouch.beheer.roles.index') }}">Rollen</a></li>
-                        @endcan
-                        @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles') || auth()->user()->hasPermission('editions_manage'))
-                            <li><hr class="dropdown-divider"></li>
-                        @endif
-                        @can('editions_manage')
-                        <li>
-                            <a class="dropdown-item" href="{{ route('intouch.editions.index') }}">
-                                Edities
-                            </a>
-                        </li>
-                        @endcan
                         @can('instellingen_edit')
                         <li>
-                            <a class="dropdown-item" href="{{ route('intouch.instellingen.edit') }}">
-                                Instellingen
-                            </a>
+                            <a class="dropdown-item" href="{{ route('intouch.instellingen.edit') }}">Mijn profiel</a>
                         </li>
-                        @endcan
                         <li><hr class="dropdown-divider"></li>
+                        @endcan
                         <li>
                             <form method="post" action="{{ route('intouch.logout') }}" class="d-inline">
                                 @csrf

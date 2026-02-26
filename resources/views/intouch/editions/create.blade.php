@@ -11,7 +11,7 @@
             Maak een nieuwe editie aan. Deze wordt automatisch de actieve editie. Er worden vier eventdagen (Dag 1 t/m 4) aangemaakt.
         </p>
 
-        <form method="post" action="{{ route('intouch.editions.store') }}">
+        <form method="post" action="{{ route('intouch.beheer.editions.store') }}">
             @csrf
 
             <div class="mb-3">
@@ -38,7 +38,7 @@
             </div>
 
             <button type="submit" class="btn btn-vierdaagse">Editie aanmaken</button>
-            <a href="{{ route('intouch.editions.index') }}" class="btn btn-outline-secondary">Annuleren</a>
+            <a href="{{ route('intouch.beheer.editions.index') }}" class="btn btn-outline-secondary">Annuleren</a>
         </form>
     </div>
 </div>

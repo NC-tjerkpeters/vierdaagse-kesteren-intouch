@@ -15,6 +15,7 @@
 <div class="card mb-4">
     <div class="card-body">
         <h2 class="h5 mb-3">Huidige avond</h2>
+        @if($canSetCurrentDay ?? true)
         <p class="text-muted mb-3">
             Op de scanner start iedereen aan het begin van elke avond op hetzelfde punt. Kies hier welke avond nu loopt.
         </p>
@@ -32,6 +33,14 @@
                 </form>
             @endforeach
         </div>
+        @else
+        <p class="text-muted mb-0">
+            Je bekijkt een archief-editie. Het wijzigen van de huidige avond kan alleen voor de actieve editie.
+        </p>
+        @if($archiveCurrentDayName ?? null)
+            <p class="mb-0 mt-2">Laatste actieve avond in deze editie: <strong>{{ $archiveCurrentDayName }}</strong></p>
+        @endif
+        @endif
     </div>
 </div>
 

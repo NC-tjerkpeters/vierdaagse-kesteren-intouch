@@ -90,12 +90,21 @@ class ScanOverviewController extends Controller
 
         $totalParticipants = $registrationIds->count();
 
+        $currentEdition = \App\Models\Edition::current();
+        $activeEdition = \App\Models\Edition::active();
+        $isViewingArchive = $activeEdition && $currentEdition && $currentEdition->id !== $activeEdition->id;
+        $canSetCurrentDay = !$isViewingArchive;
+        $viewCurrentDay = $isViewingArchive ? null : $currentDay;
+        $archiveCurrentDayName = $isViewingArchive ? $eventDays->where('is_current', true)->first()?->name : null;
+
         return view('intouch.scan-overview.index', [
             'eventDays' => $eventDays,
-            'currentDay' => $currentDay,
+            'currentDay' => $viewCurrentDay,
+            'archiveCurrentDayName' => $archiveCurrentDayName,
             'distances' => $distances,
             'overview' => $overview,
             'totalParticipants' => $totalParticipants,
+            'canSetCurrentDay' => $canSetCurrentDay,
         ]);
     }
 

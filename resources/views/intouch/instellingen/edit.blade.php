@@ -1,10 +1,10 @@
 @extends('intouch.layout')
 
-@section('title', 'Instellingen')
+@section('title', 'Mijn profiel')
 
 @section('content')
 <div class="card">
-    <div class="card-header">Instellingen</div>
+    <div class="card-header">Mijn profiel</div>
     <div class="card-body">
         <form method="post" action="{{ route('intouch.instellingen.update') }}">
             @csrf

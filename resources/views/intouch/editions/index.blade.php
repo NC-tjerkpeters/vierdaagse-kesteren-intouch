@@ -16,7 +16,7 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <span>Alle edities</span>
         @can('editions_manage')
-        <a href="{{ route('intouch.editions.create') }}" class="btn btn-light btn-sm">Start nieuwe editie</a>
+        <a href="{{ route('intouch.beheer.editions.create') }}" class="btn btn-light btn-sm">Start nieuwe editie</a>
         @endcan
     </div>
     <div class="table-responsive">

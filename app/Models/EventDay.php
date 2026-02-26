@@ -30,7 +30,7 @@ class EventDay extends Model
 
     public function scopeForActiveEdition($query)
     {
-        $edition = Edition::active();
+        $edition = Edition::current();
         if ($edition) {
             return $query->where('edition_id', $edition->id);
         }

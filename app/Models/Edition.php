@@ -43,6 +43,19 @@ class Edition extends Model
         return static::query()->where('is_active', true)->first();
     }
 
+    /** Huidige editie in beeld: session (archief) of actieve editie. */
+    public static function current(): ?self
+    {
+        $sessionId = session('edition_id');
+        if ($sessionId) {
+            $edition = static::query()->find($sessionId);
+            if ($edition) {
+                return $edition;
+            }
+        }
+        return static::active();
+    }
+
     public static function activate(self $edition): void
     {
         static::query()->update(['is_active' => false]);
