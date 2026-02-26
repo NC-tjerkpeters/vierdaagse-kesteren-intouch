@@ -1,0 +1,66 @@
+@extends('intouch.layout')
+
+@section('title', 'Sponsor toevoegen')
+
+@section('content')
+<h1 class="mb-4">Sponsor toevoegen</h1>
+
+<div class="card" style="max-width: 540px">
+    <div class="card-body">
+        <form method="post" action="{{ route('intouch.sponsors.store') }}">
+            @csrf
+
+            <div class="mb-3">
+                <label for="bedrijfsnaam" class="form-label">Bedrijfsnaam (optioneel)</label>
+                <input type="text" id="bedrijfsnaam" name="bedrijfsnaam" class="form-control @error('bedrijfsnaam') is-invalid @enderror" value="{{ old('bedrijfsnaam') }}">
+                @error('bedrijfsnaam')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="voornaam" class="form-label">Voornaam *</label>
+                    <input type="text" id="voornaam" name="voornaam" class="form-control @error('voornaam') is-invalid @enderror" value="{{ old('voornaam') }}" required>
+                    @error('voornaam')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="achternaam" class="form-label">Achternaam *</label>
+                    <input type="text" id="achternaam" name="achternaam" class="form-control @error('achternaam') is-invalid @enderror" value="{{ old('achternaam') }}" required>
+                    @error('achternaam')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail *</label>
+                <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="bedrag" class="form-label">Bedrag *</label>
+                    <input type="number" id="bedrag" name="bedrag" step="0.01" min="0" class="form-control @error('bedrag') is-invalid @enderror" value="{{ old('bedrag', '0') }}" required>
+                    @error('bedrag')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="betaalstatus" class="form-label">Betaalstatus</label>
+                    <select id="betaalstatus" name="betaalstatus" class="form-select @error('betaalstatus') is-invalid @enderror">
+                        <option value="paid" @selected(old('betaalstatus') === 'paid')>paid</option>
+                        <option value="open" @selected(old('betaalstatus', 'open') === 'open')>open</option>
+                        <option value="pending" @selected(old('betaalstatus') === 'pending')>pending</option>
+                        <option value="authorized" @selected(old('betaalstatus') === 'authorized')>authorized</option>
+                        <option value="failed" @selected(old('betaalstatus') === 'failed')>failed</option>
+                        <option value="canceled" @selected(old('betaalstatus') === 'canceled')>canceled</option>
+                        <option value="expired" @selected(old('betaalstatus') === 'expired')>expired</option>
+                    </select>
+                    @error('betaalstatus')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-vierdaagse">Opslaan</button>
+                <a href="{{ route('intouch.sponsors.index') }}" class="btn btn-outline-secondary">Annuleren</a>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection

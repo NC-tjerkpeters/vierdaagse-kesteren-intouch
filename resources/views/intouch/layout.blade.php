@@ -50,6 +50,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('intouch.scan-overview.index') }}">Loopoverzicht</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('intouch.sponsors.index') }}">Sponsors</a>
+                </li>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">

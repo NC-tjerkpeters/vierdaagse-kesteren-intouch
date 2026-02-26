@@ -9,6 +9,7 @@ use App\Http\Controllers\Intouch\RegistrationController as IntouchRegistrationCo
 use App\Http\Controllers\Intouch\ScanOverviewController;
 use App\Http\Controllers\Intouch\SettingsController;
 use App\Http\Controllers\Intouch\RoleManagementController;
+use App\Http\Controllers\Intouch\SponsorController;
 use App\Http\Controllers\Intouch\UserManagementController;
 use App\Http\Controllers\Scanner\Auth\LoginController as ScannerLoginController;
 use App\Http\Controllers\Scanner\ScanController;
@@ -39,6 +40,7 @@ Route::domain(config('app.intouch_domain'))
             Route::get('inschrijvingen/export', [IntouchRegistrationController::class, 'export'])->name('registrations.export');
             Route::get('inschrijvingen/{registration}', [IntouchRegistrationController::class, 'show'])->name('registrations.show');
             Route::get('loopoverzicht', [ScanOverviewController::class, 'index'])->name('scan-overview.index');
+            Route::resource('sponsors', SponsorController::class)->parameters(['sponsors' => 'sponsor'])->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
             Route::post('loopoverzicht/huidige-dag', [ScanOverviewController::class, 'setCurrentDay'])->name('scan-overview.set-current-day');
             Route::get('instellingen', [SettingsController::class, 'edit'])->name('instellingen.edit');
             Route::put('instellingen', [SettingsController::class, 'update'])->name('instellingen.update');
