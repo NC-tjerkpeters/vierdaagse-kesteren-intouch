@@ -8,60 +8,34 @@
 @page { margin: 0; }
 
 body{
-    margin:0;
-    padding:0;
-    font-family: DejaVu Sans, Arial, sans-serif;
-    font-size:16px;
-    color:#000;
+  margin:0; padding:0;
+  font-family: DejaVu Sans, Arial, sans-serif;
+  font-size:16px; color:#000;
 }
 
-/* reset p ruimte (Dompdf geeft anders vaak te veel witruimte) */
 p{ margin: 0 0 6px 0; }
-
-/* banner */
 .header-img{ width:100%; display:block; }
 
-/* content: compacter zodat alles op 1 pagina past */
+/* BELANGRIJK: reserveer ruimte voor footer */
 .page{
-    padding: 28px 44px 78px 44px; /* was groter */
+  padding: 28px 44px 110px 44px; /* bottom padding omhoog */
 }
 
-.kwitantie-title{
-    font-size:26px;
-    color:#2e74b5;
-    font-weight:500;
-    margin: 18px 0 10px 0;
-}
-
-.highlight{
-    font-weight:700;
-    color:#ff0000;
-    margin: 10px 0 10px 0;
-    line-height: 1.15;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin: 12px 0 12px 0;
-    border:1px solid #000;
-}
-
-th,td{ padding:7px; border:1px solid #000; }
-th{ background:#f5f5f5; text-align:left; }
-tfoot th{ border-top:2px solid #000; text-align:right; }
-
-/* footer vast onderaan */
 .footer{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    height:40px;
-    line-height:40px;
-    text-align:center;
-    font-size:12px;
-    color:#666;
+  position: fixed;
+  left: 0;
+  right: 0;
+
+  /* Zet ’m iets omhoog zodat hij niet in de “niet-printbare” zone valt */
+  bottom: 12mm;
+
+  padding: 6px 0;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+
+  /* Zorgt dat tekst altijd leesbaar is */
+  background: #fff;
 }
 </style>
 </head>
