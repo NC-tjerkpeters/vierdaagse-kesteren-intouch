@@ -23,6 +23,12 @@ php artisan migrate --force
 php artisan db:seed --force
 php artisan storage:link
 chmod -R 775 storage bootstrap/cache
+
+# Cache legen (belangrijk na deployment)
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
 ```
 
 ## Document root

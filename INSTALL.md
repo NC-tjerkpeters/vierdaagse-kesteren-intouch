@@ -139,11 +139,17 @@ Na de seed kun je inloggen op Intouch met:
 
 ---
 
-## Stap 7: Storage-link en rechten
+## Stap 7: Storage-link, rechten en cache
 
 ```bash
 php artisan storage:link
 chmod -R 775 storage bootstrap/cache
+
+# Cache legen (belangrijk na deployment om 500-fouten te voorkomen)
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
 ```
 
 ---
@@ -188,7 +194,14 @@ Zo niet, plaats ze handmatig.
 
 **500 Internal Server Error**
 
-- Controleer `storage/logs/laravel.log`
+- Voer de cache-clear commando's uit:
+  ```bash
+  php artisan config:clear
+  php artisan cache:clear
+  php artisan route:clear
+  php artisan view:clear
+  ```
+- Controleer `storage/logs/laravel.log` voor de exacte foutmelding
 - Controleer rechten op `storage/` en `bootstrap/cache/`
 
 **“No application encryption key”**

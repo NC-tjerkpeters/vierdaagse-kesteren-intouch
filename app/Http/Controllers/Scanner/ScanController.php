@@ -137,9 +137,10 @@ class ScanController extends Controller
         $medalInfo = $registration->wants_medal && $registration->medal_number
             ? ' (medaille ' . $registration->medal_number . ')'
             : '';
+        $distanceName = $registration->distance->name ?? '';
 
         return redirect()->route('scanner.index')
-            ->with('success', $registration->first_name . ' ' . $registration->last_name . $medalInfo . ' – ' . $pointName . ' geregistreerd.');
+            ->with('success', $registration->first_name . ' ' . $registration->last_name . ' – ' . $distanceName . $medalInfo . ' – ' . $pointName . ' geregistreerd.');
     }
 
     /** API voor mobiele scanner: JSON in, JSON uit (zoals jullie store.php). */
@@ -196,7 +197,8 @@ class ScanController extends Controller
         $medalInfo = $registration->wants_medal && $registration->medal_number
             ? ' (medaille ' . $registration->medal_number . ')'
             : '';
-        $message = $registration->first_name . ' ' . $registration->last_name . $medalInfo . ' – ' . $pointName . ' geregistreerd.';
+        $distanceName = $registration->distance->name ?? '';
+        $message = $registration->first_name . ' ' . $registration->last_name . ' – ' . $distanceName . $medalInfo . ' – ' . $pointName . ' geregistreerd.';
 
         return response()->json(['status' => 'ok', 'message' => $message]);
     }
