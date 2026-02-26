@@ -11,6 +11,8 @@ class DistanceController extends Controller
 {
     public function index()
     {
+        $this->authorize('afstanden_view');
+
         $distances = Distance::query()->orderBy('sort_order')->get();
 
         return view('intouch.afstanden.index', compact('distances'));
@@ -18,6 +20,8 @@ class DistanceController extends Controller
 
     public function create()
     {
+        $this->authorize('afstanden_create');
+
         $eventDays = EventDay::query()->orderBy('sort_order')->get();
 
         return view('intouch.afstanden.create', compact('eventDays'));
@@ -25,6 +29,8 @@ class DistanceController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('afstanden_create');
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'kilometers' => ['required', 'numeric', 'min:0', 'max:999'],
@@ -47,11 +53,15 @@ class DistanceController extends Controller
 
     public function show(Distance $distance)
     {
+        $this->authorize('afstanden_view');
+
         return redirect()->route('intouch.afstanden.edit', $distance);
     }
 
     public function edit(Distance $distance)
     {
+        $this->authorize('afstanden_edit');
+
         $eventDays = EventDay::query()->orderBy('sort_order')->get();
 
         return view('intouch.afstanden.edit', compact('distance', 'eventDays'));
@@ -59,6 +69,8 @@ class DistanceController extends Controller
 
     public function update(Request $request, Distance $distance)
     {
+        $this->authorize('afstanden_edit');
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'kilometers' => ['required', 'numeric', 'min:0', 'max:999'],
@@ -81,6 +93,8 @@ class DistanceController extends Controller
 
     public function destroy(Distance $distance)
     {
+        $this->authorize('afstanden_delete');
+
         if ($distance->registrations()->exists()) {
             return redirect()->route('intouch.afstanden.index')
                 ->with('error', 'Deze afstand heeft nog inschrijvingen en kan niet worden verwijderd.');

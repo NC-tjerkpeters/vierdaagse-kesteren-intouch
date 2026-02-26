@@ -12,7 +12,7 @@ class UserManagementController extends Controller
 {
     public function index(Request $request)
     {
-        $request->user()->canManageUsers() || abort(403);
+        $this->authorize('manage_users');
 
         $users = User::query()
             ->with('roles')
@@ -29,7 +29,7 @@ class UserManagementController extends Controller
 
     public function create(Request $request)
     {
-        $request->user()->canManageUsers() || abort(403);
+        $this->authorize('manage_users');
 
         $roles = Role::query()->orderBy('slug')->get();
 
@@ -40,7 +40,7 @@ class UserManagementController extends Controller
 
     public function store(Request $request)
     {
-        $request->user()->canManageUsers() || abort(403);
+        $this->authorize('manage_users');
 
         $canManageRoles = $request->user()->canManageRoles();
 
@@ -73,7 +73,7 @@ class UserManagementController extends Controller
 
     public function edit(Request $request, User $user)
     {
-        $request->user()->canManageUsers() || abort(403);
+        $this->authorize('manage_users');
 
         $roles = Role::query()->orderBy('slug')->get();
         $user->load('roles');
@@ -86,7 +86,7 @@ class UserManagementController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $request->user()->canManageUsers() || abort(403);
+        $this->authorize('manage_users');
 
         $canManageRoles = $request->user()->canManageRoles();
 

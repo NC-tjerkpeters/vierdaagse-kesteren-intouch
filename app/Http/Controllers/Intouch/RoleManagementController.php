@@ -11,7 +11,7 @@ class RoleManagementController extends Controller
 {
     public function index(Request $request)
     {
-        $request->user()->canManageRoles() || abort(403);
+        $this->authorize('manage_roles');
 
         $roles = Role::query()
             ->withCount('users')
@@ -26,18 +26,19 @@ class RoleManagementController extends Controller
 
     public function create(Request $request)
     {
-        $request->user()->canManageRoles() || abort(403);
+        $this->authorize('manage_roles');
 
-        $permissions = Permission::query()->orderBy('slug')->get();
+        $permissions = Permission::query()->orderBy('group')->orderBy('slug')->get();
+        $permissionsByGroup = $permissions->groupBy('group');
 
         return view('intouch.beheer.roles.create', [
-            'permissions' => $permissions,
+            'permissionsByGroup' => $permissionsByGroup,
         ]);
     }
 
     public function store(Request $request)
     {
-        $request->user()->canManageRoles() || abort(403);
+        $this->authorize('manage_roles');
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -59,20 +60,21 @@ class RoleManagementController extends Controller
 
     public function edit(Request $request, Role $role)
     {
-        $request->user()->canManageRoles() || abort(403);
+        $this->authorize('manage_roles');
 
         $role->load('permissions');
-        $permissions = Permission::query()->orderBy('slug')->get();
+        $permissions = Permission::query()->orderBy('group')->orderBy('slug')->get();
+        $permissionsByGroup = $permissions->groupBy('group');
 
         return view('intouch.beheer.roles.edit', [
             'role' => $role,
-            'permissions' => $permissions,
+            'permissionsByGroup' => $permissionsByGroup,
         ]);
     }
 
     public function update(Request $request, Role $role)
     {
-        $request->user()->canManageRoles() || abort(403);
+        $this->authorize('manage_roles');
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -94,7 +96,7 @@ class RoleManagementController extends Controller
 
     public function destroy(Request $request, Role $role)
     {
-        $request->user()->canManageRoles() || abort(403);
+        $this->authorize('manage_roles');
 
         $role->delete();
 

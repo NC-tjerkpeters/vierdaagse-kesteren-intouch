@@ -11,6 +11,8 @@ class RegistrationController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('inschrijvingen_view');
+
         $query = Registration::query()->with('distance');
 
         if ($request->filled('distance_id')) {
@@ -53,6 +55,8 @@ class RegistrationController extends Controller
 
     public function show(Registration $registration)
     {
+        $this->authorize('inschrijvingen_view');
+
         $registration->load('distance');
 
         return view('intouch.inschrijvingen.show', compact('registration'));
@@ -60,6 +64,8 @@ class RegistrationController extends Controller
 
     public function export(Request $request): StreamedResponse
     {
+        $this->authorize('inschrijvingen_export');
+
         $query = Registration::query()->with('distance');
 
         if ($request->filled('distance_id')) {

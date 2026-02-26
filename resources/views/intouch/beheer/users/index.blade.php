@@ -44,7 +44,7 @@
     </div>
 </div>
 
-@can('manageRoles')
+@can('manage_roles')
 <p class="mt-3">
     <a href="{{ route('intouch.beheer.roles.index') }}" class="text-decoration-none">Rollen beheren →</a>
 </p>

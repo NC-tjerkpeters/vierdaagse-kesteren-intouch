@@ -10,6 +10,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $this->authorize('dashboard_view');
+
         $totalRegistrations = Registration::query()->count();
         $paidCount = Registration::query()->where('mollie_payment_status', 'paid')->count();
         $withMedal = Registration::query()->where('wants_medal', true)->count();

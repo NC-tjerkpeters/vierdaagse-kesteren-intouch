@@ -23,14 +23,19 @@
             </div>
             <div class="mb-4">
                 <label class="form-label">Rechten</label>
-                <div class="d-flex flex-wrap gap-3">
-                    @foreach($permissions as $perm)
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $perm->id }}" id="perm-{{ $perm->id }}" {{ in_array($perm->id, old('permissions', $role->permissions->pluck('id')->toArray())) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="perm-{{ $perm->id }}">{{ $perm->name }}</label>
+                @foreach($permissionsByGroup as $group => $permissions)
+                <div class="mb-3">
+                    <div class="fw-semibold text-secondary small text-uppercase mb-2">{{ $group ?: 'Overig' }}</div>
+                    <div class="d-flex flex-wrap gap-3">
+                        @foreach($permissions as $perm)
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $perm->id }}" id="perm-{{ $perm->id }}" {{ in_array($perm->id, old('permissions', $role->permissions->pluck('id')->toArray())) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="perm-{{ $perm->id }}">{{ $perm->name }}</label>
+                        </div>
+                        @endforeach
                     </div>
-                    @endforeach
                 </div>
+                @endforeach
                 @error('permissions')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
             <button type="submit" class="btn btn-vierdaagse">Opslaan</button>

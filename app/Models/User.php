@@ -34,14 +34,19 @@ class User extends Authenticatable
         return $this->roles()->where('slug', $slug)->exists();
     }
 
+    public function hasPermission(string $slug): bool
+    {
+        return $this->roles->contains(fn (Role $role) => $role->hasAbility($slug));
+    }
+
     public function canManageUsers(): bool
     {
-        return $this->roles->contains(fn (Role $role) => $role->hasAbility('manage_users'));
+        return $this->hasPermission('manage_users');
     }
 
     public function canManageRoles(): bool
     {
-        return $this->roles->contains(fn (Role $role) => $role->hasAbility('manage_roles'));
+        return $this->hasPermission('manage_roles');
     }
 
     /**

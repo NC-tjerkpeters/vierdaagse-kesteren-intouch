@@ -62,7 +62,9 @@
                 <a href="{{ route('intouch.sponsors.index') }}" class="btn btn-outline-secondary btn-sm">Wissen</a>
             </div>
             <div class="col-md-2 text-end">
+                @can('sponsors_create')
                 <a href="{{ route('intouch.sponsors.create') }}" class="btn btn-success btn-sm">Sponsor toevoegen</a>
+                @endcan
             </div>
         </div>
     </div>
@@ -77,7 +79,9 @@
                 <div>@include('intouch.sponsors._status_badge', ['status' => $s->betaalstatus])</div>
                 <div>€ {{ number_format($s->bedrag, 2, ',', '.') }}</div>
                 <div class="mt-2">
+                    @can('sponsors_edit')
                     <a href="{{ route('intouch.sponsors.edit', $s) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -107,12 +111,16 @@
                         <td>€ {{ number_format($s->bedrag, 2, ',', '.') }}</td>
                         <td>@include('intouch.sponsors._status_badge', ['status' => $s->betaalstatus])</td>
                         <td>
+                            @can('sponsors_edit')
                             <a href="{{ route('intouch.sponsors.edit', $s) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
+                            @endcan
+                            @can('sponsors_delete')
                             <form method="post" action="{{ route('intouch.sponsors.destroy', $s) }}" class="d-inline" onsubmit="return confirm('Sponsor verwijderen?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Verwijderen</button>
                             </form>
+                            @endcan
                         </td>
                     </tr>
                 @empty

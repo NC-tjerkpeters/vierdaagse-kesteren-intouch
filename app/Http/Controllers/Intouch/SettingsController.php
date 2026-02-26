@@ -11,6 +11,8 @@ class SettingsController extends Controller
 {
     public function edit()
     {
+        $this->authorize('instellingen_edit');
+
         return view('intouch.instellingen.edit', [
             'user' => Auth::user(),
         ]);
@@ -18,6 +20,8 @@ class SettingsController extends Controller
 
     public function update(Request $request)
     {
+        $this->authorize('instellingen_edit');
+
         $user = $request->user();
 
         $rules = [

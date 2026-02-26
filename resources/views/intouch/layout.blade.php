@@ -38,21 +38,31 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
+                @can('dashboard_view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('intouch.dashboard') }}">Dashboard</a>
                 </li>
+                @endcan
+                @can('afstanden_view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('intouch.afstanden.index') }}">Afstanden</a>
                 </li>
+                @endcan
+                @can('inschrijvingen_view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('intouch.registrations.index') }}">Inschrijvingen</a>
                 </li>
+                @endcan
+                @can('loopoverzicht_view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('intouch.scan-overview.index') }}">Loopoverzicht</a>
                 </li>
+                @endcan
+                @can('sponsors_view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('intouch.sponsors.index') }}">Sponsors</a>
                 </li>
+                @endcan
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
@@ -60,20 +70,22 @@
                         <span class="me-1">{{ Auth::user()->name }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        @can('manageUsers')
+                        @can('manage_users')
                             <li><a class="dropdown-item" href="{{ route('intouch.beheer.users.index') }}">Gebruikers</a></li>
                         @endcan
-                        @can('manageRoles')
+                        @can('manage_roles')
                             <li><a class="dropdown-item" href="{{ route('intouch.beheer.roles.index') }}">Rollen</a></li>
                         @endcan
-                        @if(auth()->user()->canManageUsers() || auth()->user()->canManageRoles())
+                        @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles'))
                             <li><hr class="dropdown-divider"></li>
                         @endif
+                        @can('instellingen_edit')
                         <li>
                             <a class="dropdown-item" href="{{ route('intouch.instellingen.edit') }}">
                                 Instellingen
                             </a>
                         </li>
+                        @endcan
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form method="post" action="{{ route('intouch.logout') }}" class="d-inline">

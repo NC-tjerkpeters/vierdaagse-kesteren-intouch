@@ -42,7 +42,9 @@
                 <a href="{{ route('intouch.registrations.index') }}" class="btn btn-outline-secondary btn-sm">Wissen</a>
             </div>
             <div class="col-md-2 text-end">
+                @can('inschrijvingen_export')
                 <a href="{{ route('intouch.registrations.export', request()->query()) }}" class="btn btn-success btn-sm">Export CSV</a>
+                @endcan
             </div>
         </div>
     </div>

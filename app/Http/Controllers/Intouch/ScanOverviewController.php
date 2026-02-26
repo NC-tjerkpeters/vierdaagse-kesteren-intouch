@@ -11,6 +11,8 @@ class ScanOverviewController extends Controller
 {
     public function index()
     {
+        $this->authorize('loopoverzicht_view');
+
         $eventDays = EventDay::query()->orderBy('sort_order')->get();
         $currentDay = EventDay::getCurrent();
 
@@ -98,6 +100,8 @@ class ScanOverviewController extends Controller
 
     public function setCurrentDay(Request $request)
     {
+        $this->authorize('loopoverzicht_view');
+
         $request->validate([
             'event_day_id' => ['required', 'exists:event_days,id'],
         ]);

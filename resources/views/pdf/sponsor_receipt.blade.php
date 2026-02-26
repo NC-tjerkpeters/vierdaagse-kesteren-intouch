@@ -63,7 +63,7 @@ tfoot th{ border-top: 2px solid #000; text-align:right; }
   position: fixed;
   left: 0; right: 0; bottom: 0;
   height: 45px;
-  line-height: 45px;
+  line-height: 0px;
   text-align: center;
   font-size: 12px;
   color: #777;

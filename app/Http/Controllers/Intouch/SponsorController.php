@@ -10,6 +10,8 @@ class SponsorController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('sponsors_view');
+
         $filter = strtolower(trim($request->get('status', 'all')));
         $allowed = ['all', 'paid', 'open', 'failed', 'canceled', 'expired', 'pending', 'authorized'];
         if (!in_array($filter, $allowed, true)) {
@@ -59,11 +61,15 @@ class SponsorController extends Controller
 
     public function create()
     {
+        $this->authorize('sponsors_create');
+
         return view('intouch.sponsors.create');
     }
 
     public function store(Request $request)
     {
+        $this->authorize('sponsors_create');
+
         $validated = $request->validate([
             'bedrijfsnaam' => ['nullable', 'string', 'max:255'],
             'voornaam' => ['required', 'string', 'max:255'],
@@ -89,11 +95,15 @@ class SponsorController extends Controller
 
     public function edit(Sponsor $sponsor)
     {
+        $this->authorize('sponsors_edit');
+
         return view('intouch.sponsors.edit', compact('sponsor'));
     }
 
     public function update(Request $request, Sponsor $sponsor)
     {
+        $this->authorize('sponsors_edit');
+
         $validated = $request->validate([
             'bedrijfsnaam' => ['nullable', 'string', 'max:255'],
             'voornaam' => ['required', 'string', 'max:255'],
@@ -119,6 +129,8 @@ class SponsorController extends Controller
 
     public function destroy(Sponsor $sponsor)
     {
+        $this->authorize('sponsors_delete');
+
         $sponsor->delete();
 
         return redirect()->route('intouch.sponsors.index')

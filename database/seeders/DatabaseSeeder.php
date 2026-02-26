@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Role;
-use App\Models\Permission;
 use App\Models\Distance;
 use App\Models\EventDay;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -19,28 +18,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = [
-            ['name' => 'Gebruikers beheren', 'slug' => 'manage_users'],
-            ['name' => 'Rollen beheren', 'slug' => 'manage_roles'],
-        ];
-        foreach ($permissions as $p) {
-            Permission::query()->firstOrCreate(['slug' => $p['slug']], $p);
-        }
-
         $roles = [
             ['name' => 'Super beheerder', 'slug' => 'super_admin'],
             ['name' => 'Beheerder', 'slug' => 'admin'],
             ['name' => 'Kijker', 'slug' => 'viewer'],
         ];
         foreach ($roles as $r) {
-            $role = Role::query()->firstOrCreate(['slug' => $r['slug']], $r);
-            if ($role->slug === 'super_admin') {
-                $role->permissions()->syncWithoutDetaching(Permission::whereIn('slug', ['manage_users', 'manage_roles'])->pluck('id'));
-            }
-            if ($role->slug === 'admin') {
-                $role->permissions()->syncWithoutDetaching(Permission::where('slug', 'manage_users')->pluck('id'));
-            }
+            Role::query()->firstOrCreate(['slug' => $r['slug']], $r);
         }
+
+        $this->call(PermissionSeeder::class);
 
         $admin = User::query()->updateOrCreate(
             ['email' => 'admin@vierdaagsekesteren.nl'],
