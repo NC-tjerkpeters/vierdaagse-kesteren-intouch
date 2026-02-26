@@ -39,6 +39,11 @@ Route::domain(config('app.intouch_domain'))
         Route::post('login', [LoginController::class, 'login']);
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
+        Route::get('wachtwoord-vergeten', [\App\Http\Controllers\Intouch\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+        Route::post('wachtwoord-vergeten', [\App\Http\Controllers\Intouch\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+        Route::get('wachtwoord-herstellen/{token}', [\App\Http\Controllers\Intouch\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+        Route::post('wachtwoord-herstellen', [\App\Http\Controllers\Intouch\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
+
         Route::middleware('auth')->group(function () {
             Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
             Route::resource('afstanden', DistanceController::class)->parameters(['afstanden' => 'distance']);

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\IntouchResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -47,6 +48,11 @@ class User extends Authenticatable
     public function canManageRoles(): bool
     {
         return $this->hasPermission('manage_roles');
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new IntouchResetPasswordNotification($token));
     }
 
     /**

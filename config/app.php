@@ -56,6 +56,8 @@ return [
 
     'inschrijven_domain' => env('INSCHRIJVEN_DOMAIN', 'localhost'),
     'intouch_domain' => env('INTOUCH_DOMAIN', 'localhost'),
+
+    'intouch_password_reset_url' => env('INTOUCH_PASSWORD_RESET_URL'),
     'scanner_domain' => env('SCANNER_DOMAIN', 'localhost'),
 
     'noodnummers' => env('APP_NOODNUMMERS', '06 52 44 16 10, 06 40 89 37 40'),

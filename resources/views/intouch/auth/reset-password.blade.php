@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Inloggen – Intouch Vierdaagse Kesteren</title>
+    <title>Wachtwoord herstellen – Intouch Vierdaagse Kesteren</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root { --vk-green: #2e7d32; --vk-green-dark: #1b5e20; }
@@ -25,7 +25,7 @@
     <div class="row justify-content-center">
         <div class="col-md-5">
             <div class="card">
-                <div class="card-header">Inloggen</div>
+                <div class="card-header">Nieuw wachtwoord instellen</div>
                 <div class="card-body">
                     @if($errors->any())
                         <div class="alert alert-danger">
@@ -35,23 +35,27 @@
                         </div>
                     @endif
 
-                    <form method="post" action="{{ route('intouch.login') }}">
+                    <form method="post" action="{{ route('intouch.password.update') }}">
                         @csrf
+                        <input type="hidden" name="token" value="{{ $token }}">
                         <div class="mb-3">
                             <label for="email" class="form-label">E-mail</label>
-                            <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" required autofocus>
+                            <input type="email" id="email" name="email" class="form-control" value="{{ old('email', $email) }}" required>
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Wachtwoord</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
+                            <label for="password" class="form-label">Nieuw wachtwoord</label>
+                            <input type="password" id="password" name="password" class="form-control" required minlength="8" autocomplete="new-password">
                         </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" id="remember" name="remember" class="form-check-input" value="1">
-                            <label class="form-check-label" for="remember">Onthoud mij</label>
+                        <div class="mb-3">
+                            <label for="password_confirmation" class="form-label">Wachtwoord bevestigen</label>
+                            <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required minlength="8" autocomplete="new-password">
                         </div>
-                        <button type="submit" class="btn btn-vierdaagse">Inloggen</button>
-                        <a href="{{ route('intouch.password.request') }}" class="btn btn-link ms-2">Wachtwoord vergeten?</a>
+                        <button type="submit" class="btn btn-vierdaagse">Wachtwoord wijzigen</button>
                     </form>
+
+                    <p class="mt-3 mb-0">
+                        <a href="{{ route('intouch.login') }}">← Terug naar inloggen</a>
+                    </p>
                 </div>
             </div>
         </div>
