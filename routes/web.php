@@ -65,6 +65,7 @@ Route::domain(config('app.scanner_domain'))
 
         Route::middleware('auth')->group(function () {
             Route::get('/', [ScanController::class, 'index'])->name('index');
+            Route::get('overview', [ScanController::class, 'overviewApi'])->name('overview.api');
             Route::post('scan', [ScanController::class, 'store'])->name('scan');
             Route::post('scan-api', [ScanController::class, 'storeApi'])->name('scan.api');
         });

@@ -78,6 +78,14 @@ class ScanController extends Controller
         return ['rows' => $rows, 'totals' => $totals];
     }
 
+    public function overviewApi(): JsonResponse
+    {
+        $currentDay = EventDay::getCurrent();
+        $overview = $this->buildCompactOverview($currentDay);
+
+        return response()->json($overview);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

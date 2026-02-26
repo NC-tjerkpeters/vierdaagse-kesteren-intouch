@@ -38,7 +38,7 @@
         </form>
     </header>
     @hasSection('overview')
-    <div class="scanner-overview">
+    <div id="scanner-overview" class="scanner-overview">
         @yield('overview')
     </div>
     @endif

@@ -41,6 +41,7 @@
 <script>
 (function() {
     const POST_URL = @json(route('scanner.scan.api'));
+    const OVERVIEW_URL = @json(route('scanner.overview.api'));
     const DEBOUNCE_MS = 2000;
     const TIMEOUT_MS = 8000;
     const STORAGE_KEY = 'qr_preferred_camera_id';
@@ -101,6 +102,33 @@
         });
         return t.innerHTML;
     }
+
+    async function refreshOverview() {
+        const el = document.getElementById('scanner-overview');
+        if (!el) return;
+        try {
+            const res = await fetch(OVERVIEW_URL, { headers: { 'Accept': 'application/json' } });
+            if (!res.ok) return;
+            const data = await res.json();
+            const rows = data.rows || [];
+            const totals = data.totals || { start: 0, post: 0, finish: 0 };
+            if (rows.length === 0) {
+                el.innerHTML = '<div class="overview-row"><span class="text-muted">Geen deelnemers</span></div>';
+                return;
+            }
+            let html = '<div class="overview-row">';
+            rows.forEach(function(r) {
+                html += '<div class="overview-item"><span>' + escapeHtml(r.distance) + ':</span><strong>' + r.start + '/' + r.post + '/' + r.finish + '</strong></div>';
+            });
+            html += '</div><div class="overview-totals overview-row">';
+            html += '<div class="overview-item"><span>Start:</span><strong>' + totals.start + '</strong></div>';
+            html += '<div class="overview-item"><span>Post:</span><strong>' + totals.post + '</strong></div>';
+            html += '<div class="overview-item"><span>Finish:</span><strong>' + totals.finish + '</strong></div>';
+            html += '</div>';
+            el.innerHTML = html;
+        } catch (_) {}
+    }
+    function escapeHtml(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
     const successBox = (msg) => Swal.fire({
         icon: 'success',
@@ -210,6 +238,7 @@
             const { res, payload } = await postJson(POST_URL, { qrcode_values: text }, TIMEOUT_MS);
             if (res.ok && payload) {
                 if (payload.status === 'ok') {
+                    refreshOverview();
                     await successBox(payload.message || 'Actie voltooid.');
                 } else if (payload.status === 'info') {
                     await infoBox(payload.message || '');
