@@ -11,6 +11,9 @@
         .btn-vierdaagse { background: var(--vk-green); color: #fff; border: none; }
         .btn-vierdaagse:hover { background: var(--vk-green-dark); color: #fff; }
         .qr-promo { background: linear-gradient(135deg, var(--vk-green) 0%, var(--vk-green-dark) 100%); color: #fff; border-radius: 12px; padding: 1.5rem; text-align: center; }
+        #login-qr-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; }
+        #login-qr-overlay .overlay-content { background: #fff; border-radius: 12px; max-width: 100%; width: 360px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        #login-qr-overlay .overlay-header { background: linear-gradient(135deg, var(--vk-green) 0%, var(--vk-green-dark) 100%); color: #fff; }
     </style>
 </head>
 <body class="bg-light">
@@ -28,20 +31,6 @@
                 </button>
             </div>
 
-            <div id="login-qr-scanner-wrap" class="mb-4" style="display: none;">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Richt de camera op de inlog-QR-code</span>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-close-scanner">Sluiten</button>
-                    </div>
-                    <div class="card-body p-2">
-                        <div id="login-qr-reader" style="max-width: 100%;"></div>
-                    </div>
-                    <div class="card-footer">
-                        <div id="login-qr-error" class="alert alert-danger py-2 mb-0" style="display: none;"></div>
-                    </div>
-                </div>
-            </div>
 
             @if(session('error'))
                 <div class="alert alert-danger mb-3">{{ session('error') }}</div>
@@ -84,6 +73,23 @@
     </div>
 </div>
 
+<div id="login-qr-overlay" style="display: none;">
+    <div class="overlay-content">
+        <div class="overlay-header d-flex justify-content-between align-items-center p-3">
+            <span class="fw-bold">Scan inlog-QR-code</span>
+            <button type="button" class="btn btn-light btn-sm" id="btn-close-scanner" aria-label="Sluiten">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="p-2">
+            <div id="login-qr-reader"></div>
+        </div>
+        <div class="p-3">
+            <div id="login-qr-error" class="alert alert-danger py-2 mb-0" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 (function() {
@@ -99,7 +105,7 @@
         }
     }
 
-    const wrap = document.getElementById('login-qr-scanner-wrap');
+    const overlay = document.getElementById('login-qr-overlay');
     const readerDiv = document.getElementById('login-qr-reader');
     const errorEl = document.getElementById('login-qr-error');
     const btnScan = document.getElementById('btn-scan-login-qr');
@@ -121,7 +127,7 @@
             try { html5QrCode.clear(); } catch (e) {}
             html5QrCode = null;
         }
-        wrap.style.display = 'block';
+        overlay.style.display = 'flex';
         hideError();
         readerDiv.innerHTML = '';
         html5QrCode = new Html5Qrcode('login-qr-reader');
@@ -148,19 +154,23 @@
             html5QrCode.stop().then(function() {
                 try { html5QrCode.clear(); } catch (e) {}
                 html5QrCode = null;
-                wrap.style.display = 'none';
+                overlay.style.display = 'none';
             }).catch(function() {
                 html5QrCode = null;
-                wrap.style.display = 'none';
+                overlay.style.display = 'none';
             });
         } else {
             if (html5QrCode) {
                 try { html5QrCode.clear(); } catch (e) {}
                 html5QrCode = null;
             }
-            wrap.style.display = 'none';
+            overlay.style.display = 'none';
         }
     }
+
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) stopScanner();
+    });
 
     btnScan.addEventListener('click', startScanner);
     btnClose.addEventListener('click', stopScanner);
