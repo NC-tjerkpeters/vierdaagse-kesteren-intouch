@@ -16,7 +16,7 @@
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">{{ $route->distance->name ?? 'Route' }}@if($route->title)<br><small class="text-muted fw-normal">{{ $route->title }}</small>@endif</h5>
-                @if($route->description)<p class="card-text text-muted small">{{ Str::limit($route->description, 100) }}</p>@endif
+                @if($route->description)<p class="card-text text-muted small">{{ \Illuminate\Support\Str::limit($route->description, 100) }}</p>@endif
                 <p class="card-text small mb-2">{{ $route->points->count() }} controlepunten @if($route->pdf_path)· PDF beschikbaar@endif</p>
                 <a href="{{ route('routes.show', $route) }}" class="btn btn-vierdaagse">Route bekijken</a>
             </div>

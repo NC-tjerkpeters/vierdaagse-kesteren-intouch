@@ -11,13 +11,14 @@ Handleiding voor het installeren van de Vierdaagse Kesteren-app op SiteGround ho
 
 ## Domeinen
 
-De app gebruikt **domein-gebaseerde routing**. Configureer drie (sub)domeinen die allemaal naar dezelfde Laravel-installatie wijzen:
+De app gebruikt **domein-gebaseerde routing**. Configureer vier (sub)domeinen die allemaal naar dezelfde Laravel-installatie wijzen:
 
 | Domein | Gebruik |
 |--------|---------|
 | `inschrijven.vierdaagsekesteren.nl` | Inschrijfformulier deelnemers + sponsorformulier (vrienden) |
 | `intouch.vierdaagsekesteren.nl` | Beheerportaal |
 | `scanner.vierdaagsekesteren.nl` | QR-scanner |
+| `routes.vierdaagsekesteren.nl` | Publieke wandelroutes met PDF-download en afstrepen |
 
 Eventueel: `vierdaagsekesteren.nl` of `www.vierdaagsekesteren.nl` voor de hoofdpagina.
 
@@ -102,6 +103,7 @@ composer install --no-dev --optimize-autoloader
    INSCHRIJVEN_DOMAIN=inschrijven.vierdaagsekesteren.nl
    INTOUCH_DOMAIN=intouch.vierdaagsekesteren.nl
    SCANNER_DOMAIN=scanner.vierdaagsekesteren.nl
+   ROUTES_DOMAIN=routes.vierdaagsekesteren.nl
 
    DB_CONNECTION=mysql
    DB_HOST=localhost
@@ -251,3 +253,9 @@ Zo niet, plaats ze handmatig.
 **Sessies werken niet over subdomeinen**
 
 - Stel eventueel `SESSION_DOMAIN=.vierdaagsekesteren.nl` in (met punt)
+
+**routes.vierdaagsekesteren.nl geeft 500**
+
+- Controleer of `ROUTES_DOMAIN=routes.vierdaagsekesteren.nl` in `.env` staat (zonder https://)
+- Controleer of het subdomein correct naar de Laravel-installatie wijst (zelfde document root als de andere domeinen)
+- Voer `php artisan config:clear` en `php artisan route:clear` uit na wijzigingen in `.env`

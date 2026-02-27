@@ -122,11 +122,14 @@ Route::domain(config('app.scanner_domain'))
         });
     });
 
-Route::domain(config('app.routes_domain'))
-    ->name('routes.')
-    ->group(function () {
-        Route::get('/', [\App\Http\Controllers\Routes\PublicRoutesController::class, 'index'])->name('index');
-        Route::get('/{walkRoute}', [\App\Http\Controllers\Routes\PublicRoutesController::class, 'show'])->name('show');
-    });
+$routesDomain = config('app.routes_domain');
+if ($routesDomain) {
+    Route::domain($routesDomain)
+        ->name('routes.')
+        ->group(function () {
+            Route::get('/', [\App\Http\Controllers\Routes\PublicRoutesController::class, 'index'])->name('index');
+            Route::get('/{walkRoute}', [\App\Http\Controllers\Routes\PublicRoutesController::class, 'show'])->name('show')->where('walkRoute', '[0-9]+');
+        });
+}
 
 Route::get('/', fn () => view('welcome'))->name('home');
