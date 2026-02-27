@@ -41,6 +41,18 @@ class DatabaseSeeder extends Seeder
             $admin->roles()->attach(Role::where('slug', 'admin')->first()->id);
         }
 
+        $scannerRole = Role::query()->firstOrCreate(['slug' => 'scanner'], ['name' => 'Scanner']);
+        $scanner = User::query()->updateOrCreate(
+            ['email' => 'scanner@vierdaagsekesteren.nl'],
+            [
+                'name' => 'Scanner (vrijwilligers)',
+                'password' => bcrypt(bin2hex(random_bytes(16))),
+            ],
+        );
+        if (!$scanner->roles()->where('slug', 'scanner')->exists()) {
+            $scanner->roles()->attach($scannerRole->id);
+        }
+
         Distance::query()->updateOrCreate(
             ['name' => '2,5 km'],
             [

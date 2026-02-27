@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Intouch;
 use App\Http\Controllers\Controller;
 use App\Models\EventDay;
 use App\Models\Registration;
+use App\Models\ScannerLoginToken;
 use Illuminate\Http\Request;
 
 class ScanOverviewController extends Controller
@@ -97,6 +98,15 @@ class ScanOverviewController extends Controller
         $viewCurrentDay = $isViewingArchive ? null : $currentDay;
         $archiveCurrentDayName = $isViewingArchive ? $eventDays->where('is_current', true)->first()?->name : null;
 
+        $scannerLoginToken = session('scanner_login_token');
+        if (!$scannerLoginToken && !$isViewingArchive) {
+            $validToken = ScannerLoginToken::query()
+                ->where('expires_at', '>', now())
+                ->latest()
+                ->first();
+            $scannerLoginToken = $validToken;
+        }
+
         return view('intouch.scan-overview.index', [
             'eventDays' => $eventDays,
             'currentDay' => $viewCurrentDay,
@@ -105,6 +115,8 @@ class ScanOverviewController extends Controller
             'overview' => $overview,
             'totalParticipants' => $totalParticipants,
             'canSetCurrentDay' => $canSetCurrentDay,
+            'scannerLoginToken' => $scannerLoginToken,
+            'isViewingArchive' => $isViewingArchive,
         ]);
     }
 
@@ -142,5 +154,17 @@ class ScanOverviewController extends Controller
 
         return redirect()->route('intouch.scan-overview.index')
             ->with('status', 'Huidige avond is bijgewerkt. Iedereen start weer op hetzelfde punt voor deze avond.');
+    }
+
+    public function generateScannerLoginToken()
+    {
+        $this->authorize('loopoverzicht_view');
+
+        $token = ScannerLoginToken::createForToday();
+
+        return redirect()
+            ->route('intouch.scan-overview.index')
+            ->with('scanner_login_token', $token)
+            ->with('info', 'Nieuwe QR-code gegenereerd. Geldig tot einde van vandaag.');
     }
 }

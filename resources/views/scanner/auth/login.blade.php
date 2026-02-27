@@ -13,6 +13,10 @@
             <div class="card shadow">
                 <div class="card-body">
                     <h1 class="h4 mb-4">Scanner – Inloggen</h1>
+                    <p class="text-muted small mb-3">Vraag de QR-code aan de organisator, of log in met gebruikersnaam en wachtwoord.</p>
+                    @if(session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
                     @if($errors->any())
                         <div class="alert alert-danger">
                             @foreach($errors->all() as $error)

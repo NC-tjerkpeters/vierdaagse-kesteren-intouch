@@ -55,8 +55,9 @@ Route::domain(config('app.intouch_domain'))
             Route::get('inschrijvingen/export', [IntouchRegistrationController::class, 'export'])->name('registrations.export');
             Route::get('inschrijvingen/{registration}', [IntouchRegistrationController::class, 'show'])->name('registrations.show');
             Route::put('inschrijvingen/{registration}/medaille', [IntouchRegistrationController::class, 'updateMedal'])->name('registrations.update-medal');
-            Route::get('loopoverzicht', [ScanOverviewController::class, 'index'])->name('scan-overview.index');
             Route::resource('sponsors', SponsorController::class)->parameters(['sponsors' => 'sponsor'])->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+            Route::get('loopoverzicht', [ScanOverviewController::class, 'index'])->name('scan-overview.index');
+            Route::post('loopoverzicht/scanner-login-qr', [ScanOverviewController::class, 'generateScannerLoginToken'])->name('scan-overview.generate-scanner-login');
             Route::post('loopoverzicht/huidige-dag', [ScanOverviewController::class, 'setCurrentDay'])->name('scan-overview.set-current-day');
             Route::get('instellingen', [SettingsController::class, 'edit'])->name('instellingen.edit');
             Route::put('instellingen', [SettingsController::class, 'update'])->name('instellingen.update');

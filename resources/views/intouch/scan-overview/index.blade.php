@@ -44,6 +44,38 @@
     </div>
 </div>
 
+@if(!($isViewingArchive ?? false) && ($canSetCurrentDay ?? true))
+<div class="card mb-4">
+    <div class="card-header">Scanner-login voor vrijwilligers</div>
+    <div class="card-body">
+        <p class="text-muted mb-3">Vrijwilligers kunnen inloggen op de scanner door deze QR-code te scannen. Geen gebruikersnaam of wachtwoord nodig. De code is geldig tot einde van vandaag.</p>
+        @if($scannerLoginToken ?? null)
+            @php
+                $scheme = request()->secure() ? 'https' : 'http';
+                $loginUrl = $scheme . '://' . config('app.scanner_domain') . '/login?token=' . $scannerLoginToken->token;
+            @endphp
+            <div class="d-flex flex-wrap align-items-start gap-4">
+                <div class="bg-white p-3 rounded border">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ urlencode($loginUrl) }}" alt="QR-code scanner login" width="200" height="200">
+                </div>
+                <div>
+                    <p class="mb-1"><strong>Geldig tot:</strong> {{ $scannerLoginToken->expires_at->format('d-m-Y H:i') }}</p>
+                    <form method="post" action="{{ route('intouch.scan-overview.generate-scanner-login') }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Nieuwe code genereren</button>
+                    </form>
+                </div>
+            </div>
+        @else
+            <form method="post" action="{{ route('intouch.scan-overview.generate-scanner-login') }}">
+                @csrf
+                <button type="submit" class="btn btn-vierdaagse">Genereer QR-code</button>
+            </form>
+        @endif
+    </div>
+</div>
+@endif
+
 <p class="text-muted small mb-3">
     Per avond: aantal deelnemers per afstand bij <strong>start</strong>, <strong>post</strong> en <strong>finish</strong>. Onder „Niet bij finish” staan deelnemers die je kunt nabellen.
 </p>
