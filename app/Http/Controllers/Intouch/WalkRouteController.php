@@ -168,6 +168,21 @@ class WalkRouteController extends Controller
         return redirect()->route('intouch.walk-routes.edit', $walkRoute)->with('status', 'PDF verwijderd.');
     }
 
+    public function pdf(WalkRoute $walkRoute)
+    {
+        $this->authorize('routes_view');
+
+        if (! $walkRoute->pdf_path || ! \Storage::disk('public')->exists($walkRoute->pdf_path)) {
+            abort(404);
+        }
+
+        return \Storage::disk('public')->response(
+            $walkRoute->pdf_path,
+            basename($walkRoute->pdf_path),
+            ['Content-Type' => 'application/pdf']
+        );
+    }
+
     /** Leeg of alle dagen → null (actief op alle dagen). */
     private function normalizeEventDaySortOrders(?array $value): ?array
     {

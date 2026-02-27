@@ -38,7 +38,7 @@
                     @if($template->word_path)
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <span class="badge bg-primary">Aanwezig</span>
-                        <a href="{{ $template->word_url }}" download class="btn btn-sm btn-outline-primary">Download</a>
+                            <a href="{{ route('intouch.route-templates.word', $template) }}" download class="btn btn-sm btn-outline-primary">Download</a>
                         <button type="submit" form="delete-word-form" class="btn btn-sm btn-outline-danger" onclick="return confirm('Word-document verwijderen?');">Verwijderen</button>
                     </div>
                     @else
@@ -52,7 +52,7 @@
                     @if($template->pdf_path)
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <span class="badge bg-success">Aanwezig</span>
-                        <a href="{{ $template->pdf_url }}" target="_blank" class="btn btn-sm btn-outline-primary">Bekijken</a>
+                        <a href="{{ route('intouch.route-templates.pdf', $template) }}" target="_blank" class="btn btn-sm btn-outline-primary">Bekijken</a>
                         <button type="submit" form="delete-pdf-form" class="btn btn-sm btn-outline-danger" onclick="return confirm('PDF verwijderen?');">Verwijderen</button>
                     </div>
                     @else

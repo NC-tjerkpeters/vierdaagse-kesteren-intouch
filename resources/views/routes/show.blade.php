@@ -12,7 +12,7 @@
         @endif
     </div>
     @if($walkRoute->pdf_path)
-        <a href="{{ $walkRoute->pdf_url }}" target="_blank" class="btn btn-vierdaagse">PDF downloaden</a>
+        <a href="{{ route('routes.pdf', $walkRoute) }}" target="_blank" class="btn btn-vierdaagse">PDF downloaden</a>
     @endif
 </div>
 

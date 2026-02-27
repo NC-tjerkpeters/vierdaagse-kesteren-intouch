@@ -54,4 +54,21 @@ class PublicRoutesController extends Controller
 
         return view('routes.show', ['walkRoute' => $walkRoute]);
     }
+
+    public function pdf(WalkRoute $walkRoute)
+    {
+        $activeEdition = Edition::active();
+        if (! $activeEdition || $walkRoute->edition_id !== $activeEdition->id) {
+            abort(404);
+        }
+        if (! $walkRoute->pdf_path || ! \Storage::disk('public')->exists($walkRoute->pdf_path)) {
+            abort(404);
+        }
+
+        return \Storage::disk('public')->response(
+            $walkRoute->pdf_path,
+            basename($walkRoute->pdf_path),
+            ['Content-Type' => 'application/pdf']
+        );
+    }
 }

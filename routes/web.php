@@ -90,6 +90,8 @@ Route::domain(config('app.intouch_domain'))
             Route::get('werkgroep/routebibliotheek', [\App\Http\Controllers\Intouch\RouteTemplateController::class, 'index'])->name('route-templates.index');
             Route::get('werkgroep/routebibliotheek/aanmaken', [\App\Http\Controllers\Intouch\RouteTemplateController::class, 'create'])->name('route-templates.create');
             Route::post('werkgroep/routebibliotheek', [\App\Http\Controllers\Intouch\RouteTemplateController::class, 'store'])->name('route-templates.store');
+            Route::get('werkgroep/routebibliotheek/{routeTemplate}/pdf', [\App\Http\Controllers\Intouch\RouteTemplateController::class, 'pdf'])->name('route-templates.pdf');
+            Route::get('werkgroep/routebibliotheek/{routeTemplate}/word', [\App\Http\Controllers\Intouch\RouteTemplateController::class, 'word'])->name('route-templates.word');
             Route::get('werkgroep/routebibliotheek/{routeTemplate}', [\App\Http\Controllers\Intouch\RouteTemplateController::class, 'edit'])->name('route-templates.edit');
             Route::put('werkgroep/routebibliotheek/{routeTemplate}', [\App\Http\Controllers\Intouch\RouteTemplateController::class, 'update'])->name('route-templates.update');
             Route::delete('werkgroep/routebibliotheek/{routeTemplate}', [\App\Http\Controllers\Intouch\RouteTemplateController::class, 'destroy'])->name('route-templates.destroy');
@@ -138,6 +140,7 @@ if ($routesDomain) {
         ->name('routes.')
         ->group(function () {
             Route::get('/', [\App\Http\Controllers\Routes\PublicRoutesController::class, 'index'])->name('index');
+            Route::get('/{walkRoute}/pdf', [\App\Http\Controllers\Routes\PublicRoutesController::class, 'pdf'])->name('pdf')->where('walkRoute', '[0-9]+');
             Route::get('/{walkRoute}', [\App\Http\Controllers\Routes\PublicRoutesController::class, 'show'])->name('show')->where('walkRoute', '[0-9]+');
         });
 }

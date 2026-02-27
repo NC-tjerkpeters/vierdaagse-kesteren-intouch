@@ -133,4 +133,38 @@ class RouteTemplateController extends Controller
 
         return redirect()->route('intouch.route-templates.edit', $routeTemplate)->with('status', 'PDF verwijderd.');
     }
+
+    public function pdf(RouteTemplate $routeTemplate)
+    {
+        $this->authorize('routes_view');
+
+        if (! $routeTemplate->pdf_path || ! \Storage::disk('public')->exists($routeTemplate->pdf_path)) {
+            abort(404);
+        }
+
+        return \Storage::disk('public')->response(
+            $routeTemplate->pdf_path,
+            basename($routeTemplate->pdf_path),
+            ['Content-Type' => 'application/pdf']
+        );
+    }
+
+    public function word(RouteTemplate $routeTemplate)
+    {
+        $this->authorize('routes_view');
+
+        if (! $routeTemplate->word_path || ! \Storage::disk('public')->exists($routeTemplate->word_path)) {
+            abort(404);
+        }
+
+        $mime = str_ends_with(strtolower($routeTemplate->word_path), '.docx')
+            ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            : 'application/msword';
+
+        return \Storage::disk('public')->response(
+            $routeTemplate->word_path,
+            basename($routeTemplate->word_path),
+            ['Content-Type' => $mime]
+        );
+    }
 }

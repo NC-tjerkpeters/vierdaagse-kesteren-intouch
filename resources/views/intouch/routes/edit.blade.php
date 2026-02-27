@@ -60,7 +60,7 @@
                 @if($walkRoute->pdf_path)
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <span class="badge bg-success">PDF aanwezig</span>
-                        <a href="{{ $walkRoute->pdf_url }}" target="_blank" class="btn btn-sm btn-outline-primary">Bekijken</a>
+                        <a href="{{ route('intouch.walk-routes.pdf', $walkRoute) }}" target="_blank" class="btn btn-sm btn-outline-primary">Bekijken</a>
                         <button type="submit" form="delete-pdf-form" class="btn btn-sm btn-outline-danger" onclick="return confirm('PDF verwijderen?');">Verwijderen</button>
                     </div>
                 @endif

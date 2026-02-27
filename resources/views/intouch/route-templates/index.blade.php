@@ -32,14 +32,14 @@
                     <td>{{ $t->points->count() }}</td>
                     <td>
                         @if($t->word_path)
-                            <a href="{{ $t->word_url }}" download class="badge bg-primary text-decoration-none">Download</a>
+                            <a href="{{ route('intouch.route-templates.word', $t) }}" download class="badge bg-primary text-decoration-none">Download</a>
                         @else
                             <span class="badge bg-secondary">Nee</span>
                         @endif
                     </td>
                     <td>
                         @if($t->pdf_path)
-                            <a href="{{ $t->pdf_url }}" target="_blank" class="badge bg-success text-decoration-none">Bekijken</a>
+                            <a href="{{ route('intouch.route-templates.pdf', $t) }}" target="_blank" class="badge bg-success text-decoration-none">Bekijken</a>
                         @else
                             <span class="badge bg-secondary">Nee</span>
                         @endif
