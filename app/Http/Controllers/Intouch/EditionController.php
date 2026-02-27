@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Intouch;
 
 use App\Http\Controllers\Controller;
 use App\Models\Edition;
+use App\Models\EditionChecklistItem;
 use App\Models\EventDay;
 use Illuminate\Http\Request;
 
@@ -68,6 +69,14 @@ class EditionController extends Controller
                 'name' => $name,
                 'sort_order' => $i + 1,
                 'is_current' => $i === 0,
+            ]);
+        }
+
+        foreach (config('edition_checklist.default_items', []) as $i => $title) {
+            EditionChecklistItem::create([
+                'edition_id' => $edition->id,
+                'title' => $title,
+                'sort_order' => $i + 1,
             ]);
         }
 

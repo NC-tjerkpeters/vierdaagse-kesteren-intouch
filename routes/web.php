@@ -67,6 +67,10 @@ Route::domain(config('app.intouch_domain'))
             Route::get('beheer/edities', [EditionController::class, 'index'])->name('beheer.editions.index');
             Route::get('beheer/edities/aanmaken', [EditionController::class, 'create'])->name('beheer.editions.create');
             Route::post('beheer/edities', [EditionController::class, 'store'])->name('beheer.editions.store');
+            Route::get('beheer/edities/{edition}/checklist', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'index'])->name('beheer.editions.checklist');
+            Route::put('beheer/edities/{edition}/checklist', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'update'])->name('beheer.editions.checklist.update');
+            Route::post('beheer/edities/{edition}/checklist/items', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'addItem'])->name('beheer.editions.checklist.add-item');
+            Route::post('beheer/edities/{edition}/checklist/init', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'initFromDefaults'])->name('beheer.editions.checklist.init');
             Route::get('financien', [FinanceController::class, 'index'])->name('finance.index');
             Route::get('financien/kosten/aanmaken', [FinanceController::class, 'createCost'])->name('finance.cost.create');
             Route::post('financien/kosten', [FinanceController::class, 'storeCost'])->name('finance.cost.store');

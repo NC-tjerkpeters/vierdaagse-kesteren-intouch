@@ -102,4 +102,9 @@ class Edition extends Model
     {
         return $this->hasMany(CostEntry::class);
     }
+
+    public function checklistItems(): HasMany
+    {
+        return $this->hasMany(EditionChecklistItem::class)->orderBy('sort_order');
+    }
 }

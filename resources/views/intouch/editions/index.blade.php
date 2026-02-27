@@ -28,6 +28,7 @@
                     <th>Inschrijvingen</th>
                     <th>Sponsors</th>
                     <th>Status</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -44,10 +45,13 @@
                                 <span class="badge bg-secondary">Archief</span>
                             @endif
                         </td>
+                        <td>
+                            <a href="{{ route('intouch.beheer.editions.checklist', $e) }}" class="btn btn-sm btn-outline-secondary">Checklist</a>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-muted">Nog geen edities.</td>
+                        <td colspan="6" class="text-muted">Nog geen edities.</td>
                     </tr>
                 @endforelse
             </tbody>
