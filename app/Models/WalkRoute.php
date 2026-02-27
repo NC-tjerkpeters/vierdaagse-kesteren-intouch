@@ -11,11 +11,34 @@ class WalkRoute extends Model
 {
     protected $table = 'walk_routes';
 
-    protected $fillable = ['edition_id', 'distance_id', 'title', 'description', 'pdf_path', 'sort_order'];
+    protected $fillable = ['edition_id', 'route_template_id', 'distance_id', 'title', 'description', 'pdf_path', 'sort_order', 'event_day_sort_orders'];
+
+    protected function casts(): array
+    {
+        return [
+            'event_day_sort_orders' => 'array',
+        ];
+    }
+
+    /** Of deze route op de gegeven dag actief is. Leeg/null = alle dagen. */
+    public function runsOnEventDay(\App\Models\EventDay $day): bool
+    {
+        $allowed = $this->event_day_sort_orders;
+        if ($allowed === null || $allowed === []) {
+            return true;
+        }
+
+        return in_array((int) $day->sort_order, array_map('intval', $allowed), true);
+    }
 
     public function edition(): BelongsTo
     {
         return $this->belongsTo(Edition::class);
+    }
+
+    public function routeTemplate(): BelongsTo
+    {
+        return $this->belongsTo(RouteTemplate::class);
     }
 
     public function distance(): BelongsTo

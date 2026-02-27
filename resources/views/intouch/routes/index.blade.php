@@ -9,7 +9,11 @@
         <p class="text-muted small mb-0">Beheer wandelroutes per afstand voor de editie</p>
     </div>
     @can('routes_manage')
-    <a href="{{ route('intouch.walk-routes.create') }}" class="btn btn-vierdaagse">Nieuwe route</a>
+    <div class="d-flex gap-2 flex-wrap align-items-center">
+        <a href="{{ route('intouch.walk-routes.create') }}" class="btn btn-vierdaagse">Nieuwe route</a>
+        <a href="{{ route('intouch.walk-routes.add-from-library-form') }}" class="btn btn-outline-primary">Toevoegen uit bibliotheek</a>
+        <a href="{{ route('intouch.route-templates.index') }}" class="btn btn-outline-secondary">Routebibliotheek</a>
+    </div>
     @endcan
 </div>
 
@@ -21,6 +25,7 @@
                     <th>Volgorde</th>
                     <th>Afstand</th>
                     <th>Titel</th>
+                    <th>Dagen</th>
                     <th>Punten</th>
                     <th>PDF</th>
                     <th></th>
@@ -32,6 +37,13 @@
                     <td>{{ $route->sort_order }}</td>
                     <td>{{ $route->distance->name ?? '-' }}</td>
                     <td>{{ $route->title ?: '-' }}</td>
+                    <td>
+                        @if($route->event_day_sort_orders === null || $route->event_day_sort_orders === [])
+                            Alle dagen
+                        @else
+                            {{ collect($route->event_day_sort_orders)->map(fn($n) => $eventDays->get($n)?->name ?? 'Dag '.$n)->join(', ') }}
+                        @endif
+                    </td>
                     <td>{{ $route->points->count() }}</td>
                     <td>
                         @if($route->pdf_path)
@@ -53,7 +65,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-muted">Nog geen routes. Maak er een aan.</td>
+                    <td colspan="7" class="text-muted">Nog geen routes. Maak er een aan.</td>
                 </tr>
                 @endforelse
             </tbody>

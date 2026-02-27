@@ -36,6 +36,27 @@
                 @enderror
             </div>
             <div class="mb-3">
+                <label class="form-label">Actief op dagen</label>
+                <p class="text-muted small mb-2">Geen vinkjes = actief op alle dagen. Alleen vinkjes zetten bij de dagen waarop deze route loopt.</p>
+                @php
+                    $selected = old('event_day_sort_orders', []);
+                    $selected = is_array($selected) ? array_map('intval', $selected) : [];
+                    $showAll = $selected === [] || $selected === null;
+                @endphp
+                <div class="d-flex flex-wrap gap-3">
+                    @foreach($eventDays as $day)
+                        <div class="form-check">
+                            <input type="checkbox" id="event_day_{{ $day->sort_order }}" name="event_day_sort_orders[]" class="form-check-input" value="{{ $day->sort_order }}"
+                                @checked($showAll || in_array((int) $day->sort_order, $selected, true))>
+                            <label class="form-check-label" for="event_day_{{ $day->sort_order }}">{{ $day->name }}</label>
+                        </div>
+                    @endforeach
+                </div>
+                @error('event_day_sort_orders')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-3">
                 <label for="pdf" class="form-label">PDF routekaart</label>
                 <input type="file" id="pdf" name="pdf" class="form-control @error('pdf') is-invalid @enderror" accept=".pdf">
                 <small class="text-muted">Max 10 MB. Je kunt later ook een PDF toevoegen.</small>

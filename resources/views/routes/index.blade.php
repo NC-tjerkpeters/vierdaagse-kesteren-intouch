@@ -5,11 +5,27 @@
 @section('content')
 @if(!$edition)
 <div class="alert alert-info">Er is momenteel geen actieve editie. De routes worden binnenkort weer beschikbaar.</div>
-@elseif($walkRoutes->isEmpty())
-<div class="alert alert-info">Er zijn nog geen routes beschikbaar voor {{ $edition->name }}.</div>
 @else
 <h1 class="mb-4">Wandelroutes {{ $edition->name }}</h1>
+@if($eventDays->isNotEmpty())
+<div class="mb-4 d-flex flex-wrap align-items-center gap-2">
+    <span class="text-muted small">Filter op dag:</span>
+    <a href="{{ route('routes.index') }}" class="btn btn-sm {{ !$selectedDay ? 'btn-vierdaagse' : 'btn-outline-secondary' }}">Alle dagen</a>
+        @foreach($eventDays as $day)
+        <a href="{{ route('routes.index', ['dag' => $day->sort_order]) }}" class="btn btn-sm {{ $selectedDay && $selectedDay->id === $day->id ? 'btn-vierdaagse' : 'btn-outline-secondary' }}">{{ $day->name }}</a>
+    @endforeach
+</div>
+@endif
 <p class="text-muted mb-4">Kies een route om de controlepunten te bekijken, af te strepen tijdens het wandelen en de PDF te downloaden.</p>
+@if($walkRoutes->isEmpty())
+<div class="alert alert-info">
+    @if($selectedDay)
+        Geen routes beschikbaar voor {{ $selectedDay->name }}.
+    @else
+        Er zijn nog geen routes beschikbaar voor {{ $edition->name }}.
+    @endif
+</div>
+@else
 <div class="row g-3">
     @foreach($walkRoutes as $route)
     <div class="col-md-6 col-lg-4">
@@ -36,5 +52,6 @@
     </div>
     @endforeach
 </div>
+@endif
 @endif
 @endsection

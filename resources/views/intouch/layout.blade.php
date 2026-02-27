@@ -79,6 +79,7 @@
                         @endcan
                         @can('routes_view')
                         <li><a class="dropdown-item" href="{{ route('intouch.walk-routes.index') }}">Routes</a></li>
+                        <li><a class="dropdown-item" href="{{ route('intouch.route-templates.index') }}">Routebibliotheek</a></li>
                         @endcan
                         @can('checklist_view')
                         <li><a class="dropdown-item" href="{{ route('intouch.werkgroep.checklist') }}">Checklist</a></li>
