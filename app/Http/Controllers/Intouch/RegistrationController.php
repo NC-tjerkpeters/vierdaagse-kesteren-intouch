@@ -62,6 +62,24 @@ class RegistrationController extends Controller
         return view('intouch.inschrijvingen.show', compact('registration'));
     }
 
+    public function updateMedal(Request $request, Registration $registration)
+    {
+        $this->authorize('inschrijvingen_edit');
+
+        $data = $request->validate([
+            'wants_medal' => ['required', 'boolean'],
+            'medal_number' => ['nullable', 'integer', 'min:1'],
+        ]);
+
+        $registration->wants_medal = (bool) $data['wants_medal'];
+        $registration->medal_number = $data['wants_medal'] ? ($data['medal_number'] ?? null) : null;
+        $registration->save();
+
+        return redirect()
+            ->route('intouch.registrations.show', $registration)
+            ->with('status', 'Medaille-informatie bijgewerkt.');
+    }
+
     public function export(Request $request): StreamedResponse
     {
         $this->authorize('inschrijvingen_export');

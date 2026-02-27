@@ -8,6 +8,7 @@ return [
         ['group' => 'Afstanden', 'slug' => 'afstanden_edit', 'name' => 'Bewerken'],
         ['group' => 'Afstanden', 'slug' => 'afstanden_delete', 'name' => 'Verwijderen'],
         ['group' => 'Inschrijvingen', 'slug' => 'inschrijvingen_view', 'name' => 'Bekijken'],
+        ['group' => 'Inschrijvingen', 'slug' => 'inschrijvingen_edit', 'name' => 'Bewerken'],
         ['group' => 'Inschrijvingen', 'slug' => 'inschrijvingen_export', 'name' => 'Exporteren'],
         ['group' => 'Inschrijvingen', 'slug' => 'inschrijvingen_medal_overview', 'name' => 'Medaille-overzicht'],
         ['group' => 'Loopoverzicht', 'slug' => 'loopoverzicht_view', 'name' => 'Bekijken'],

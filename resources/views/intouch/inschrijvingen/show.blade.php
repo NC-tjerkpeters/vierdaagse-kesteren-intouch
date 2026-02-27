@@ -75,4 +75,37 @@
         </table>
     </div>
 </div>
+
+@can('inschrijvingen_edit')
+<div class="card mt-4">
+    <div class="card-header">Medaille-informatie wijzigen</div>
+    <div class="card-body">
+        <p class="text-muted small mb-3">Pas medaille- en medaillenummer aan als iemand achteraf toch (geen) medaille wil of een ander nummer heeft.</p>
+        <form method="post" action="{{ route('intouch.registrations.update-medal', $registration) }}">
+            @csrf
+            @method('put')
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input type="hidden" name="wants_medal" value="0">
+                        <input type="checkbox" class="form-check-input" id="wants_medal" name="wants_medal" value="1"
+                            @checked($registration->wants_medal)>
+                        <label class="form-check-label" for="wants_medal">Medaille gewenst</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="medal_number" class="form-label">Medaillenummer</label>
+                    <input type="number" class="form-control @error('medal_number') is-invalid @enderror" id="medal_number" name="medal_number" min="1"
+                        value="{{ old('medal_number', $registration->medal_number) }}"
+                        placeholder="Loopt voor medaillenummer">
+                    @error('medal_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-vierdaagse btn-sm">Opslaan</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endcan
 @endsection
