@@ -78,15 +78,15 @@
             <h6 class="mt-4 mb-2">Controlepunten</h6>
             <p class="text-muted small">Punten die wandelaars kunnen afstrepen op hun route. Volgorde kan je aanpassen door rijen te herschikken.</p>
             <div id="points-container">
-                @foreach(old('points', $walkRoute->points->pluck('name')->toArray()) as $idx => $name)
+                @foreach(old('points', $walkRoute->points->pluck('name')->toArray()) as $name)
                     <div class="input-group mb-2 point-row">
-                        <input type="text" name="points[{{ $idx }}][name]" class="form-control" value="{{ is_array($name) ? ($name['name'] ?? '') : $name }}" placeholder="Naam van het punt">
+                        <input type="text" name="points[]" class="form-control" value="{{ is_array($name) ? ($name['name'] ?? '') : $name }}" placeholder="Naam van het punt">
                         <button type="button" class="btn btn-outline-danger remove-point" title="Verwijderen">×</button>
                     </div>
                 @endforeach
                 @if($walkRoute->points->isEmpty() && empty(old('points')))
                     <div class="input-group mb-2 point-row">
-                        <input type="text" name="points[0][name]" class="form-control" placeholder="Naam van het punt">
+                        <input type="text" name="points[]" class="form-control" placeholder="Naam van het punt">
                         <button type="button" class="btn btn-outline-danger remove-point" title="Verwijderen">×</button>
                     </div>
                 @endif
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('add-point').addEventListener('click', function() {
         const div = document.createElement('div');
         div.className = 'input-group mb-2 point-row';
-        div.innerHTML = '<input type="text" name="points[' + pointIndex + '][name]" class="form-control" placeholder="Naam van het punt">' +
+        div.innerHTML = '<input type="text" name="points[]" class="form-control" placeholder="Naam van het punt">' +
             '<button type="button" class="btn btn-outline-danger remove-point" title="Verwijderen">×</button>';
         document.getElementById('points-container').appendChild(div);
         pointIndex++;

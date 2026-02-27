@@ -75,15 +75,15 @@
             <p class="text-muted small">Punten die meegekopieerd worden naar edities.</p>
             <div id="points-container">
                 @php $pointsData = old('points', $template->points->pluck('name')->toArray()); @endphp
-                @foreach($pointsData as $idx => $name)
+                @foreach($pointsData as $name)
                 <div class="input-group mb-2 point-row">
-                    <input type="text" name="points[{{ $idx }}][name]" class="form-control" value="{{ is_array($name) ? ($name['name'] ?? '') : $name }}" placeholder="Naam van het punt">
+                    <input type="text" name="points[]" class="form-control" value="{{ is_array($name) ? ($name['name'] ?? '') : $name }}" placeholder="Naam van het punt">
                     <button type="button" class="btn btn-outline-danger remove-point">×</button>
                 </div>
                 @endforeach
                 @if($template->points->isEmpty() && empty(old('points')))
                 <div class="input-group mb-2 point-row">
-                    <input type="text" name="points[0][name]" class="form-control" placeholder="Naam van het punt">
+                    <input type="text" name="points[]" class="form-control" placeholder="Naam van het punt">
                     <button type="button" class="btn btn-outline-danger remove-point">×</button>
                 </div>
                 @endif
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('add-point').addEventListener('click', function() {
         const div = document.createElement('div');
         div.className = 'input-group mb-2 point-row';
-        div.innerHTML = '<input type="text" name="points[' + pointIndex + '][name]" class="form-control" placeholder="Naam van het punt"><button type="button" class="btn btn-outline-danger remove-point">×</button>';
+        div.innerHTML = '<input type="text" name="points[]" class="form-control" placeholder="Naam van het punt"><button type="button" class="btn btn-outline-danger remove-point">×</button>';
         document.getElementById('points-container').appendChild(div);
         pointIndex++;
     });

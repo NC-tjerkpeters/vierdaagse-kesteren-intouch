@@ -138,9 +138,10 @@ class WalkRouteController extends Controller
 
         $walkRoute->points()->delete();
         $points = $request->input('points', []);
-        foreach ($points as $i => $p) {
-            $name = is_array($p) ? ($p['name'] ?? '') : $p;
-            if (trim((string) $name) !== '') {
+        $points = is_array($points) ? $points : [];
+        foreach (array_values($points) as $i => $p) {
+            $name = is_array($p) ? ($p['name'] ?? '') : (string) $p;
+            if (trim($name) !== '') {
                 $walkRoute->points()->create(['name' => trim($name), 'sort_order' => $i]);
             }
         }
