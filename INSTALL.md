@@ -15,7 +15,7 @@ De app gebruikt **domein-gebaseerde routing**. Configureer drie (sub)domeinen di
 
 | Domein | Gebruik |
 |--------|---------|
-| `inschrijven.vierdaagsekesteren.nl` | Inschrijfformulier |
+| `inschrijven.vierdaagsekesteren.nl` | Inschrijfformulier deelnemers + sponsorformulier (vrienden) |
 | `intouch.vierdaagsekesteren.nl` | Beheerportaal |
 | `scanner.vierdaagsekesteren.nl` | QR-scanner |
 
@@ -110,15 +110,26 @@ composer install --no-dev --optimize-autoloader
    DB_USERNAME=<jouw_gebruiker>
    DB_PASSWORD=<jouw_wachtwoord>
 
-   # SESSION_DOMAIN=null
+   SESSION_DRIVER=database
+   SESSION_ENCRYPT=true
 
    MOLLIE_KEY=live_xxxxx
    MOLLIE_WEBHOOKS_ENABLED=true
 
+   # Sponsors (vrienden)
+   SPONSORS_DOELBEDRAG=1850
+   SPONSORS_REDIRECT_URL=https://vierdaagsekesteren.nl/vrienden-van-de-vierdaagse-kesteren/aanmelden/bedankt-voor-uw-bijdrage/
+   SPONSORS_RECEIPT_BCC=mail@vierdaagsekesteren.nl
+
+   # Microsoft Graph (Intouch-login, tickets)
    MSGRAPH_TENANT_ID=...
    MSGRAPH_CLIENT_ID=...
    MSGRAPH_CLIENT_SECRET=...
    MSGRAPH_SENDER_ADDRESS=...
+
+   # Optioneel: scanner, noodnummers (ook via Beheer → Instellingen)
+   SCANNER_MIN_MINUTES_BETWEEN_SCANS=5
+   APP_NOODNUMMERS="06 52 44 16 10, 06 40 89 37 40"
 
    MAIL_MAILER=log
    ```
@@ -137,6 +148,12 @@ Na de seed kun je inloggen op Intouch met:
 - **E-mail:** `admin@vierdaagsekesteren.nl`
 - **Wachtwoord:** `wijzig-dit-wachtwoord`
 
+**Let op:** Bij nieuwe releases met extra permissies (bijv. `inschrijvingen_edit`):
+
+```bash
+php artisan db:seed --class=PermissionSeeder --force
+```
+
 ---
 
 ## Stap 7: Storage-link, rechten en cache
@@ -154,18 +171,41 @@ php artisan view:clear
 
 ---
 
-## Stap 8: Mollie-webhook
+## Stap 8: Mollie-webhooks
+
+Er zijn **twee webhook-routes**:
+
+### Inschrijvingen (deelnemers)
 
 1. De ticket-mail wordt verzonden als de deelnemer na betaling naar de bedankpagina gaat.
 2. Voor extra zekerheid (als iemand de browser sluit vóór de bedankpagina):
    - Stel `MOLLIE_WEBHOOKS_ENABLED=true` in `.env`.
-   - Registreer in het Mollie-dashboard de webhook-URL: `https://inschrijven.vierdaagsekesteren.nl/webhooks/mollie`
+   - Registreer in het Mollie-dashboard de webhook-URL:  
+     `https://inschrijven.vierdaagsekesteren.nl/webhooks/mollie`
    - Eventueel `MOLLIE_WEBHOOK_SIGNING_SECRETS` instellen.
-   - Zonder extra webhook-listener in de app blijft de ticket alleen verstuurd worden via de bedankpagina.
+
+### Sponsors (vrienden)
+
+- De webhook-URL wordt **per betaling** meegegeven; je hoeft geen extra webhook in het Mollie-dashboard te registreren.
+- URL: `https://inschrijven.vierdaagsekesteren.nl/webhooks/mollie/sponsors`
+- Zie [docs/SPONSOREN_FORMULIER.md](docs/SPONSOREN_FORMULIER.md) voor integratie van het sponsorformulier.
 
 ---
 
-## Stap 9: Afbeeldingen PDF-ticket
+## Stap 9: Systeeminstellingen (optioneel)
+
+Veel instellingen kun je aanpassen via **Intouch → Beheer → Instellingen**:
+
+- Sponsors doelbedrag
+- Mollie transactiekosten per betaalmethode
+- Scanner: min. minuten tussen scans, namen scanpunten
+- Noodnummers op tickets
+
+Die overschrijven de standaardwaarden uit `.env` en config.
+
+---
+
+## Stap 10: Afbeeldingen PDF-ticket
 
 Controleer of deze bestanden aanwezig zijn:
 
@@ -185,7 +225,7 @@ Zo niet, plaats ze handmatig.
 - [ ] `php artisan db:seed` uitgevoerd
 - [ ] Document root van alle domeinen op `public`
 - [ ] Storage-link aangemaakt
-- [ ] Mollie live key en webhook actief
+- [ ] Mollie live key en webhook (inschrijvingen) actief
 - [ ] Microsoft Graph (Intouch) geconfigureerd
 
 ---
@@ -204,7 +244,7 @@ Zo niet, plaats ze handmatig.
 - Controleer `storage/logs/laravel.log` voor de exacte foutmelding
 - Controleer rechten op `storage/` en `bootstrap/cache/`
 
-**“No application encryption key”**
+**"No application encryption key"**
 
 - Voer `php artisan key:generate` uit
 

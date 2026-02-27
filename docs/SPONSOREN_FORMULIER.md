@@ -1,6 +1,6 @@
 # Vrienden/sponsoren formulier
 
-Het vrienden-formulier op vierdaagsekesteren.nl kan nu naar de Laravel-app wijzen in plaats van de oude PHP-scripts.
+Het vrienden-formulier op vierdaagsekesteren.nl kan naar de Laravel-app wijzen in plaats van de oude PHP-scripts.
 
 ## Form action aanpassen
 
@@ -15,6 +15,8 @@ https://inschrijven.vierdaagsekesteren.nl/vrienden/aanmelden
 ```
 
 *(Vervang `inschrijven.vierdaagsekesteren.nl` door je daadwerkelijke inschrijf-domein als dat anders is.)*
+
+De route staat op het **inschrijven-domein**; CSRF is uitgeschakeld voor dit endpoint omdat het formulier op een ander domein (vierdaagsekesteren.nl) staat.
 
 ## Form HTML (voorbeeld)
 
@@ -80,16 +82,24 @@ https://inschrijven.vierdaagsekesteren.nl/vrienden/aanmelden
 
 ## Configuratie (.env)
 
-- `SPONSORS_REDIRECT_URL` – waar de gebruiker na succesvolle betaling naartoe gaat (standaard: bedankpagina op vierdaagsekesteren.nl)
-- `SPONSORS_WEBHOOK_URL` – indien de webhook-URL afwijkt van `APP_URL + /webhooks/mollie/sponsors`
-- `MOLLIE_KEY` – dezelfde key als voor inschrijvingen (live key in productie)
+| Variabele | Beschrijving |
+|-----------|--------------|
+| `SPONSORS_REDIRECT_URL` | Waar de gebruiker na succesvolle betaling naartoe gaat (standaard: bedankpagina op vierdaagsekesteren.nl) |
+| `SPONSORS_WEBHOOK_URL` | Optioneel: volledige webhook-URL (anders: APP_URL + `/webhooks/mollie/sponsors`) |
+| `SPONSORS_RECEIPT_BCC` | BCC-adres voor ontvangstbevestiging per e-mail |
+| `SPONSORS_DOELBEDRAG` | Doelbedrag voor de voortgangsbalk in Intouch (ook aanpasbaar via Beheer → Instellingen) |
+| `MOLLIE_KEY` | Dezelfde key als voor inschrijvingen (live key in productie) |
 
 ## Mollie webhook
 
-De webhook wordt per betaling ingesteld; je hoeft geen extra webhook in het Mollie-dashboard te registreren. De URL wordt automatisch meegegeven bij het aanmaken van de betaling.
+De webhook wordt **per betaling** ingesteld; je hoeft geen extra webhook in het Mollie-dashboard te registreren. De URL wordt automatisch meegegeven bij het aanmaken van de betaling.
 
 De webhook-URL is: `https://inschrijven.vierdaagsekesteren.nl/webhooks/mollie/sponsors`  
 (gebaseerd op je `APP_URL` of `SPONSORS_WEBHOOK_URL`)
+
+## Intouch
+
+In **Intouch → Sponsors** beheer je de betalingen en ontvangstbevestigingen. Het doelbedrag en andere instellingen kun je aanpassen via **Beheer → Instellingen**.
 
 ## Oude PHP-scripts
 
