@@ -78,6 +78,13 @@ Route::domain(config('app.intouch_domain'))
             Route::put('beheer/edities/{edition}/checklist', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'update'])->name('beheer.editions.checklist.update');
             Route::post('beheer/edities/{edition}/checklist/items', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'addItem'])->name('beheer.editions.checklist.add-item');
             Route::post('beheer/edities/{edition}/checklist/init', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'initFromDefaults'])->name('beheer.editions.checklist.init');
+            Route::get('werkgroep/routes', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'index'])->name('walk-routes.index');
+            Route::get('werkgroep/routes/aanmaken', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'create'])->name('walk-routes.create');
+            Route::post('werkgroep/routes', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'store'])->name('walk-routes.store');
+            Route::get('werkgroep/routes/{walkRoute}', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'edit'])->name('walk-routes.edit');
+            Route::put('werkgroep/routes/{walkRoute}', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'update'])->name('walk-routes.update');
+            Route::delete('werkgroep/routes/{walkRoute}', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'destroy'])->name('walk-routes.destroy');
+            Route::delete('werkgroep/routes/{walkRoute}/pdf', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'deletePdf'])->name('walk-routes.delete-pdf');
             Route::get('financien', [FinanceController::class, 'index'])->name('finance.index');
             Route::get('financien/kosten/aanmaken', [FinanceController::class, 'createCost'])->name('finance.cost.create');
             Route::post('financien/kosten', [FinanceController::class, 'storeCost'])->name('finance.cost.store');
@@ -113,6 +120,13 @@ Route::domain(config('app.scanner_domain'))
             Route::post('scan', [ScanController::class, 'store'])->name('scan');
             Route::post('scan-api', [ScanController::class, 'storeApi'])->name('scan.api');
         });
+    });
+
+Route::domain(config('app.routes_domain'))
+    ->name('routes.')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\Routes\PublicRoutesController::class, 'index'])->name('index');
+        Route::get('/{walkRoute}', [\App\Http\Controllers\Routes\PublicRoutesController::class, 'show'])->name('show');
     });
 
 Route::get('/', fn () => view('welcome'))->name('home');

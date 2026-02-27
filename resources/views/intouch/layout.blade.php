@@ -78,6 +78,7 @@
                         <li><a class="dropdown-item" href="{{ route('intouch.finance.index') }}">Financiën</a></li>
                         @endcan
                         @can('editions_manage')
+                        <li><a class="dropdown-item" href="{{ route('intouch.walk-routes.index') }}">Routes</a></li>
                         <li><a class="dropdown-item" href="{{ route('intouch.werkgroep.checklist') }}">Checklist</a></li>
                         @endcan
                     </ul>
