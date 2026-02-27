@@ -67,6 +67,13 @@ Route::domain(config('app.intouch_domain'))
             Route::get('beheer/edities', [EditionController::class, 'index'])->name('beheer.editions.index');
             Route::get('beheer/edities/aanmaken', [EditionController::class, 'create'])->name('beheer.editions.create');
             Route::post('beheer/edities', [EditionController::class, 'store'])->name('beheer.editions.store');
+            Route::get('werkgroep/checklist', function () {
+                $edition = \App\Models\Edition::current();
+                if (!$edition) {
+                    return redirect()->route('intouch.beheer.editions.index')->with('info', 'Selecteer eerst een editie.');
+                }
+                return redirect()->route('intouch.beheer.editions.checklist', $edition);
+            })->name('werkgroep.checklist');
             Route::get('beheer/edities/{edition}/checklist', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'index'])->name('beheer.editions.checklist');
             Route::put('beheer/edities/{edition}/checklist', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'update'])->name('beheer.editions.checklist.update');
             Route::post('beheer/edities/{edition}/checklist/items', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'addItem'])->name('beheer.editions.checklist.add-item');

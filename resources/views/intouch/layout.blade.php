@@ -70,11 +70,19 @@
                     <a class="nav-link" href="{{ route('intouch.scan-overview.index') }}">Loopoverzicht</a>
                 </li>
                 @endcan
-                @can('finances_view')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('intouch.finance.index') }}">Financiën</a>
+                @if(auth()->user()->hasPermission('finances_view') || auth()->user()->hasPermission('editions_manage'))
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Werkgroep</a>
+                    <ul class="dropdown-menu">
+                        @can('finances_view')
+                        <li><a class="dropdown-item" href="{{ route('intouch.finance.index') }}">Financiën</a></li>
+                        @endcan
+                        @can('editions_manage')
+                        <li><a class="dropdown-item" href="{{ route('intouch.werkgroep.checklist') }}">Checklist</a></li>
+                        @endcan
+                    </ul>
                 </li>
-                @endcan
+                @endif
                 @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles') || auth()->user()->hasPermission('editions_manage') || auth()->user()->hasPermission('afstanden_view') || auth()->user()->hasPermission('instellingen_edit'))
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Beheer</a>
