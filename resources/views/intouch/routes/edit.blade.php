@@ -61,11 +61,7 @@
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <span class="badge bg-success">PDF aanwezig</span>
                         <a href="{{ $walkRoute->pdf_url }}" target="_blank" class="btn btn-sm btn-outline-primary">Bekijken</a>
-                        <form method="post" action="{{ route('intouch.walk-routes.delete-pdf', $walkRoute) }}" class="d-inline" onsubmit="return confirm('PDF verwijderen?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Verwijderen</button>
-                        </form>
+                        <button type="submit" form="delete-pdf-form" class="btn btn-sm btn-outline-danger" onclick="return confirm('PDF verwijderen?');">Verwijderen</button>
                     </div>
                 @endif
                 <input type="file" id="pdf" name="pdf" class="form-control @error('pdf') is-invalid @enderror" accept=".pdf">
@@ -98,6 +94,9 @@
                 <a href="{{ route('intouch.walk-routes.index') }}" class="btn btn-outline-secondary">Annuleren</a>
             </div>
         </form>
+        @if($walkRoute->pdf_path)
+        <form id="delete-pdf-form" method="post" action="{{ route('intouch.walk-routes.delete-pdf', $walkRoute) }}" class="d-none">@csrf @method('DELETE')</form>
+        @endif
     </div>
 </div>
 

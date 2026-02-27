@@ -39,11 +39,7 @@
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <span class="badge bg-primary">Aanwezig</span>
                         <a href="{{ $template->word_url }}" download class="btn btn-sm btn-outline-primary">Download</a>
-                        <form method="post" action="{{ route('intouch.route-templates.delete-word', $template) }}" class="d-inline" onsubmit="return confirm('Word-document verwijderen?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Verwijderen</button>
-                        </form>
+                        <button type="submit" form="delete-word-form" class="btn btn-sm btn-outline-danger" onclick="return confirm('Word-document verwijderen?');">Verwijderen</button>
                     </div>
                     @else
                     <p class="text-muted small mb-1">Niet geüpload</p>
@@ -57,11 +53,7 @@
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <span class="badge bg-success">Aanwezig</span>
                         <a href="{{ $template->pdf_url }}" target="_blank" class="btn btn-sm btn-outline-primary">Bekijken</a>
-                        <form method="post" action="{{ route('intouch.route-templates.delete-pdf', $template) }}" class="d-inline" onsubmit="return confirm('PDF verwijderen?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Verwijderen</button>
-                        </form>
+                        <button type="submit" form="delete-pdf-form" class="btn btn-sm btn-outline-danger" onclick="return confirm('PDF verwijderen?');">Verwijderen</button>
                     </div>
                     @else
                     <p class="text-muted small mb-1">Niet geüpload</p>
@@ -95,6 +87,12 @@
                 <a href="{{ route('intouch.route-templates.index') }}" class="btn btn-outline-secondary">Annuleren</a>
             </div>
         </form>
+        @if($template->word_path)
+        <form id="delete-word-form" method="post" action="{{ route('intouch.route-templates.delete-word', $template) }}" class="d-none">@csrf @method('DELETE')</form>
+        @endif
+        @if($template->pdf_path)
+        <form id="delete-pdf-form" method="post" action="{{ route('intouch.route-templates.delete-pdf', $template) }}" class="d-none">@csrf @method('DELETE')</form>
+        @endif
     </div>
 </div>
 
