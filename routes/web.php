@@ -70,7 +70,7 @@ Route::domain(config('app.intouch_domain'))
             Route::get('werkgroep/checklist', function () {
                 $edition = \App\Models\Edition::current();
                 if (!$edition) {
-                    return redirect()->route('intouch.beheer.editions.index')->with('info', 'Selecteer eerst een editie.');
+                    return redirect()->route('intouch.dashboard')->with('info', 'Selecteer eerst een editie (rechtsboven in het menu).');
                 }
                 return redirect()->route('intouch.beheer.editions.checklist', $edition);
             })->name('werkgroep.checklist');

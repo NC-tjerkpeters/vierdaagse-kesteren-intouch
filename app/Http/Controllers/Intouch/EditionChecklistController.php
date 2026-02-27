@@ -11,7 +11,7 @@ class EditionChecklistController extends Controller
 {
     public function index(Edition $edition)
     {
-        $this->authorize('editions_manage');
+        $this->authorize('checklist_view');
 
         $edition->load('checklistItems');
 
@@ -22,7 +22,7 @@ class EditionChecklistController extends Controller
 
     public function update(Request $request, Edition $edition)
     {
-        $this->authorize('editions_manage');
+        $this->authorize('checklist_view');
 
         $items = $edition->checklistItems;
         $rules = [];
@@ -46,7 +46,7 @@ class EditionChecklistController extends Controller
 
     public function addItem(Request $request, Edition $edition)
     {
-        $this->authorize('editions_manage');
+        $this->authorize('checklist_view');
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],

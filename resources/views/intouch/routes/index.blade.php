@@ -8,7 +8,9 @@
         <h1 class="mb-1">Routes – {{ $edition->name }}</h1>
         <p class="text-muted small mb-0">Beheer wandelroutes per afstand voor de editie</p>
     </div>
+    @can('routes_manage')
     <a href="{{ route('intouch.walk-routes.create') }}" class="btn btn-vierdaagse">Nieuwe route</a>
+    @endcan
 </div>
 
 <div class="card">
@@ -38,14 +40,16 @@
                         <span class="badge bg-secondary">Nee</span>
                         @endif
                     </td>
-                    <td class="text-end">
-                        <a href="{{ route('intouch.walk-routes.edit', $route) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
-                        <form method="post" action="{{ route('intouch.walk-routes.destroy', $route) }}" class="d-inline" onsubmit="return confirm('Weet je het zeker?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Verwijderen</button>
-                        </form>
-                    </td>
+<td class="text-end">
+                            @can('routes_manage')
+                            <a href="{{ route('intouch.walk-routes.edit', $route) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
+                            <form method="post" action="{{ route('intouch.walk-routes.destroy', $route) }}" class="d-inline" onsubmit="return confirm('Weet je het zeker?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Verwijderen</button>
+                            </form>
+                            @endcan
+                        </td>
                 </tr>
                 @empty
                 <tr>

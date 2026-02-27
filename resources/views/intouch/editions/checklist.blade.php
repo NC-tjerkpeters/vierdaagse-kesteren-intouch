@@ -5,7 +5,11 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
+        @can('editions_manage')
         <a href="{{ route('intouch.beheer.editions.index') }}" class="text-muted text-decoration-none small">← Edities</a>
+        @else
+        <a href="{{ route('intouch.dashboard') }}" class="text-muted text-decoration-none small">← Dashboard</a>
+        @endcan
         <h1 class="mb-1">Checklist – {{ $edition->name }}</h1>
         <p class="text-muted small mb-0">{{ $edition->start_date->format('Y') }} – Werkgroep af te vinken</p>
     </div>
@@ -14,11 +18,13 @@
 @if($edition->checklistItems->isEmpty())
     <div class="card">
         <div class="card-body text-center py-5">
-            <p class="text-muted mb-4">Deze editie heeft nog geen checklist-items. Laad de standaardlijst of voeg zelf items toe.</p>
+            <p class="text-muted mb-4">Deze editie heeft nog geen checklist-items.@can('editions_manage') Laad de standaardlijst of voeg zelf items toe.@else Neem contact op met een beheerder om de checklist op te zetten.@endcan</p>
+            @can('editions_manage')
             <form method="post" action="{{ route('intouch.beheer.editions.checklist.init', $edition) }}" class="d-inline">
                 @csrf
                 <button type="submit" class="btn btn-vierdaagse">Laad standaard checklist</button>
             </form>
+            @endcan
         </div>
     </div>
 @else
@@ -79,6 +85,6 @@
 @endif
 
 <p class="text-muted small mt-4">
-    Alle werkgroepleden met toegang tot Edities zien deze checklist en kunnen punten afvinken of notities toevoegen.
+    Werkgroepleden met toegang tot de Checklist kunnen punten afvinken en notities toevoegen.
 </p>
 @endsection

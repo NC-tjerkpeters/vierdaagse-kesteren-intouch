@@ -38,7 +38,8 @@ class PermissionSeeder extends Seeder
                     'inschrijvingen_view', 'inschrijvingen_edit', 'inschrijvingen_export', 'inschrijvingen_medal_overview',
                     'loopoverzicht_view',
                     'sponsors_view', 'sponsors_create', 'sponsors_edit', 'sponsors_delete',
-                    'manage_users', 'instellingen_edit', 'editions_manage', 'finances_view', 'finances_edit',
+                    'manage_users', 'manage_roles', 'instellingen_edit', 'editions_manage', 'finances_view', 'finances_edit',
+                    'routes_view', 'routes_manage', 'checklist_view',
                 ])->pluck('id')
             );
         }

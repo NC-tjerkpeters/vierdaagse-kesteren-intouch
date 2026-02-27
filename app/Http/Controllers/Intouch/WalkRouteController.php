@@ -11,12 +11,12 @@ class WalkRouteController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('editions_manage');
+        $this->authorize('routes_view');
 
         $edition = Edition::current();
         if (! $edition) {
-            return redirect()->route('intouch.beheer.editions.index')
-                ->with('info', 'Selecteer eerst een editie.');
+            return redirect()->route('intouch.dashboard')
+                ->with('info', 'Selecteer eerst een editie (rechtsboven in het menu).');
         }
 
         $walkRoutes = WalkRoute::query()
@@ -36,12 +36,12 @@ class WalkRouteController extends Controller
 
     public function create()
     {
-        $this->authorize('editions_manage');
+        $this->authorize('routes_manage');
 
         $edition = Edition::current();
         if (! $edition) {
-            return redirect()->route('intouch.beheer.editions.index')
-                ->with('info', 'Selecteer eerst een editie.');
+            return redirect()->route('intouch.dashboard')
+                ->with('info', 'Selecteer eerst een editie (rechtsboven in het menu).');
         }
 
         $distances = \App\Models\Distance::query()->orderBy('sort_order')->get();
@@ -54,7 +54,7 @@ class WalkRouteController extends Controller
 
     public function store(Request $request)
     {
-        $this->authorize('editions_manage');
+        $this->authorize('routes_manage');
 
         $edition = Edition::current();
         if (! $edition) {
@@ -87,7 +87,7 @@ class WalkRouteController extends Controller
 
     public function edit(WalkRoute $walkRoute)
     {
-        $this->authorize('editions_manage');
+        $this->authorize('routes_manage');
 
         $walkRoute->load(['edition', 'distance', 'points']);
 
@@ -96,7 +96,7 @@ class WalkRouteController extends Controller
 
     public function update(Request $request, WalkRoute $walkRoute)
     {
-        $this->authorize('editions_manage');
+        $this->authorize('routes_manage');
 
         $data = $request->validate([
             'title' => ['nullable', 'string', 'max:255'],
@@ -129,7 +129,7 @@ class WalkRouteController extends Controller
 
     public function destroy(WalkRoute $walkRoute)
     {
-        $this->authorize('editions_manage');
+        $this->authorize('routes_manage');
 
         $walkRoute->deletePdf();
         $walkRoute->delete();
@@ -139,7 +139,7 @@ class WalkRouteController extends Controller
 
     public function deletePdf(WalkRoute $walkRoute)
     {
-        $this->authorize('editions_manage');
+        $this->authorize('routes_manage');
 
         $walkRoute->deletePdf();
 
