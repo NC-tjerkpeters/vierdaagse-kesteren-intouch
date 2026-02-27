@@ -83,6 +83,7 @@ Route::domain(config('app.intouch_domain'))
             Route::post('werkgroep/routes', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'store'])->name('walk-routes.store');
             Route::get('werkgroep/routes/uit-bibliotheek', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'addFromLibraryForm'])->name('walk-routes.add-from-library-form');
             Route::post('werkgroep/routes/uit-bibliotheek', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'addFromLibrary'])->name('walk-routes.add-from-library');
+            Route::get('werkgroep/routes/{walkRoute}/pdf', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'pdf'])->name('walk-routes.pdf');
             Route::get('werkgroep/routes/{walkRoute}', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'edit'])->name('walk-routes.edit');
             Route::put('werkgroep/routes/{walkRoute}', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'update'])->name('walk-routes.update');
             Route::delete('werkgroep/routes/{walkRoute}', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'destroy'])->name('walk-routes.destroy');
