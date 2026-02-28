@@ -11,7 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->validateCsrfTokens(except: ['webhooks/mollie/sponsors', 'vrienden/aanmelden']);
+        $middleware->validateCsrfTokens(except: ['webhooks/mollie/sponsors', 'webhooks/mollie/registrations', 'vrienden/aanmelden']);
         $middleware->redirectTo(guests: function (\Illuminate\Http\Request $request) {
             $host = $request->getHost();
             $intouchDomain = config('app.intouch_domain');

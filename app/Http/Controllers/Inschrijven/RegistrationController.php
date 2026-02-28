@@ -69,7 +69,7 @@ class RegistrationController extends Controller
         ];
 
         if (! app()->environment('local')) {
-            $paymentData['webhookUrl'] = config('app.url') . config('mollie.webhooks.path');
+            $paymentData['webhookUrl'] = route('webhooks.mollie.registrations');
         }
 
         $payment = Mollie::api()->payments->create($paymentData);

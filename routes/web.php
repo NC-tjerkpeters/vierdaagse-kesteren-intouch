@@ -39,6 +39,10 @@ Route::post('/webhooks/mollie/sponsors', \App\Http\Controllers\Inschrijven\Spons
     ->middleware('throttle:60,1')
     ->name('webhooks.mollie.sponsors');
 
+Route::post('/webhooks/mollie/registrations', \App\Http\Controllers\Inschrijven\RegistrationWebhookController::class)
+    ->middleware('throttle:60,1')
+    ->name('webhooks.mollie.registrations');
+
 Route::domain(config('app.intouch_domain'))
     ->name('intouch.')
     ->group(function () {
