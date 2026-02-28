@@ -95,7 +95,7 @@ De route staat op het **inschrijven-domein**; CSRF is uitgeschakeld voor dit end
 De webhook wordt **per betaling** ingesteld; je hoeft geen extra webhook in het Mollie-dashboard te registreren. De URL wordt automatisch meegegeven bij het aanmaken van de betaling.
 
 De webhook-URL is: `https://inschrijven.vierdaagsekesteren.nl/webhooks/mollie/sponsors`  
-(gebaseerd op je `APP_URL` of `SPONSORS_WEBHOOK_URL`)
+Standaard: `APP_URL` + `/webhooks/mollie/sponsors`. Zet `SPONSORS_WEBHOOK_URL` alleen als de webhook op een ander domein moet uitkomen.
 
 ## Intouch
 

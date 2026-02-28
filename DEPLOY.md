@@ -47,9 +47,11 @@ php artisan route:clear
 php artisan view:clear
 ```
 
+**Na beveiligingsupdates of grote wijzigingen:** zie [docs/PRODUCTIE_INSTRUCTIES.md](docs/PRODUCTIE_INSTRUCTIES.md) voor eventuele extra stappen.
+
 ## Document root
 
-Voor **inschrijven**, **intouch** en **scanner**: document root = `~/vierdaagse/public` (of jouw pad + `/public`).
+Voor **inschrijven**, **intouch**, **scanner** en **routes**: document root = `~/vierdaagse/public` (of jouw pad + `/public`).
 
 ## Eerste inlog
 

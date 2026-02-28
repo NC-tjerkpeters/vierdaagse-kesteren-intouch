@@ -37,7 +37,7 @@ De wijzigingen werken direct. Optioneel kun je het volgende instellen:
 
 ### QR-scanner: numeriek ID uitschakelen
 
-Standaard accepteren oude scanners nog steeds een numeriek deelnemer-ID (bijv. `123`). Voor extra beveiliging kun je dit uitschakelen. **Let op:** Controleer of al je scanners de volledige `vierdaagsekesteren:123:uuid` QR-code lezen.
+Standaard accepteren oude scanners nog steeds een numeriek deelnemer-ID (bijv. `123`) naast de volledige QR-code (`vierdaagsekesteren:123:uuid`). Voor extra beveiliging kun je numeriek ID uitschakelen. **Let op:** Controleer of al je scanners de volledige `vierdaagsekesteren:id:uuid` QR-code lezen.
 
 ```env
 # Zet op false om alleen volledige QR-codes toe te staan (standaard: true)

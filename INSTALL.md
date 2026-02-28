@@ -71,10 +71,11 @@ composer install --no-dev --optimize-autoloader
 ## Stap 4: Document root
 
 1. Ga naar **Site Tools → Domains**.
-2. Voor elk domein (inschrijven, intouch, scanner):
+2. Voor elk domein (**inschrijven**, **intouch**, **scanner**, **routes**):
    - Klik op het domein → **Manage**.
    - Stel **Document root** in op: `~/vierdaagse/public`  
      (of het pad waar `public` van je Laravel-installatie staat).
+3. Alle vier subdomeinen moeten naar dezelfde Laravel-installatie wijzen.
 
 ---
 
@@ -131,6 +132,7 @@ composer install --no-dev --optimize-autoloader
 
    # Optioneel: scanner, noodnummers (ook via Beheer → Instellingen)
    SCANNER_MIN_MINUTES_BETWEEN_SCANS=5
+   SCANNER_ALLOW_NUMERIC_ID_FALLBACK=true
    APP_NOODNUMMERS="06 52 44 16 10, 06 40 89 37 40"
 
    MAIL_MAILER=log
@@ -160,7 +162,7 @@ php artisan db:seed --class=PermissionSeeder --force
 
 ## Stap 7: Storage-link, rechten en cache
 
-> **Na beveiligingsupdates:** Zie [docs/PRODUCTIE_INSTRUCTIES.md](docs/PRODUCTIE_INSTRUCTIES.md) voor instructies.
+> **Na beveiligingsupdates of grote wijzigingen:** Zie [docs/PRODUCTIE_INSTRUCTIES.md](docs/PRODUCTIE_INSTRUCTIES.md) voor gedragswijzigingen en eventuele extra stappen.
 
 ```bash
 php artisan storage:link
@@ -224,10 +226,10 @@ Zo niet, plaats ze handmatig.
 
 - [ ] PHP 8.2+
 - [ ] Composer-dependencies geïnstalleerd
-- [ ] `.env` correct ingevuld
+- [ ] `.env` correct ingevuld (inclusief `ROUTES_DOMAIN` – verplicht voor het wandelroutes-domein)
 - [ ] Database migraties uitgevoerd
 - [ ] `php artisan db:seed` uitgevoerd
-- [ ] Document root van alle domeinen op `public`
+- [ ] Document root van alle vier domeinen (inschrijven, intouch, scanner, routes) op `public`
 - [ ] Storage-link aangemaakt
 - [ ] Mollie live key en webhook (inschrijvingen) actief
 - [ ] Microsoft Graph (Intouch) geconfigureerd
