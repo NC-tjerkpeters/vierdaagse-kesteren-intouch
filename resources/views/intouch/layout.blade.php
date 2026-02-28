@@ -75,7 +75,7 @@
                     <a class="nav-link" href="{{ route('intouch.scan-overview.index') }}">Loopoverzicht</a>
                 </li>
                 @endcan
-                @if(auth()->user()->hasPermission('finances_view') || auth()->user()->hasPermission('editions_manage') || auth()->user()->hasPermission('routes_view') || auth()->user()->hasPermission('checklist_view'))
+                @if(auth()->user()->hasPermission('finances_view') || auth()->user()->hasPermission('editions_manage') || auth()->user()->hasPermission('routes_view') || auth()->user()->hasPermission('checklist_view') || auth()->user()->hasPermission('vrijwilligers_view'))
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Werkgroep</a>
                     <ul class="dropdown-menu">
@@ -88,6 +88,9 @@
                         @endcan
                         @can('checklist_view')
                         <li><a class="dropdown-item" href="{{ route('intouch.werkgroep.checklist') }}">Checklist</a></li>
+                        @endcan
+                        @can('vrijwilligers_view')
+                        <li><a class="dropdown-item" href="{{ route('intouch.volunteers.index') }}">Vrijwilligersrooster</a></li>
                         @endcan
                     </ul>
                 </li>

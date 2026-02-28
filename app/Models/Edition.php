@@ -42,6 +42,11 @@ class Edition extends Model
         return $this->hasMany(EventDay::class);
     }
 
+    public function volunteers(): HasMany
+    {
+        return $this->hasMany(Volunteer::class);
+    }
+
     public static function active(): ?self
     {
         return static::query()->where('is_active', true)->first();

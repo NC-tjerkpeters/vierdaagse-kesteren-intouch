@@ -13,6 +13,8 @@ return [
         ['group' => 'Communicatie', 'slug' => 'communicatie_view', 'name' => 'Bekijken'],
         ['group' => 'Communicatie', 'slug' => 'communicatie_send', 'name' => 'E-mails versturen'],
         ['group' => 'Communicatie', 'slug' => 'communicatie_templates', 'name' => 'Templates beheren'],
+        ['group' => 'Vrijwilligers', 'slug' => 'vrijwilligers_view', 'name' => 'Bekijken'],
+        ['group' => 'Vrijwilligers', 'slug' => 'vrijwilligers_manage', 'name' => 'Beheren'],
         ['group' => 'Inschrijvingen', 'slug' => 'inschrijvingen_medal_overview', 'name' => 'Medaille-overzicht'],
         ['group' => 'Loopoverzicht', 'slug' => 'loopoverzicht_view', 'name' => 'Bekijken'],
         ['group' => 'Sponsors', 'slug' => 'sponsors_view', 'name' => 'Bekijken'],

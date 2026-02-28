@@ -91,6 +91,13 @@ Route::domain(config('app.intouch_domain'))
             Route::put('beheer/edities/{edition}/checklist', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'update'])->name('beheer.editions.checklist.update');
             Route::post('beheer/edities/{edition}/checklist/items', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'addItem'])->name('beheer.editions.checklist.add-item');
             Route::post('beheer/edities/{edition}/checklist/init', [\App\Http\Controllers\Intouch\EditionChecklistController::class, 'initFromDefaults'])->name('beheer.editions.checklist.init');
+            Route::get('werkgroep/vrijwilligers', [\App\Http\Controllers\Intouch\VolunteerController::class, 'index'])->name('volunteers.index');
+            Route::get('werkgroep/vrijwilligers/aanmaken', [\App\Http\Controllers\Intouch\VolunteerController::class, 'create'])->name('volunteers.create');
+            Route::post('werkgroep/vrijwilligers', [\App\Http\Controllers\Intouch\VolunteerController::class, 'store'])->name('volunteers.store');
+            Route::get('werkgroep/vrijwilligers/{volunteer}/bewerken', [\App\Http\Controllers\Intouch\VolunteerController::class, 'edit'])->name('volunteers.edit');
+            Route::put('werkgroep/vrijwilligers/{volunteer}', [\App\Http\Controllers\Intouch\VolunteerController::class, 'update'])->name('volunteers.update');
+            Route::delete('werkgroep/vrijwilligers/{volunteer}', [\App\Http\Controllers\Intouch\VolunteerController::class, 'destroy'])->name('volunteers.destroy');
+            Route::post('werkgroep/vrijwilligers/slot', [\App\Http\Controllers\Intouch\VolunteerController::class, 'assignSlot'])->name('volunteers.assign-slot');
             Route::get('werkgroep/routes', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'index'])->name('walk-routes.index');
             Route::get('werkgroep/routes/aanmaken', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'create'])->name('walk-routes.create');
             Route::post('werkgroep/routes', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'store'])->name('walk-routes.store');

@@ -82,6 +82,7 @@ Voor multi-domein lokaal: `INSCHRIJVEN_DOMAIN`, `INTOUCH_DOMAIN`, `SCANNER_DOMAI
 - **[docs/PRODUCTIE_INSTRUCTIES.md](docs/PRODUCTIE_INSTRUCTIES.md)** – Na beveiligingsupdates of wijzigingen
 - **[docs/ROUTEBIBLIOTHEEK.md](docs/ROUTEBIBLIOTHEEK.md)** – Routebibliotheek en hergebruik over edities
 - **[docs/COMMUNICATIE.md](docs/COMMUNICATIE.md)** – E-mail naar deelnemers (templates, plaatshouders)
+- **[docs/VRIJWILLIGERS.md](docs/VRIJWILLIGERS.md)** – Vrijwilligersrooster
 - **[docs/ARCHITECTUUR.md](docs/ARCHITECTUUR.md)** – Architectuur en begrippen voor ontwikkelaars
 - **[docs/SPONSOREN_FORMULIER.md](docs/SPONSOREN_FORMULIER.md)** – Vrienden-formulier integreren
 
