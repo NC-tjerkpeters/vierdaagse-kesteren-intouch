@@ -19,6 +19,9 @@
     <li class="nav-item">
         <a class="nav-link {{ $tab === 'rooster' ? 'active' : '' }}" href="{{ route('intouch.volunteers.index', ['tab' => 'rooster']) }}">Rooster</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link {{ $tab === 'verkeersregelaars' ? 'active' : '' }}" href="{{ route('intouch.volunteers.index', ['tab' => 'verkeersregelaars']) }}">Verkeersregelaars</a>
+    </li>
 </ul>
 
 @if($tab === 'lijst')
@@ -69,7 +72,7 @@
         </table>
     </div>
 </div>
-@else
+@elseif($tab === 'rooster')
 <div class="card">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -119,5 +122,47 @@
 @if($volunteers->isEmpty())
 <p class="text-muted mt-2">Voeg eerst vrijwilligers toe om ze in te plannen.</p>
 @endif
+@elseif($tab === 'verkeersregelaars')
+<div class="card">
+    <div class="card-body">
+        <p class="text-muted">Verkeersregelaars staan langs de route. Plan ze per route in.</p>
+        @forelse($walkRoutes as $route)
+        <div class="border rounded p-3 mb-3">
+            <strong>{{ $route->distance?->name ?? '-' }} – {{ $route->title ?: 'Route' }}</strong>
+            <ul class="mb-2 mt-2">
+                @foreach($route->volunteerRouteAssignments as $ass)
+                <li>
+                    {{ $ass->volunteer?->name ?? '-' }}
+                    @can('vrijwilligers_manage')
+                    <form method="post" action="{{ route('intouch.volunteers.remove-verkeersregelaar') }}" class="d-inline">
+                        @csrf
+                        <input type="hidden" name="walk_route_id" value="{{ $route->id }}">
+                        <input type="hidden" name="volunteer_id" value="{{ $ass->volunteer_id }}">
+                        <button type="submit" class="btn btn-sm btn-link text-danger p-0 ms-1">Verwijderen</button>
+                    </form>
+                    @endcan
+                </li>
+                @endforeach
+            </ul>
+            @can('vrijwilligers_manage')
+            <form method="post" action="{{ route('intouch.volunteers.assign-verkeersregelaar') }}" class="d-flex gap-2 align-items-center">
+                @csrf
+                <input type="hidden" name="walk_route_id" value="{{ $route->id }}">
+                @php $assignedIds = $route->volunteerRouteAssignments->pluck('volunteer_id')->toArray(); @endphp
+                <select name="volunteer_id" class="form-select form-select-sm" style="max-width: 200px;">
+                    <option value="">– kies vrijwilliger –</option>
+                    @foreach($volunteers->whereNotIn('id', $assignedIds) as $v)
+                    <option value="{{ $v->id }}">{{ $v->name }}</option>
+                    @endforeach
+                </select>
+                <button type="submit" class="btn btn-sm btn-vierdaagse">Toevoegen</button>
+            </form>
+            @endcan
+        </div>
+        @empty
+        <p class="text-muted mb-0">Geen routes. Voeg routes toe via Werkgroep → Routes.</p>
+        @endforelse
+    </div>
+</div>
 @endif
 @endsection

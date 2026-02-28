@@ -98,6 +98,8 @@ Route::domain(config('app.intouch_domain'))
             Route::put('werkgroep/vrijwilligers/{volunteer}', [\App\Http\Controllers\Intouch\VolunteerController::class, 'update'])->name('volunteers.update');
             Route::delete('werkgroep/vrijwilligers/{volunteer}', [\App\Http\Controllers\Intouch\VolunteerController::class, 'destroy'])->name('volunteers.destroy');
             Route::post('werkgroep/vrijwilligers/slot', [\App\Http\Controllers\Intouch\VolunteerController::class, 'assignSlot'])->name('volunteers.assign-slot');
+            Route::post('werkgroep/vrijwilligers/verkeersregelaar', [\App\Http\Controllers\Intouch\VolunteerController::class, 'assignVerkeersregelaar'])->name('volunteers.assign-verkeersregelaar');
+            Route::post('werkgroep/vrijwilligers/verkeersregelaar/verwijderen', [\App\Http\Controllers\Intouch\VolunteerController::class, 'removeVerkeersregelaar'])->name('volunteers.remove-verkeersregelaar');
             Route::get('werkgroep/routes', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'index'])->name('walk-routes.index');
             Route::get('werkgroep/routes/aanmaken', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'create'])->name('walk-routes.create');
             Route::post('werkgroep/routes', [\App\Http\Controllers\Intouch\WalkRouteController::class, 'store'])->name('walk-routes.store');

@@ -51,6 +51,11 @@ class WalkRoute extends Model
         return $this->hasMany(RoutePoint::class, 'walk_route_id')->orderBy('sort_order');
     }
 
+    public function volunteerRouteAssignments(): HasMany
+    {
+        return $this->hasMany(VolunteerRouteAssignment::class, 'walk_route_id');
+    }
+
     public function getPdfUrlAttribute(): ?string
     {
         if (! $this->pdf_path) {

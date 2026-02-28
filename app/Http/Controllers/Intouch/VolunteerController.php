@@ -7,7 +7,9 @@ use App\Models\Edition;
 use App\Models\EventDay;
 use App\Models\Volunteer;
 use App\Models\VolunteerAvailability;
+use App\Models\VolunteerRouteAssignment;
 use App\Models\VolunteerSlot;
+use App\Models\WalkRoute;
 use Illuminate\Http\Request;
 
 class VolunteerController extends Controller
@@ -56,10 +58,17 @@ class VolunteerController extends Controller
             }
         }
 
+        $walkRoutes = WalkRoute::query()
+            ->where('edition_id', $edition->id)
+            ->with(['distance', 'volunteerRouteAssignments.volunteer'])
+            ->orderBy('sort_order')
+            ->get();
+
         return view('intouch.volunteers.index', [
             'edition' => $edition,
             'volunteers' => $volunteers,
             'eventDays' => $eventDays,
+            'walkRoutes' => $walkRoutes,
             'roles' => $roles,
             'slotsByDayRole' => $slotsByDayRole,
             'availabilityByVolunteer' => $availabilityByVolunteer,
@@ -235,5 +244,70 @@ class VolunteerController extends Controller
 
         return redirect()->route('intouch.volunteers.index', ['tab' => 'rooster'])
             ->with('status', 'Rooster bijgewerkt.');
+    }
+
+    public function assignVerkeersregelaar(Request $request)
+    {
+        $this->authorize('vrijwilligers_manage');
+
+        $edition = Edition::current();
+        if (! $edition) {
+            return redirect()->route('intouch.volunteers.index')->with('error', 'Geen editie geselecteerd.');
+        }
+
+        $data = $request->validate([
+            'walk_route_id' => ['required', 'exists:walk_routes,id'],
+            'volunteer_id' => ['nullable', 'exists:volunteers,id'],
+        ]);
+
+        $walkRoute = WalkRoute::findOrFail($data['walk_route_id']);
+        if ($walkRoute->edition_id !== $edition->id) {
+            return redirect()->route('intouch.volunteers.index')->with('error', 'Route niet gevonden.');
+        }
+
+        if (empty($data['volunteer_id'])) {
+            return redirect()->route('intouch.volunteers.index', ['tab' => 'verkeersregelaars'])
+                ->with('error', 'Selecteer een vrijwilliger.');
+        }
+
+        $volunteer = Volunteer::findOrFail($data['volunteer_id']);
+        if ($volunteer->edition_id !== $edition->id) {
+            return redirect()->route('intouch.volunteers.index')->with('error', 'Vrijwilliger niet gevonden.');
+        }
+
+        VolunteerRouteAssignment::firstOrCreate([
+            'volunteer_id' => $data['volunteer_id'],
+            'walk_route_id' => $data['walk_route_id'],
+        ]);
+
+        return redirect()->route('intouch.volunteers.index', ['tab' => 'verkeersregelaars'])
+            ->with('status', 'Verkeersregelaar toegevoegd aan route.');
+    }
+
+    public function removeVerkeersregelaar(Request $request)
+    {
+        $this->authorize('vrijwilligers_manage');
+
+        $edition = Edition::current();
+        if (! $edition) {
+            return redirect()->route('intouch.volunteers.index')->with('error', 'Geen editie geselecteerd.');
+        }
+
+        $data = $request->validate([
+            'walk_route_id' => ['required', 'exists:walk_routes,id'],
+            'volunteer_id' => ['required', 'exists:volunteers,id'],
+        ]);
+
+        $assignment = VolunteerRouteAssignment::query()
+            ->where('walk_route_id', $data['walk_route_id'])
+            ->where('volunteer_id', $data['volunteer_id'])
+            ->first();
+
+        if ($assignment) {
+            $assignment->delete();
+        }
+
+        return redirect()->route('intouch.volunteers.index', ['tab' => 'verkeersregelaars'])
+            ->with('status', 'Verkeersregelaar verwijderd van route.');
     }
 }

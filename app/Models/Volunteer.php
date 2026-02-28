@@ -35,4 +35,9 @@ class Volunteer extends Model
     {
         return $this->availabilities()->where('event_day_id', $eventDayId)->exists();
     }
+
+    public function routeAssignments(): HasMany
+    {
+        return $this->hasMany(VolunteerRouteAssignment::class);
+    }
 }
