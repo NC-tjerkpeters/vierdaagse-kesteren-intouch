@@ -2,10 +2,11 @@
 
 return [
     'roles' => [
-        'scanner' => 'Scanner',
-        'post' => 'Post',
         'start' => 'Start',
+        'post' => 'Post',
         'finish' => 'Finish',
-        'overig' => 'Overig',
+        'fietser_op_route' => 'Fietser op de Route',
+        'auto_op_route' => 'Auto op de Route',
+        'soos' => 'Soos',
     ],
 ];
