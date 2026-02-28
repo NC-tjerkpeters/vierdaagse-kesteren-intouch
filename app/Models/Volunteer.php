@@ -25,4 +25,14 @@ class Volunteer extends Model
     {
         return $this->hasMany(VolunteerSlot::class);
     }
+
+    public function availabilities(): HasMany
+    {
+        return $this->hasMany(VolunteerAvailability::class);
+    }
+
+    public function isAvailableOnEventDay(int $eventDayId): bool
+    {
+        return $this->availabilities()->where('event_day_id', $eventDayId)->exists();
+    }
 }

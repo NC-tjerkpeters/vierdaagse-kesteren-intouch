@@ -30,6 +30,7 @@
                     <th>Naam</th>
                     <th>E-mail</th>
                     <th>Telefoon</th>
+                    <th>Beschikbaar</th>
                     <th>Ingepland</th>
                     <th></th>
                 </tr>
@@ -40,6 +41,13 @@
                     <td>{{ $v->name }}</td>
                     <td>{{ $v->email }}</td>
                     <td>{{ $v->phone ?? '–' }}</td>
+                    <td>
+                        @if($v->availabilities->isEmpty())
+                        <span class="text-muted">–</span>
+                        @else
+                        {{ $v->availabilities->sortBy(fn($a) => $a->eventDay?->sort_order)->map(fn($a) => $a->eventDay?->name)->filter()->join(', ') }}
+                        @endif
+                    </td>
                     <td>{{ $v->slots_count }}x</td>
                     <td>
                         @can('vrijwilligers_manage')
@@ -54,7 +62,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="text-muted">Nog geen vrijwilligers. @can('vrijwilligers_manage')<a href="{{ route('intouch.volunteers.create') }}">Voeg er een toe</a>.@endcan</td>
+                    <td colspan="6" class="text-muted">Nog geen vrijwilligers. @can('vrijwilligers_manage')<a href="{{ route('intouch.volunteers.create') }}">Voeg er een toe</a>.@endcan</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -89,7 +97,10 @@
                                 <select name="volunteer_id" class="form-select form-select-sm" onchange="this.form.submit()">
                                     <option value="">– kies –</option>
                                     @foreach($volunteers as $v)
-                                    <option value="{{ $v->id }}" @selected($slot && $slot->volunteer_id === $v->id)>{{ $v->name }}</option>
+                                    @php $available = in_array($day->id, $availabilityByVolunteer[$v->id] ?? []); @endphp
+                                    <option value="{{ $v->id }}" @selected($slot && $slot->volunteer_id === $v->id)>
+                                        {{ $v->name }}{{ !$available ? ' (niet beschikbaar)' : '' }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </form>

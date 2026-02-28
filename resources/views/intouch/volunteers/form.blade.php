@@ -36,6 +36,20 @@
                 @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">Beschikbaar op</label>
+                <p class="text-muted small mb-2">Op welke avonden is deze vrijwilliger beschikbaar?</p>
+                <div class="d-flex flex-wrap gap-3">
+                    @foreach($eventDays as $day)
+                    <div class="form-check">
+                        <input type="checkbox" id="day_{{ $day->id }}" name="available_days[]" class="form-check-input" value="{{ $day->id }}"
+                            @checked(in_array($day->id, old('available_days', $volunteer?->availabilities->pluck('event_day_id')->toArray() ?? [])))>
+                        <label class="form-check-label" for="day_{{ $day->id }}">{{ $day->name }}</label>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
             <div class="mb-4">
                 <label for="notes" class="form-label">Opmerkingen</label>
                 <textarea id="notes" name="notes" class="form-control @error('notes') is-invalid @enderror" rows="2">{{ old('notes', $volunteer?->notes) }}</textarea>

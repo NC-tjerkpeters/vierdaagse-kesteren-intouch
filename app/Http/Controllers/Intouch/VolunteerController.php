@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Edition;
 use App\Models\EventDay;
 use App\Models\Volunteer;
+use App\Models\VolunteerAvailability;
 use App\Models\VolunteerSlot;
 use Illuminate\Http\Request;
 
@@ -25,9 +26,15 @@ class VolunteerController extends Controller
 
         $volunteers = Volunteer::query()
             ->where('edition_id', $edition->id)
+            ->with(['availabilities', 'availabilities.eventDay'])
             ->withCount('slots')
             ->orderBy('name')
             ->get();
+
+        $availabilityByVolunteer = [];
+        foreach ($volunteers as $v) {
+            $availabilityByVolunteer[$v->id] = $v->availabilities->pluck('event_day_id')->toArray();
+        }
 
         $eventDays = EventDay::query()
             ->where('edition_id', $edition->id)
@@ -55,6 +62,7 @@ class VolunteerController extends Controller
             'eventDays' => $eventDays,
             'roles' => $roles,
             'slotsByDayRole' => $slotsByDayRole,
+            'availabilityByVolunteer' => $availabilityByVolunteer,
             'tab' => $tab,
         ]);
     }
@@ -69,9 +77,12 @@ class VolunteerController extends Controller
                 ->with('info', 'Selecteer eerst een editie.');
         }
 
+        $eventDays = EventDay::query()->where('edition_id', $edition->id)->orderBy('sort_order')->get();
+
         return view('intouch.volunteers.form', [
             'volunteer' => null,
             'edition' => $edition,
+            'eventDays' => $eventDays,
         ]);
     }
 
@@ -89,10 +100,25 @@ class VolunteerController extends Controller
             'email' => ['required', 'email'],
             'phone' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'available_days' => ['nullable', 'array'],
+            'available_days.*' => ['integer', 'exists:event_days,id'],
         ]);
 
         $data['edition_id'] = $edition->id;
-        Volunteer::create($data);
+        $availableDays = $data['available_days'] ?? [];
+        unset($data['available_days']);
+
+        $volunteer = Volunteer::create($data);
+
+        foreach ($availableDays as $eventDayId) {
+            $day = EventDay::find($eventDayId);
+            if ($day && $day->edition_id === $edition->id) {
+                VolunteerAvailability::create([
+                    'volunteer_id' => $volunteer->id,
+                    'event_day_id' => $eventDayId,
+                ]);
+            }
+        }
 
         return redirect()->route('intouch.volunteers.index')
             ->with('status', 'Vrijwilliger toegevoegd.');
@@ -107,9 +133,13 @@ class VolunteerController extends Controller
             return redirect()->route('intouch.volunteers.index')->with('error', 'Vrijwilliger niet gevonden.');
         }
 
+        $volunteer->load('availabilities');
+        $eventDays = EventDay::query()->where('edition_id', $edition->id)->orderBy('sort_order')->get();
+
         return view('intouch.volunteers.form', [
             'volunteer' => $volunteer,
             'edition' => $edition,
+            'eventDays' => $eventDays,
         ]);
     }
 
@@ -127,9 +157,25 @@ class VolunteerController extends Controller
             'email' => ['required', 'email'],
             'phone' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'available_days' => ['nullable', 'array'],
+            'available_days.*' => ['integer', 'exists:event_days,id'],
         ]);
 
+        $availableDays = $data['available_days'] ?? [];
+        unset($data['available_days']);
+
         $volunteer->update($data);
+
+        $volunteer->availabilities()->delete();
+        foreach ($availableDays as $eventDayId) {
+            $day = EventDay::find($eventDayId);
+            if ($day && $day->edition_id === $edition->id) {
+                VolunteerAvailability::create([
+                    'volunteer_id' => $volunteer->id,
+                    'event_day_id' => $eventDayId,
+                ]);
+            }
+        }
 
         return redirect()->route('intouch.volunteers.index')
             ->with('status', 'Vrijwilliger bijgewerkt.');
