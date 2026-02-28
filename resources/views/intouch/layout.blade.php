@@ -32,6 +32,7 @@
         .card { border-radius: 10px; border: none; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
         .card-header { background: linear-gradient(135deg, var(--vk-green) 0%, var(--vk-green-dark) 100%); color: #fff; border-radius: 10px 10px 0 0; font-weight: 600; }
     </style>
+    @stack('styles')
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark navbar-vierdaagse sticky-top">

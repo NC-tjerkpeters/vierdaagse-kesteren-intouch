@@ -31,9 +31,10 @@
 
             <div class="mb-4">
                 <label for="body" class="form-label">Bericht (HTML) *</label>
-                <textarea id="body" name="body" class="form-control font-monospace @error('body') is-invalid @enderror" rows="15" required>{{ old('body', $template?->body) }}</textarea>
-                @error('body')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                <small class="text-muted">Gebruik &lt;p&gt;, &lt;strong&gt;, &lt;a href=""&gt;, &lt;ul&gt;, &lt;li&gt; etc.</small>
+                <div id="body-editor" class="border rounded bg-white" style="min-height: 200px;"></div>
+                <textarea id="body" name="body" class="d-none @error('body') is-invalid @enderror" required>{{ old('body', $template?->body) }}</textarea>
+                @error('body')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                <small class="text-muted">Plaatshouders: @{{voornaam}}, @{{achternaam}}, @{{afstand}}, @{{edition_name}}, @{{start_datum}}, @{{eind_datum}}, @{{inschrijf_url}}, @{{routes_url}}</small>
             </div>
 
             <button type="submit" class="btn btn-vierdaagse">{{ $template ? 'Bijwerken' : 'Aanmaken' }}</button>
@@ -42,3 +43,43 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+@endpush
+
+@push('scripts')
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editorEl = document.getElementById('body-editor');
+    const textarea = document.getElementById('body');
+    if (!editorEl || !textarea) return;
+
+    const quill = new Quill(editorEl, {
+        theme: 'snow',
+        placeholder: 'Schrijf je bericht...',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['link'],
+                ['clean']
+            ]
+        }
+    });
+
+    quill.root.innerHTML = textarea.value || '';
+
+    quill.on('text-change', function() {
+        textarea.value = quill.root.innerHTML;
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    document.querySelector('form').addEventListener('submit', function() {
+        textarea.value = quill.root.innerHTML;
+    });
+});
+</script>
+@endpush
