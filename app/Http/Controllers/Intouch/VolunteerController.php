@@ -88,6 +88,14 @@ class VolunteerController extends Controller
                 ->toArray();
         }
 
+        // Vrijwilliger → event_day_ids waarop ze in het rooster staan
+        $roosterDaysByVolunteer = VolunteerSlot::query()
+            ->whereIn('volunteer_id', $volunteers->pluck('id'))
+            ->get()
+            ->groupBy('volunteer_id')
+            ->map(fn ($slots) => $slots->pluck('event_day_id')->unique()->values()->toArray())
+            ->toArray();
+
         // Waarschuwing alleen als vrijwilliger op meerdere routes staat die op dezelfde dag vallen
         $assignmentSameDayConflict = [];
         foreach ($walkRoutes as $route) {
@@ -107,6 +115,41 @@ class VolunteerController extends Controller
             }
         }
 
+        // Waarschuwing als vrijwilliger zowel in rooster als verkeersregelaar op dezelfde dag
+        $assignmentRosterConflict = [];
+        foreach ($walkRoutes as $route) {
+            $routeDayIds = $eventDaysByRoute[$route->id] ?? [];
+            foreach ($route->volunteerRouteAssignments as $ass) {
+                $vid = $ass->volunteer_id;
+                $roosterDays = $roosterDaysByVolunteer[$vid] ?? [];
+                if (! empty(array_intersect($routeDayIds, $roosterDays))) {
+                    $assignmentRosterConflict[$vid][$route->id] = true;
+                }
+            }
+        }
+
+        // Beschikbare verkeersregelaars: ook uitsluiten als ze op route-dagen in het rooster staan
+        foreach ($walkRoutes as $route) {
+            $routeDayIds = $eventDaysByRoute[$route->id] ?? [];
+            $availableVerkeersregelaarsByRoute[$route->id] = array_values(array_filter(
+                $availableVerkeersregelaarsByRoute[$route->id],
+                fn ($vid) => empty(array_intersect($routeDayIds, $roosterDaysByVolunteer[$vid] ?? []))
+            ));
+        }
+
+        // Vrijwilliger → event_day_ids waarop ze verkeersregelaar zijn (voor rooster-tab)
+        $verkeersregelaarDaysByVolunteer = [];
+        foreach ($walkRoutes as $route) {
+            $routeDayIds = $eventDaysByRoute[$route->id] ?? [];
+            foreach ($route->volunteerRouteAssignments as $ass) {
+                $vid = $ass->volunteer_id;
+                $verkeersregelaarDaysByVolunteer[$vid] = array_unique(array_merge(
+                    $verkeersregelaarDaysByVolunteer[$vid] ?? [],
+                    $routeDayIds
+                ));
+            }
+        }
+
         return view('intouch.volunteers.index', [
             'edition' => $edition,
             'volunteers' => $volunteers,
@@ -118,6 +161,8 @@ class VolunteerController extends Controller
             'eventDaysByRoute' => $eventDaysByRoute,
             'availableVerkeersregelaarsByRoute' => $availableVerkeersregelaarsByRoute,
             'assignmentSameDayConflict' => $assignmentSameDayConflict,
+            'assignmentRosterConflict' => $assignmentRosterConflict,
+            'verkeersregelaarDaysByVolunteer' => $verkeersregelaarDaysByVolunteer,
             'tab' => $tab,
         ]);
     }
@@ -285,6 +330,18 @@ class VolunteerController extends Controller
             if ($volunteer->edition_id !== $edition->id) {
                 return redirect()->route('intouch.volunteers.index')->with('error', 'Ongeldige vrijwilliger.');
             }
+            $routesOnThisDay = WalkRoute::query()
+                ->where('edition_id', $edition->id)
+                ->get()
+                ->filter(fn ($r) => $r->runsOnEventDay($eventDay));
+            $isVerkeersregelaarOnDay = VolunteerRouteAssignment::query()
+                ->where('volunteer_id', $volunteer->id)
+                ->whereIn('walk_route_id', $routesOnThisDay->pluck('id'))
+                ->exists();
+            if ($isVerkeersregelaarOnDay) {
+                return redirect()->route('intouch.volunteers.index', ['tab' => 'rooster'])
+                    ->with('error', 'Deze vrijwilliger staat al als verkeersregelaar op een route op deze dag. Iemand kan niet tegelijk in het rooster én verkeersregelaar langs de route staan.');
+            }
             VolunteerSlot::create([
                 'volunteer_id' => $data['volunteer_id'],
                 'event_day_id' => $data['event_day_id'],
@@ -339,6 +396,14 @@ class VolunteerController extends Controller
         if (empty(array_intersect($routeDayIds, $volunteerDayIds))) {
             return redirect()->route('intouch.volunteers.index', ['tab' => 'verkeersregelaars'])
                 ->with('error', 'Deze vrijwilliger is niet beschikbaar op de dag(en) waarop deze route loopt.');
+        }
+        $volunteerRosterDays = VolunteerSlot::query()
+            ->where('volunteer_id', $volunteer->id)
+            ->pluck('event_day_id')
+            ->toArray();
+        if (! empty(array_intersect($routeDayIds, $volunteerRosterDays))) {
+            return redirect()->route('intouch.volunteers.index', ['tab' => 'verkeersregelaars'])
+                ->with('error', 'Deze vrijwilliger staat al in het rooster op de dag(en) van deze route. Iemand kan niet tegelijk ingepland zijn én verkeersregelaar langs de route.');
         }
 
         VolunteerRouteAssignment::firstOrCreate([

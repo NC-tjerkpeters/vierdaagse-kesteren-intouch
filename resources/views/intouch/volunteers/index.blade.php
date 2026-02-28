@@ -75,6 +75,7 @@
     </div>
 </div>
 @elseif($tab === 'rooster')
+<p class="text-muted mb-3">Vrijwilligers die als verkeersregelaar op een route staan, kunnen niet tegelijk in het rooster op die dag.</p>
 <div class="card">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -95,6 +96,8 @@
                         @php $slot = $slotsByDayRole[$day->id][$roleKey] ?? null; @endphp
                         <td>
                             @can('vrijwilligers_manage')
+                            @php $slotConflict = $slot && in_array($day->id, $verkeersregelaarDaysByVolunteer[$slot->volunteer_id] ?? []); @endphp
+                            @if($slotConflict)<span class="text-danger" title="Staat ook als verkeersregelaar op deze dag">⛔</span> @endif
                             <form method="post" action="{{ route('intouch.volunteers.assign-slot') }}" class="d-inline">
                                 @csrf
                                 <input type="hidden" name="event_day_id" value="{{ $day->id }}">
@@ -102,15 +105,27 @@
                                 <select name="volunteer_id" class="form-select form-select-sm" onchange="this.form.submit()">
                                     <option value="">– kies –</option>
                                     @foreach($volunteers as $v)
-                                    @php $available = in_array($day->id, $availabilityByVolunteer[$v->id] ?? []); @endphp
-                                    <option value="{{ $v->id }}" @selected($slot && $slot->volunteer_id === $v->id)>
-                                        {{ $v->name }}{{ !$available ? ' (niet beschikbaar)' : '' }}
+                                    @php
+                                        $available = in_array($day->id, $availabilityByVolunteer[$v->id] ?? []);
+                                        $isVerkeersregelaarDieDag = in_array($day->id, $verkeersregelaarDaysByVolunteer[$v->id] ?? []);
+                                        $isCurrentSlot = $slot && $slot->volunteer_id === $v->id;
+                                        $showOption = !$isVerkeersregelaarDieDag || $isCurrentSlot;
+                                    @endphp
+                                    @if($showOption)
+                                    <option value="{{ $v->id }}" @selected($isCurrentSlot) @disabled($isVerkeersregelaarDieDag && !$isCurrentSlot)>
+                                        {{ $v->name }}{{ !$available ? ' (niet beschikbaar)' : '' }}{{ $isVerkeersregelaarDieDag ? ' – verkeersregelaar die dag' : '' }}
                                     </option>
+                                    @endif
                                     @endforeach
                                 </select>
                             </form>
                             @else
-                            {{ $slot && $slot->volunteer ? $slot->volunteer->name : '–' }}
+                            @if($slot && $slot->volunteer)
+                                @php $slotConflict = in_array($day->id, $verkeersregelaarDaysByVolunteer[$slot->volunteer_id] ?? []); @endphp
+                                @if($slotConflict)<span class="text-danger" title="Staat ook als verkeersregelaar op deze dag">⛔</span> @endif{{ $slot->volunteer->name }}
+                            @else
+                            –
+                            @endif
                             @endcan
                         </td>
                         @endforeach
@@ -127,7 +142,7 @@
 @elseif($tab === 'verkeersregelaars')
 <div class="card">
     <div class="card-body">
-        <p class="text-muted mb-3">Verkeersregelaars staan langs de route. Plan ze per route in. Alleen bevoegde vrijwilligers die beschikbaar zijn op de dag(en) van de route worden getoond. <span class="text-warning">⚠️</span> = dubbel gepland op dezelfde dag.</p>
+        <p class="text-muted mb-3">Verkeersregelaars staan langs de route. Plan ze per route in. Alleen bevoegde vrijwilligers die beschikbaar zijn op de dag(en) van de route worden getoond. Vrijwilligers die al in het rooster staan op die dag kunnen niet gekozen worden. <span class="text-warning">⚠️</span> = dubbel gepland op dezelfde dag. <span class="text-danger">⛔</span> = staat ook in het rooster op deze dag (niet mogelijk).</p>
         @forelse($walkRoutes as $route)
         @php
             $routeDayIds = $eventDaysByRoute[$route->id] ?? [];
@@ -142,7 +157,9 @@
             <ul class="mb-2 mt-2">
                 @foreach($route->volunteerRouteAssignments as $ass)
                 <li>
-                    @if(($assignmentSameDayConflict[$ass->volunteer_id][$route->id] ?? false))
+                    @if(($assignmentRosterConflict[$ass->volunteer_id][$route->id] ?? false))
+                    <span class="text-danger" title="Staat ook in het rooster op deze dag – dit kan niet">⛔</span>
+                    @elseif(($assignmentSameDayConflict[$ass->volunteer_id][$route->id] ?? false))
                     <span class="text-warning" title="Dubbel gepland op dezelfde dag – controleer of dit qua tijd haalbaar is">⚠️</span>
                     @endif
                     {{ $ass->volunteer?->name ?? '-' }}

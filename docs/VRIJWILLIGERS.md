@@ -13,7 +13,7 @@ Module voor het beheren van vrijwilligers en het inplannen per avond en rol.
 - **Bevoegd verkeersregelaar** – Checkbox bij vrijwilliger: mag verkeer regelen langs de route (alleen deze kunnen als verkeersregelaar worden ingepland)
 - **Rooster** – Matrix: dagen × rollen. Per cel kies je welke vrijwilliger ingepland is. Bij het kiezen zie je "(niet beschikbaar)" als iemand die dag niet kan
 - **Rollen** – Scanner, Post, Start, Finish, Overig (aanpasbaar in `config/volunteers.php`)
-- **Verkeersregelaars** – Aparte tab: verkeersregelaars worden per route ingepland (niet in het dag-rooster). Alleen vrijwilligers die bevoegd zijn én beschikbaar op de dag(en) van de route worden getoond. Dubbel gepland op dezelfde dag krijgt een waarschuwing (⚠️).
+- **Verkeersregelaars** – Aparte tab: verkeersregelaars worden per route ingepland (niet in het dag-rooster). Alleen vrijwilligers die bevoegd zijn én beschikbaar op de dag(en) van de route worden getoond. Iemand kan niet tegelijk in het rooster én verkeersregelaar op dezelfde dag staan – dit wordt geblokkeerd en gemeld (⛔). Dubbel gepland op dezelfde dag krijgt een waarschuwing (⚠️).
 
 ## Permissies
 
