@@ -47,9 +47,9 @@ Route::domain(config('app.intouch_domain'))
     ->name('intouch.')
     ->group(function () {
         Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-        Route::post('login', [LoginController::class, 'login']);
+        Route::post('login', [LoginController::class, 'login'])->middleware('throttle:5,1');
         Route::get('login/two-factor', [\App\Http\Controllers\Intouch\Auth\TwoFactorChallengeController::class, 'show'])->name('login.two-factor');
-        Route::post('login/two-factor', [\App\Http\Controllers\Intouch\Auth\TwoFactorChallengeController::class, 'verify'])->name('login.two-factor.verify');
+        Route::post('login/two-factor', [\App\Http\Controllers\Intouch\Auth\TwoFactorChallengeController::class, 'verify'])->middleware('throttle:5,1')->name('login.two-factor.verify');
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
         Route::get('wachtwoord-vergeten', [\App\Http\Controllers\Intouch\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
@@ -156,7 +156,7 @@ Route::domain(config('app.scanner_domain'))
     ->name('scanner.')
     ->group(function () {
         Route::get('login', [ScannerLoginController::class, 'showLoginForm'])->name('login');
-        Route::post('login', [ScannerLoginController::class, 'login']);
+        Route::post('login', [ScannerLoginController::class, 'login'])->middleware('throttle:5,1');
         Route::post('logout', [ScannerLoginController::class, 'logout'])->name('logout');
 
         Route::middleware('auth')->group(function () {
