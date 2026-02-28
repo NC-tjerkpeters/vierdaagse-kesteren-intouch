@@ -88,12 +88,24 @@ class VolunteerController extends Controller
                 ->toArray();
         }
 
-        // Vrijwilligers die op meerdere routes staan (dubbel gepland)
-        $volunteerRouteCounts = VolunteerRouteAssignment::query()
-            ->whereIn('walk_route_id', $walkRoutes->pluck('id'))
-            ->selectRaw('volunteer_id, COUNT(*) as cnt')
-            ->groupBy('volunteer_id')
-            ->pluck('cnt', 'volunteer_id');
+        // Waarschuwing alleen als vrijwilliger op meerdere routes staat die op dezelfde dag vallen
+        $assignmentSameDayConflict = [];
+        foreach ($walkRoutes as $route) {
+            $routeDayIds = $eventDaysByRoute[$route->id] ?? [];
+            foreach ($route->volunteerRouteAssignments as $ass) {
+                $vid = $ass->volunteer_id;
+                $otherAssignments = $walkRoutes
+                    ->filter(fn ($r) => $r->id !== $route->id)
+                    ->filter(fn ($r) => $r->volunteerRouteAssignments->contains('volunteer_id', $vid));
+                foreach ($otherAssignments as $otherRoute) {
+                    $otherDayIds = $eventDaysByRoute[$otherRoute->id] ?? [];
+                    if (! empty(array_intersect($routeDayIds, $otherDayIds))) {
+                        $assignmentSameDayConflict[$vid][$route->id] = true;
+                        break;
+                    }
+                }
+            }
+        }
 
         return view('intouch.volunteers.index', [
             'edition' => $edition,
@@ -105,7 +117,7 @@ class VolunteerController extends Controller
             'availabilityByVolunteer' => $availabilityByVolunteer,
             'eventDaysByRoute' => $eventDaysByRoute,
             'availableVerkeersregelaarsByRoute' => $availableVerkeersregelaarsByRoute,
-            'volunteerRouteCounts' => $volunteerRouteCounts,
+            'assignmentSameDayConflict' => $assignmentSameDayConflict,
             'tab' => $tab,
         ]);
     }

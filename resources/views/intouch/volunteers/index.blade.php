@@ -127,7 +127,7 @@
 @elseif($tab === 'verkeersregelaars')
 <div class="card">
     <div class="card-body">
-        <p class="text-muted mb-3">Verkeersregelaars staan langs de route. Plan ze per route in. Alleen bevoegde vrijwilligers die beschikbaar zijn op de dag(en) van de route worden getoond. <span class="text-warning">⚠️</span> = dubbel gepland (op meerdere routes).</p>
+        <p class="text-muted mb-3">Verkeersregelaars staan langs de route. Plan ze per route in. Alleen bevoegde vrijwilligers die beschikbaar zijn op de dag(en) van de route worden getoond. <span class="text-warning">⚠️</span> = dubbel gepland op dezelfde dag.</p>
         @forelse($walkRoutes as $route)
         @php
             $routeDayIds = $eventDaysByRoute[$route->id] ?? [];
@@ -142,8 +142,8 @@
             <ul class="mb-2 mt-2">
                 @foreach($route->volunteerRouteAssignments as $ass)
                 <li>
-                    @if(($volunteerRouteCounts[$ass->volunteer_id] ?? 0) >= 2)
-                    <span class="text-warning" title="Dubbel gepland – controleer of dit qua tijd haalbaar is">⚠️</span>
+                    @if(($assignmentSameDayConflict[$ass->volunteer_id][$route->id] ?? false))
+                    <span class="text-warning" title="Dubbel gepland op dezelfde dag – controleer of dit qua tijd haalbaar is">⚠️</span>
                     @endif
                     {{ $ass->volunteer?->name ?? '-' }}
                     @can('vrijwilligers_manage')
