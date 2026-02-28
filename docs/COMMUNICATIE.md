@@ -30,6 +30,11 @@ Het berichtveld ondersteunt **HTML** (`<p>`, `<strong>`, `<a>`, `<ul>`, `<li>`, 
 
 E-mails worden verstuurd via **Microsoft Graph** (zelfde integratie als tickets en sponsor-receipts). Zorg dat `MSGRAPH_*` in `.env` correct is geconfigureerd.
 
+**Queue**: E-mails worden op de achtergrond verstuurd via Laravel's queue. Voorkomt timeouts bij veel ontvangers.
+- Zet `QUEUE_CONNECTION=database` in `.env`
+- Run `php artisan queue:work` (of gebruik Supervisor in productie)
+- Voortgang is zichtbaar in de verzendgeschiedenis
+
 ## Permissies
 
 | Permissie             | Omschrijving                    |

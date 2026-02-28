@@ -75,9 +75,15 @@
                 </div>
             </div>
 
-            <div class="d-flex gap-2">
+            <div class="d-flex flex-wrap gap-2 align-items-center">
                 <button type="submit" class="btn btn-vierdaagse">Opslaan</button>
                 <a href="{{ route('intouch.sponsors.index') }}" class="btn btn-outline-secondary">Annuleren</a>
+                @if($sponsor->betaalstatus === 'paid' && $sponsor->invoice_id)
+                <form method="post" action="{{ route('intouch.sponsors.resend-receipt', $sponsor) }}" class="d-inline" onsubmit="return confirm('Kwitantie opnieuw versturen naar {{ $sponsor->email }}?');">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-primary">Kwitantie opnieuw versturen</button>
+                </form>
+                @endif
             </div>
         </form>
     </div>

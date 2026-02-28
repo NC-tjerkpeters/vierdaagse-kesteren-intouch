@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Intouch;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\CleanupCommunicationAttachmentJob;
+use App\Jobs\SendParticipantEmailJob;
 use App\Models\Distance;
 use App\Models\Edition;
 use App\Models\ParticipantEmailLog;
 use App\Models\ParticipantEmailTemplate;
 use App\Models\Registration;
-use App\Services\MicrosoftGraphMailService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ParticipantCommunicationController extends Controller
 {
@@ -152,51 +152,26 @@ class ParticipantCommunicationController extends Controller
             'started_at' => now(),
         ]);
 
-        $graphMail = app(MicrosoftGraphMailService::class);
-        $sentCount = 0;
-        $failedCount = 0;
-
         foreach ($registrations as $registration) {
-            try {
-                $renderedSubject = $this->replacePlaceholders($subject, $registration, $edition);
-                $renderedBody = $this->replacePlaceholders($body, $registration, $edition);
-
-                $graphMail->sendHtmlMail(
-                    toAddress: $registration->email,
-                    toName: trim($registration->first_name . ' ' . $registration->last_name),
-                    subject: $renderedSubject,
-                    htmlBody: $renderedBody,
-                    attachmentPath: $attachmentPath,
-                    attachmentFilename: $attachmentFilename,
-                );
-                $sentCount++;
-            } catch (\Throwable $e) {
-                Log::error('Participant communication: mail failed', [
-                    'registration_id' => $registration->id,
-                    'email' => $registration->email,
-                    'error' => $e->getMessage(),
-                ]);
-                $failedCount++;
-            }
+            SendParticipantEmailJob::dispatch(
+                registrationId: $registration->id,
+                logId: $log->id,
+                subject: $subject,
+                body: $body,
+                attachmentPath: $attachmentPath,
+                attachmentFilename: $attachmentFilename,
+            );
         }
 
         if ($attachmentPath) {
-            \Illuminate\Support\Facades\Storage::disk('local')->delete($attachmentPath);
+            CleanupCommunicationAttachmentJob::dispatch($attachmentPath)
+                ->delay(now()->addMinutes(30));
         }
 
-        $log->update([
-            'sent_count' => $sentCount,
-            'failed_count' => $failedCount,
-            'completed_at' => now(),
-        ]);
-
-        $message = "{$sentCount} e-mail(s) verstuurd.";
-        if ($failedCount > 0) {
-            $message .= " {$failedCount} mislukt.";
-        }
+        $count = $registrations->count();
 
         return redirect()->route('intouch.registrations.communicatie')
-            ->with('status', $message);
+            ->with('status', "{$count} e-mail(s) worden op de achtergrond verstuurd. Vernieuw de pagina om de voortgang in de geschiedenis te zien.");
     }
 
     protected function buildRecipientQuery(Edition $edition, Request $request)

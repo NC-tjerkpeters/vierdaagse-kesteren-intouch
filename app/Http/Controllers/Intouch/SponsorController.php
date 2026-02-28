@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Intouch;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sponsor;
+use App\Services\SponsorReceiptService;
 use Illuminate\Http\Request;
 
 class SponsorController extends Controller
@@ -143,5 +144,28 @@ class SponsorController extends Controller
 
         return redirect()->route('intouch.sponsors.index')
             ->with('status', 'Sponsor verwijderd.');
+    }
+
+    public function resendReceipt(Sponsor $sponsor, SponsorReceiptService $receiptService)
+    {
+        $this->authorize('sponsors_edit');
+
+        $sponsor = Sponsor::query()->forActiveEdition()->findOrFail($sponsor->id);
+
+        if ($sponsor->betaalstatus !== 'paid') {
+            return redirect()->back()->with('error', 'Kwitantie kan alleen worden verstuurd naar betaalde sponsors.');
+        }
+
+        if (empty($sponsor->invoice_id)) {
+            return redirect()->back()->with('error', 'Deze sponsor heeft nog geen kwitantienummer. Wacht op de verwerking van de betaling.');
+        }
+
+        try {
+            $receiptService->sendReceipt($sponsor);
+
+            return redirect()->back()->with('status', 'Kwitantie opnieuw verstuurd naar ' . $sponsor->email . '.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Verzenden mislukt: ' . $e->getMessage());
+        }
     }
 }

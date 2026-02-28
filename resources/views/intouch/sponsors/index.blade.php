@@ -81,6 +81,12 @@
                 <div class="mt-2">
                     @can('sponsors_edit')
                     <a href="{{ route('intouch.sponsors.edit', $s) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
+                    @if($s->betaalstatus === 'paid' && $s->invoice_id)
+                    <form method="post" action="{{ route('intouch.sponsors.resend-receipt', $s) }}" class="d-inline" onsubmit="return confirm('Kwitantie opnieuw versturen?');">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Kwitantie versturen</button>
+                    </form>
+                    @endif
                     @endcan
                 </div>
             </div>
@@ -113,6 +119,12 @@
                         <td>
                             @can('sponsors_edit')
                             <a href="{{ route('intouch.sponsors.edit', $s) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
+                            @if($s->betaalstatus === 'paid' && $s->invoice_id)
+                            <form method="post" action="{{ route('intouch.sponsors.resend-receipt', $s) }}" class="d-inline" onsubmit="return confirm('Kwitantie opnieuw versturen naar {{ $s->email }}?');">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-secondary" title="Kwitantie opnieuw versturen">Kwitantie versturen</button>
+                            </form>
+                            @endif
                             @endcan
                             @can('sponsors_delete')
                             <form method="post" action="{{ route('intouch.sponsors.destroy', $s) }}" class="d-inline" onsubmit="return confirm('Sponsor verwijderen?');">

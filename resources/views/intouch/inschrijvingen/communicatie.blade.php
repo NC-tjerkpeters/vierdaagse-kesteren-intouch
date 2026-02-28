@@ -113,7 +113,9 @@
                     <br>
                     <small class="text-muted">
                         {{ $log->sent_count }}/{{ $log->recipient_count }} verstuurd
-                        @if($log->failed_count > 0)
+                        @if(!$log->completed_at)
+                            <span class="text-primary">(bezig)</span>
+                        @elseif($log->failed_count > 0)
                             <span class="text-danger">({{ $log->failed_count }} mislukt)</span>
                         @endif
                         · {{ $log->created_at->format('d-m-Y H:i') }}

@@ -68,6 +68,7 @@ Route::domain(config('app.intouch_domain'))
             Route::delete('inschrijvingen/communicatie/templates/{template}', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'destroy'])->name('registrations.communicatie.templates.destroy');
             Route::get('inschrijvingen/{registration}', [IntouchRegistrationController::class, 'show'])->name('registrations.show');
             Route::put('inschrijvingen/{registration}/medaille', [IntouchRegistrationController::class, 'updateMedal'])->name('registrations.update-medal');
+            Route::post('sponsors/{sponsor}/resend-receipt', [SponsorController::class, 'resendReceipt'])->name('sponsors.resend-receipt');
             Route::resource('sponsors', SponsorController::class)->parameters(['sponsors' => 'sponsor'])->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
             Route::get('loopoverzicht', [ScanOverviewController::class, 'index'])->name('scan-overview.index');
             Route::post('loopoverzicht/scanner-login-qr', [ScanOverviewController::class, 'generateScannerLoginToken'])->name('scan-overview.generate-scanner-login');
