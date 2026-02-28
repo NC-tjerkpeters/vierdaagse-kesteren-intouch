@@ -22,7 +22,7 @@ De app bestaat uit vier domeinen:
 - **Loopoverzicht** – Wie heeft gestart/post/finish gescand
 - **Financiën** – Startsaldo, opbrengsten, kosten, Mollie-schatting, bank/kas
 - **Beheer** – Afstanden, gebruikers, rollen, edities, systeeminstellingen
-- **Mijn profiel** – Naam, e-mail, wachtwoord wijzigen
+- **Mijn profiel** – Naam, e-mail, wachtwoord wijzigen. Optioneel: twee-factor authenticatie (TOTP, bijv. Google Authenticator)
 
 ### Systeeminstellingen (Beheer → Instellingen)
 

@@ -32,6 +32,17 @@ class LoginController extends Controller
             ]);
         }
 
+        $user = Auth::user();
+        Auth::logout();
+
+        if ($user->hasTwoFactorEnabled()) {
+            $request->session()->put('login.id', $user->id);
+            $request->session()->put('login.remember', $remember);
+
+            return redirect()->route('intouch.login.two-factor');
+        }
+
+        Auth::login($user, $remember);
         $request->session()->regenerate();
 
         return redirect()->intended(route('intouch.dashboard'));

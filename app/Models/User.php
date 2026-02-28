@@ -67,7 +67,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return ! empty($this->two_factor_secret);
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -79,6 +86,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'two_factor_recovery_codes' => 'array',
         ];
     }
 }

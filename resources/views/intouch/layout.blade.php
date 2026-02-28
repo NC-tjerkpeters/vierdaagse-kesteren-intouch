@@ -143,12 +143,10 @@
                         <span class="me-1">{{ Auth::user()->name }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        @can('instellingen_edit')
                         <li>
                             <a class="dropdown-item" href="{{ route('intouch.instellingen.edit') }}">Mijn profiel</a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
-                        @endcan
                         <li>
                             <form method="post" action="{{ route('intouch.logout') }}" class="d-inline">
                                 @csrf

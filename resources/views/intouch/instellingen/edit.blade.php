@@ -33,4 +33,24 @@
         </form>
     </div>
 </div>
+
+<div class="card mt-4" style="max-width: 540px">
+    <div class="card-header">Twee-factor authenticatie</div>
+    <div class="card-body">
+        @if($user->hasTwoFactorEnabled())
+            <p class="text-success mb-2">Twee-factor authenticatie is ingeschakeld.</p>
+            <form method="post" action="{{ route('intouch.instellingen.two-factor.disable') }}" class="d-inline" onsubmit="return confirm('Weet je zeker dat je twee-factor authenticatie wilt uitschakelen?');">
+                @csrf
+                <div class="mb-2">
+                    <label for="disable_password" class="form-label">Wachtwoord om uit te schakelen</label>
+                    <input type="password" id="disable_password" name="password" class="form-control" required style="max-width: 200px">
+                </div>
+                <button type="submit" class="btn btn-outline-danger btn-sm">Twee-factor authenticatie uitschakelen</button>
+            </form>
+        @else
+            <p class="text-muted mb-2">Voeg een extra beveiligingslaag toe met een authenticator-app.</p>
+            <a href="{{ route('intouch.instellingen.two-factor.setup') }}" class="btn btn-outline-primary btn-sm">Twee-factor authenticatie inschakelen</a>
+        @endif
+    </div>
+</div>
 @endsection

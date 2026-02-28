@@ -44,6 +44,8 @@ Route::domain(config('app.intouch_domain'))
     ->group(function () {
         Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
         Route::post('login', [LoginController::class, 'login']);
+        Route::get('login/two-factor', [\App\Http\Controllers\Intouch\Auth\TwoFactorChallengeController::class, 'show'])->name('login.two-factor');
+        Route::post('login/two-factor', [\App\Http\Controllers\Intouch\Auth\TwoFactorChallengeController::class, 'verify'])->name('login.two-factor.verify');
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
         Route::get('wachtwoord-vergeten', [\App\Http\Controllers\Intouch\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
@@ -75,6 +77,9 @@ Route::domain(config('app.intouch_domain'))
             Route::post('loopoverzicht/huidige-dag', [ScanOverviewController::class, 'setCurrentDay'])->name('scan-overview.set-current-day');
             Route::get('instellingen', [SettingsController::class, 'edit'])->name('instellingen.edit');
             Route::put('instellingen', [SettingsController::class, 'update'])->name('instellingen.update');
+            Route::get('instellingen/two-factor/setup', [\App\Http\Controllers\Intouch\TwoFactorController::class, 'setup'])->name('instellingen.two-factor.setup');
+            Route::post('instellingen/two-factor/confirm', [\App\Http\Controllers\Intouch\TwoFactorController::class, 'confirm'])->name('instellingen.two-factor.confirm');
+            Route::post('instellingen/two-factor/disable', [\App\Http\Controllers\Intouch\TwoFactorController::class, 'disable'])->name('instellingen.two-factor.disable');
             Route::post('edition/set', [\App\Http\Controllers\Intouch\EditionSelectorController::class, 'set'])->name('edition.set');
             Route::get('beheer/instellingen', [AppSettingsController::class, 'edit'])->name('beheer.instellingen.edit');
             Route::put('beheer/instellingen', [AppSettingsController::class, 'update'])->name('beheer.instellingen.update');
