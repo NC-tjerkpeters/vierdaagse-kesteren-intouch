@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Edition;
+use App\Models\ParticipantEmailTemplate;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,6 +18,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Route::bind('template', fn ($value) => ParticipantEmailTemplate::findOrFail($value));
+
         // Gates voor alle permissions uit config
         $permissions = config('permissions.all', []);
         foreach ($permissions as $p) {

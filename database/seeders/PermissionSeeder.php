@@ -49,7 +49,7 @@ class PermissionSeeder extends Seeder
             $syncIfEmpty($admin, [
                 'dashboard_view', 'afstanden_view', 'afstanden_create', 'afstanden_edit', 'afstanden_delete',
                 'inschrijvingen_view', 'inschrijvingen_edit', 'inschrijvingen_export', 'inschrijvingen_medal_overview',
-                'communicatie_view', 'communicatie_send',
+                'communicatie_view', 'communicatie_send', 'communicatie_templates',
                 'loopoverzicht_view',
                 'sponsors_view', 'sponsors_create', 'sponsors_edit', 'sponsors_delete',
                 'manage_users', 'manage_roles', 'instellingen_edit', 'editions_manage', 'finances_view', 'finances_edit',
@@ -74,11 +74,11 @@ class PermissionSeeder extends Seeder
             'finances_view', 'finances_edit',
             'checklist_view',
             'routes_view', 'routes_manage',
-            'communicatie_view', 'communicatie_send',
+            'communicatie_view', 'communicatie_send', 'communicatie_templates',
         ]);
 
         // Nieuwe permissies toevoegen aan bestaande rollen (zonder andere rechten te verwijderen)
-        $communicatiePermissions = Permission::whereIn('slug', ['communicatie_view', 'communicatie_send'])->pluck('id');
+        $communicatiePermissions = Permission::whereIn('slug', ['communicatie_view', 'communicatie_send', 'communicatie_templates'])->pluck('id');
         foreach ([$admin, $superAdmin, $werkgroep] as $role) {
             if ($role && $role->permissions()->count() > 0) {
                 $role->permissions()->syncWithoutDetaching($communicatiePermissions);

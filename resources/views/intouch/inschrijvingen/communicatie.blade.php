@@ -5,7 +5,12 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Communicatie naar deelnemers</h1>
-    <a href="{{ route('intouch.registrations.index') }}" class="btn btn-outline-secondary">← Inschrijvingen</a>
+    <div>
+        @can('communicatie_templates')
+        <a href="{{ route('intouch.registrations.communicatie.templates') }}" class="btn btn-outline-secondary me-1">Templates beheren</a>
+        @endcan
+        <a href="{{ route('intouch.registrations.index') }}" class="btn btn-outline-secondary">← Inschrijvingen</a>
+    </div>
 </div>
 
 <p class="text-muted mb-4">
@@ -53,12 +58,13 @@
         <div class="card-header">Bericht</div>
         <div class="card-body">
             <div class="mb-4">
-                <label for="template_key" class="form-label">Template</label>
-                <select id="template_key" name="template_key" class="form-select" required>
+                <label for="template_id" class="form-label">Template</label>
+                <select id="template_id" name="template_id" class="form-select" required>
                     <option value="">– Kies een template –</option>
-                    @foreach($templates as $key => $tpl)
-                        <option value="{{ $key }}">{{ $tpl['name'] }}</option>
+                    @foreach($templates as $tpl)
+                        <option value="{{ $tpl->id }}">{{ $tpl->name }}</option>
                     @endforeach
+                    <option value="custom">Algemeen bericht (eigen tekst)</option>
                 </select>
             </div>
 
@@ -72,6 +78,12 @@
                     <textarea id="custom_body" name="custom_body" class="form-control" rows="10" placeholder="Plaatshouders: @{{voornaam}}, @{{achternaam}}, @{{afstand}}, ..."></textarea>
                     <small class="text-muted">Gebruik @{{voornaam}}, @{{achternaam}}, @{{afstand}}, @{{edition_name}}, @{{start_datum}}, @{{eind_datum}}, @{{inschrijf_url}}, @{{routes_url}} voor persoonlijke inhoud.</small>
                 </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="attachment" class="form-label">Bijlage (optioneel)</label>
+                <input type="file" id="attachment" name="attachment" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx">
+                <small class="text-muted">Max 10 MB. PDF, afbeeldingen of Word-document.</small>
             </div>
 
             <div class="d-flex gap-2">
@@ -140,7 +152,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const templateSelect = document.getElementById('template_key');
+    const templateSelect = document.getElementById('template_id');
     const customFields = document.getElementById('custom-fields');
     if (!templateSelect) return;
     const btnPreview = document.getElementById('btn-preview');
@@ -149,15 +161,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateButtons() {
         const hasTemplate = templateSelect.value && templateSelect.value !== '';
-        const isCustom = templateSelect.value === 'algemeen';
+        const isCustom = templateSelect.value === 'custom';
         const customOk = !isCustom || (document.getElementById('custom_subject')?.value && document.getElementById('custom_body')?.value);
         btnPreview.disabled = !hasTemplate || recipientCount === 0 || (isCustom && !customOk);
         if (btnSend) btnSend.disabled = !hasTemplate || recipientCount === 0 || (isCustom && !customOk);
     }
 
     templateSelect.addEventListener('change', function() {
-        customFields.classList.toggle('d-none', this.value !== 'algemeen');
-        if (this.value !== 'algemeen') {
+        customFields.classList.toggle('d-none', this.value !== 'custom');
+        if (this.value !== 'custom') {
             document.getElementById('custom_subject').value = '';
             document.getElementById('custom_body').value = '';
         }
@@ -171,10 +183,10 @@ document.addEventListener('DOMContentLoaded', function() {
     btnPreview.addEventListener('click', function() {
         const formData = new FormData();
         formData.append('_token', document.querySelector('meta[name="csrf-token"]')?.content || document.querySelector('input[name="_token"]')?.value);
-        formData.append('template_key', templateSelect.value);
+        formData.append('template_id', templateSelect.value);
         formData.append('distance_id', document.querySelector('input[name="distance_id"]').value);
         formData.append('status', document.querySelector('input[name="status"]').value);
-        if (templateSelect.value === 'algemeen') {
+        if (templateSelect.value === 'custom') {
             formData.append('custom_subject', document.getElementById('custom_subject').value);
             formData.append('custom_body', document.getElementById('custom_body').value);
         }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Distance;
 use App\Models\Edition;
 use App\Models\ParticipantEmailLog;
+use App\Models\ParticipantEmailTemplate;
 use App\Models\Registration;
 use App\Services\MicrosoftGraphMailService;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class ParticipantCommunicationController extends Controller
                 ->with('info', 'Selecteer eerst een editie.');
         }
 
-        $templates = config('participant_communication.templates', []);
+        $dbTemplates = ParticipantEmailTemplate::query()->orderBy('sort_order')->orderBy('name')->get();
         $distances = Distance::query()->where('is_active', true)->orderBy('sort_order')->get(['id', 'name']);
 
         $query = $this->buildRecipientQuery($edition, $request);
@@ -38,7 +39,7 @@ class ParticipantCommunicationController extends Controller
 
         return view('intouch.inschrijvingen.communicatie', [
             'edition' => $edition,
-            'templates' => $templates,
+            'templates' => $dbTemplates,
             'distances' => $distances,
             'recipientCount' => $recipientCount,
             'logs' => $logs,
@@ -55,13 +56,20 @@ class ParticipantCommunicationController extends Controller
             return response()->json(['error' => 'Geen editie geselecteerd'], 400);
         }
 
-        $templateKey = $request->input('template_key');
+        $templateId = $request->input('template_id');
         $customSubject = $request->input('custom_subject');
         $customBody = $request->input('custom_body');
 
-        $template = config("participant_communication.templates.{$templateKey}");
-        if (! $template) {
-            return response()->json(['error' => 'Template niet gevonden'], 400);
+        if ($templateId === 'custom') {
+            $subject = $customSubject ?: '(Geen onderwerp)';
+            $body = $customBody ?: '(Geen tekst)';
+        } else {
+            $template = ParticipantEmailTemplate::find($templateId);
+            if (! $template) {
+                return response()->json(['error' => 'Template niet gevonden'], 400);
+            }
+            $subject = $template->subject;
+            $body = $template->body;
         }
 
         $registration = $this->buildRecipientQuery($edition, $request)->with('distance')->first();
@@ -70,9 +78,6 @@ class ParticipantCommunicationController extends Controller
                 'error' => 'Geen deelnemers gevonden met de geselecteerde filters. Gebruik andere filters om een voorvertoning te zien.',
             ], 400);
         }
-
-        $subject = $template['custom'] ?? false ? ($customSubject ?: '(Geen onderwerp)') : $template['subject'];
-        $body = $template['custom'] ?? false ? ($customBody ?: '(Geen tekst)') : $template['body'];
 
         $subject = $this->replacePlaceholders($subject, $registration, $edition);
         $body = $this->replacePlaceholders($body, $registration, $edition);
@@ -94,14 +99,23 @@ class ParticipantCommunicationController extends Controller
                 ->with('error', 'Selecteer eerst een editie.');
         }
 
-        $templateKey = $request->input('template_key');
+        $templateId = $request->input('template_id');
         $customSubject = $request->input('custom_subject');
         $customBody = $request->input('custom_body');
 
-        $template = config("participant_communication.templates.{$templateKey}");
-        if (! $template) {
-            return redirect()->route('intouch.registrations.communicatie')
-                ->with('error', 'Template niet gevonden.');
+        if ($templateId === 'custom') {
+            $subject = $customSubject;
+            $body = $customBody;
+            $templateKey = 'custom';
+        } else {
+            $template = ParticipantEmailTemplate::find($templateId);
+            if (! $template) {
+                return redirect()->route('intouch.registrations.communicatie')
+                    ->with('error', 'Template niet gevonden.');
+            }
+            $subject = $template->subject;
+            $body = $template->body;
+            $templateKey = 'tpl-' . $template->id;
         }
 
         $registrations = $this->buildRecipientQuery($edition, $request)->with('distance')->get();
@@ -110,15 +124,24 @@ class ParticipantCommunicationController extends Controller
                 ->with('error', 'Geen deelnemers gevonden met de geselecteerde filters.');
         }
 
-        $subject = $template['custom'] ?? false ? $customSubject : $template['subject'];
-        $body = $template['custom'] ?? false ? $customBody : $template['body'];
-
         if (empty($subject) || empty($body)) {
             return redirect()->route('intouch.registrations.communicatie')
                 ->with('error', 'Onderwerp en bericht zijn verplicht.');
         }
 
+        $request->validate([
+            'attachment' => ['nullable', 'file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,gif,doc,docx'], // 10 MB
+        ]);
+
         $recipientFilter = $request->only(['distance_id', 'status']);
+        $attachmentPath = null;
+        $attachmentFilename = null;
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $attachmentPath = $file->store('communicatie-attachments', 'local');
+            $attachmentFilename = $file->getClientOriginalName();
+        }
+
         $log = ParticipantEmailLog::create([
             'edition_id' => $edition->id,
             'template_key' => $templateKey,
@@ -143,6 +166,8 @@ class ParticipantCommunicationController extends Controller
                     toName: trim($registration->first_name . ' ' . $registration->last_name),
                     subject: $renderedSubject,
                     htmlBody: $renderedBody,
+                    attachmentPath: $attachmentPath,
+                    attachmentFilename: $attachmentFilename,
                 );
                 $sentCount++;
             } catch (\Throwable $e) {
@@ -153,6 +178,10 @@ class ParticipantCommunicationController extends Controller
                 ]);
                 $failedCount++;
             }
+        }
+
+        if ($attachmentPath) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($attachmentPath);
         }
 
         $log->update([

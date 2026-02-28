@@ -167,32 +167,50 @@ class MicrosoftGraphMailService
         string $toName,
         string $subject,
         string $htmlBody,
+        ?string $attachmentPath = null,
+        ?string $attachmentFilename = null,
     ): void {
         $accessToken = $this->getAccessToken();
         $sender = config('services.msgraph.sender_address');
         $endpoint = "https://graph.microsoft.com/v1.0/users/{$sender}/sendMail";
 
-        $payload = [
-            'message' => [
-                'subject' => $subject,
-                'body' => [
-                    'contentType' => 'HTML',
-                    'content' => $htmlBody,
-                ],
-                'toRecipients' => [
-                    [
-                        'emailAddress' => [
-                            'address' => $toAddress,
-                            'name' => $toName,
-                        ],
-                    ],
-                ],
-                'from' => [
+        $message = [
+            'subject' => $subject,
+            'body' => [
+                'contentType' => 'HTML',
+                'content' => $htmlBody,
+            ],
+            'toRecipients' => [
+                [
                     'emailAddress' => [
-                        'address' => $sender,
+                        'address' => $toAddress,
+                        'name' => $toName,
                     ],
                 ],
             ],
+            'from' => [
+                'emailAddress' => [
+                    'address' => $sender,
+                ],
+            ],
+        ];
+
+        if ($attachmentPath && \Illuminate\Support\Facades\Storage::disk('local')->exists($attachmentPath)) {
+            $content = \Illuminate\Support\Facades\Storage::disk('local')->get($attachmentPath);
+            $filename = $attachmentFilename ?? basename($attachmentPath);
+            $mimeType = \Illuminate\Support\Facades\Storage::disk('local')->mimeType($attachmentPath) ?: 'application/octet-stream';
+            $message['attachments'] = [
+                [
+                    '@odata.type' => '#microsoft.graph.fileAttachment',
+                    'name' => $filename,
+                    'contentType' => $mimeType,
+                    'contentBytes' => base64_encode($content),
+                ],
+            ];
+        }
+
+        $payload = [
+            'message' => $message,
             'saveToSentItems' => true,
         ];
 

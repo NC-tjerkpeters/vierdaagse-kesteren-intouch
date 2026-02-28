@@ -60,6 +60,12 @@ Route::domain(config('app.intouch_domain'))
             Route::get('inschrijvingen/communicatie', [\App\Http\Controllers\Intouch\ParticipantCommunicationController::class, 'index'])->name('registrations.communicatie');
             Route::post('inschrijvingen/communicatie/preview', [\App\Http\Controllers\Intouch\ParticipantCommunicationController::class, 'preview'])->name('registrations.communicatie.preview');
             Route::post('inschrijvingen/communicatie/versturen', [\App\Http\Controllers\Intouch\ParticipantCommunicationController::class, 'send'])->name('registrations.communicatie.send');
+            Route::get('inschrijvingen/communicatie/templates', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'index'])->name('registrations.communicatie.templates');
+            Route::get('inschrijvingen/communicatie/templates/aanmaken', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'create'])->name('registrations.communicatie.templates.create');
+            Route::post('inschrijvingen/communicatie/templates', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'store'])->name('registrations.communicatie.templates.store');
+            Route::get('inschrijvingen/communicatie/templates/{template}', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'edit'])->name('registrations.communicatie.templates.edit');
+            Route::put('inschrijvingen/communicatie/templates/{template}', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'update'])->name('registrations.communicatie.templates.update');
+            Route::delete('inschrijvingen/communicatie/templates/{template}', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'destroy'])->name('registrations.communicatie.templates.destroy');
             Route::get('inschrijvingen/{registration}', [IntouchRegistrationController::class, 'show'])->name('registrations.show');
             Route::put('inschrijvingen/{registration}/medaille', [IntouchRegistrationController::class, 'updateMedal'])->name('registrations.update-medal');
             Route::resource('sponsors', SponsorController::class)->parameters(['sponsors' => 'sponsor'])->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
