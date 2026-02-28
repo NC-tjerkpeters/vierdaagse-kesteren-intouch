@@ -69,8 +69,8 @@
                 </div>
                 <div class="mb-3">
                     <label for="custom_body" class="form-label">Bericht *</label>
-                    <textarea id="custom_body" name="custom_body" class="form-control" rows="10" placeholder="Plaatshouders: {{voornaam}}, {{achternaam}}, {{afstand}}, {{edition_name}}, {{start_datum}}, {{eind_datum}}, {{inschrijf_url}}, {{routes_url}}"></textarea>
-                    <small class="text-muted">Gebruik {{voornaam}}, {{achternaam}}, {{afstand}}, {{edition_name}}, {{start_datum}}, {{eind_datum}}, {{inschrijf_url}}, {{routes_url}} voor persoonlijke inhoud.</small>
+                    <textarea id="custom_body" name="custom_body" class="form-control" rows="10" placeholder="Plaatshouders: @{{voornaam}}, @{{achternaam}}, @{{afstand}}, ..."></textarea>
+                    <small class="text-muted">Gebruik @{{voornaam}}, @{{achternaam}}, @{{afstand}}, @{{edition_name}}, @{{start_datum}}, @{{eind_datum}}, @{{inschrijf_url}}, @{{routes_url}} voor persoonlijke inhoud.</small>
                 </div>
             </div>
 
