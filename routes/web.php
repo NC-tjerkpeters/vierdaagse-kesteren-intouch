@@ -57,6 +57,9 @@ Route::domain(config('app.intouch_domain'))
             Route::get('inschrijvingen', [IntouchRegistrationController::class, 'index'])->name('registrations.index');
             Route::get('inschrijvingen/medaille-overzicht', [\App\Http\Controllers\Intouch\MedalOverviewController::class, 'index'])->name('registrations.medal-overview');
             Route::get('inschrijvingen/export', [IntouchRegistrationController::class, 'export'])->name('registrations.export');
+            Route::get('inschrijvingen/communicatie', [\App\Http\Controllers\Intouch\ParticipantCommunicationController::class, 'index'])->name('registrations.communicatie');
+            Route::post('inschrijvingen/communicatie/preview', [\App\Http\Controllers\Intouch\ParticipantCommunicationController::class, 'preview'])->name('registrations.communicatie.preview');
+            Route::post('inschrijvingen/communicatie/versturen', [\App\Http\Controllers\Intouch\ParticipantCommunicationController::class, 'send'])->name('registrations.communicatie.send');
             Route::get('inschrijvingen/{registration}', [IntouchRegistrationController::class, 'show'])->name('registrations.show');
             Route::put('inschrijvingen/{registration}/medaille', [IntouchRegistrationController::class, 'updateMedal'])->name('registrations.update-medal');
             Route::resource('sponsors', SponsorController::class)->parameters(['sponsors' => 'sponsor'])->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);

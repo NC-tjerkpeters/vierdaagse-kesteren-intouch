@@ -10,6 +10,8 @@ return [
         ['group' => 'Inschrijvingen', 'slug' => 'inschrijvingen_view', 'name' => 'Bekijken'],
         ['group' => 'Inschrijvingen', 'slug' => 'inschrijvingen_edit', 'name' => 'Bewerken'],
         ['group' => 'Inschrijvingen', 'slug' => 'inschrijvingen_export', 'name' => 'Exporteren'],
+        ['group' => 'Communicatie', 'slug' => 'communicatie_view', 'name' => 'Bekijken'],
+        ['group' => 'Communicatie', 'slug' => 'communicatie_send', 'name' => 'E-mails versturen'],
         ['group' => 'Inschrijvingen', 'slug' => 'inschrijvingen_medal_overview', 'name' => 'Medaille-overzicht'],
         ['group' => 'Loopoverzicht', 'slug' => 'loopoverzicht_view', 'name' => 'Bekijken'],
         ['group' => 'Sponsors', 'slug' => 'sponsors_view', 'name' => 'Bekijken'],
