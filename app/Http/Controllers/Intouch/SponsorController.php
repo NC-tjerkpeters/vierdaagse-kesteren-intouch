@@ -100,12 +100,16 @@ class SponsorController extends Controller
     {
         $this->authorize('sponsors_edit');
 
+        $sponsor = Sponsor::query()->forActiveEdition()->findOrFail($sponsor->id);
+
         return view('intouch.sponsors.edit', compact('sponsor'));
     }
 
     public function update(Request $request, Sponsor $sponsor)
     {
         $this->authorize('sponsors_edit');
+
+        $sponsor = Sponsor::query()->forActiveEdition()->findOrFail($sponsor->id);
 
         $validated = $request->validate([
             'bedrijfsnaam' => ['nullable', 'string', 'max:255'],
@@ -134,6 +138,7 @@ class SponsorController extends Controller
     {
         $this->authorize('sponsors_delete');
 
+        $sponsor = Sponsor::query()->forActiveEdition()->findOrFail($sponsor->id);
         $sponsor->delete();
 
         return redirect()->route('intouch.sponsors.index')

@@ -6,11 +6,13 @@ Na het deployen van de beveiligingsverbeteringen (feb 2026) gelden de volgende i
 
 ## Wat is er gewijzigd?
 
-1. **Editie-wissel** – Alleen gebruikers met `dashboard_view` mogen de editie wijzigen
+1. **Editie-wissel** – Alleen gebruikers met `dashboard_view` mogen de editie wijzigen (selector alleen zichtbaar voor hen)
 2. **Scan-overzicht** – `totalParticipants` toont nu correct het aantal van de geselecteerde editie
-3. **QR-scanner** – Striktere validatie: alleen geldige `vierdaagsekesteren:...` QR-codes of (optioneel) numeriek ID
+3. **QR-scanner** – Striktere validatie: alleen geldige `vierdaagsekesteren:...` QR-codes of (optioneel) numeriek ID; scoped op actieve editie
 4. **Bedankt-pagina** – Beveiligd met signed URLs; link verloopt na 48 uur
 5. **Rate limiting** – Inschrijfformulier, sponsorformulier en Mollie webhook beperkt in aantal requests per minuut
+6. **IDOR-fix** – Sponsor, Registration, CostEntry, WalkRoute alleen bewerkbaar binnen de geselecteerde editie
+7. **Sponsor webhook** – Invoice ID race condition opgelost met database lock
 
 ---
 

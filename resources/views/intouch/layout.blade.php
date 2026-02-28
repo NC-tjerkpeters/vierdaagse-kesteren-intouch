@@ -111,6 +111,7 @@
                 @endif
             </ul>
             <ul class="navbar-nav align-items-center">
+                @can('dashboard_view')
                 @if(isset($currentEdition) && $currentEdition)
                 <li class="nav-item">
                     <form method="post" action="{{ route('intouch.edition.set') }}" class="d-flex align-items-center gap-1" id="edition-select-form">
@@ -128,6 +129,7 @@
                     </form>
                 </li>
                 @endif
+                @endcan
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="me-1">{{ Auth::user()->name }}</span>

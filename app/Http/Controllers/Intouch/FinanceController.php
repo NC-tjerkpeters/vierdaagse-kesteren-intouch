@@ -127,6 +127,8 @@ class FinanceController extends Controller
     {
         $this->authorize('finances_edit');
 
+        $this->ensureCostBelongsToCurrentEdition($cost);
+
         $editions = Edition::query()->orderByDesc('start_date')->get();
 
         return view('intouch.finance.cost-form', [
@@ -157,6 +159,8 @@ class FinanceController extends Controller
     public function destroyCost(CostEntry $cost)
     {
         $this->authorize('finances_edit');
+
+        $this->ensureCostBelongsToCurrentEdition($cost);
 
         $editionId = $cost->edition_id;
         $cost->delete();
@@ -257,5 +261,13 @@ class FinanceController extends Controller
         }
 
         return Edition::current();
+    }
+
+    private function ensureCostBelongsToCurrentEdition(CostEntry $cost): void
+    {
+        $edition = Edition::current();
+        if (! $edition || $cost->edition_id !== $edition->id) {
+            abort(404);
+        }
     }
 }

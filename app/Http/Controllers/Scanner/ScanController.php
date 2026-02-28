@@ -28,11 +28,13 @@ class ScanController extends Controller
         }
 
         $registrationIds = Registration::query()
+            ->where('edition_id', $currentDay->edition_id)
             ->where('mollie_payment_status', 'paid')
             ->whereNotNull('qr_code')
             ->pluck('id');
 
         $registrationsByDistance = Registration::query()
+            ->where('edition_id', $currentDay->edition_id)
             ->with('distance')
             ->whereIn('id', $registrationIds)
             ->get()
@@ -98,7 +100,7 @@ class ScanController extends Controller
                 ->with('error', 'Er is geen actieve avond gekozen. Stel in Intouch de huidige avond in.');
         }
 
-        $registration = $this->resolveRegistrationFromQr($request->qr_data);
+        $registration = $this->resolveRegistrationFromQr($request->qr_data, $currentDay->edition_id);
         if (! $registration) {
             return redirect()->route('scanner.index')
                 ->with('error', 'Ongeldige of onbekende QR-code.');
@@ -154,7 +156,7 @@ class ScanController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Er is geen actieve avond gekozen. Stel in Intouch de huidige avond in.']);
         }
 
-        $registration = $this->resolveRegistrationFromQr((string) $qrData);
+        $registration = $this->resolveRegistrationFromQr((string) $qrData, $currentDay->edition_id);
         if (! $registration) {
             return response()->json(['status' => 'error', 'message' => 'Ongeldige of onbekende QR-code.']);
         }
@@ -205,7 +207,7 @@ class ScanController extends Controller
         return response()->json(['status' => 'ok', 'message' => $message]);
     }
 
-    protected function resolveRegistrationFromQr(string $qrData): ?Registration
+    protected function resolveRegistrationFromQr(string $qrData, int $editionId): ?Registration
     {
         $qrData = trim($qrData);
         if (str_starts_with($qrData, 'vierdaagsekesteren:')) {
@@ -214,6 +216,7 @@ class ScanController extends Controller
             if ($id > 0) {
                 $reg = Registration::query()
                     ->where('id', $id)
+                    ->where('edition_id', $editionId)
                     ->where('mollie_payment_status', 'paid')
                     ->whereNotNull('qr_code')
                     ->first();
@@ -226,6 +229,7 @@ class ScanController extends Controller
         if (config('app.scanner_allow_numeric_id_fallback', true) && ctype_digit($qrData)) {
             return Registration::query()
                 ->where('id', (int) $qrData)
+                ->where('edition_id', $editionId)
                 ->where('mollie_payment_status', 'paid')
                 ->whereNotNull('qr_code')
                 ->first();

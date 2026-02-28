@@ -57,6 +57,7 @@ class RegistrationController extends Controller
     {
         $this->authorize('inschrijvingen_view');
 
+        $registration = Registration::query()->forActiveEdition()->findOrFail($registration->id);
         $registration->load('distance');
 
         return view('intouch.inschrijvingen.show', compact('registration'));
@@ -65,6 +66,8 @@ class RegistrationController extends Controller
     public function updateMedal(Request $request, Registration $registration)
     {
         $this->authorize('inschrijvingen_edit');
+
+        $registration = Registration::query()->forActiveEdition()->findOrFail($registration->id);
 
         $data = $request->validate([
             'wants_medal' => ['required', 'boolean'],

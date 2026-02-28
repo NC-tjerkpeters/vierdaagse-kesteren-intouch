@@ -46,7 +46,9 @@ class SponsorWebhookController extends Controller
         }
 
         return DB::transaction(function () use ($sponsor) {
-            $maxNum = Sponsor::whereNotNull('invoice_id')
+            Sponsor::query()->orderBy('id')->lockForUpdate()->first();
+            $maxNum = Sponsor::query()
+                ->whereNotNull('invoice_id')
                 ->where('invoice_id', '!=', '')
                 ->get('invoice_id')
                 ->max(fn ($s) => (int) preg_replace('/\D/', '', $s->invoice_id));

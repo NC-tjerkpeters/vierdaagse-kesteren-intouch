@@ -103,6 +103,7 @@ class WalkRouteController extends Controller
     {
         $this->authorize('routes_manage');
 
+        $this->ensureWalkRouteBelongsToCurrentEdition($walkRoute);
         $walkRoute->load(['edition', 'distance', 'points']);
         $eventDays = EventDay::query()->where('edition_id', $walkRoute->edition_id)->orderBy('sort_order')->get();
 
@@ -115,6 +116,8 @@ class WalkRouteController extends Controller
     public function update(Request $request, WalkRoute $walkRoute)
     {
         $this->authorize('routes_manage');
+
+        $this->ensureWalkRouteBelongsToCurrentEdition($walkRoute);
 
         $data = $request->validate([
             'title' => ['nullable', 'string', 'max:255'],
@@ -153,6 +156,7 @@ class WalkRouteController extends Controller
     {
         $this->authorize('routes_manage');
 
+        $this->ensureWalkRouteBelongsToCurrentEdition($walkRoute);
         $walkRoute->deletePdf();
         $walkRoute->delete();
 
@@ -163,6 +167,7 @@ class WalkRouteController extends Controller
     {
         $this->authorize('routes_manage');
 
+        $this->ensureWalkRouteBelongsToCurrentEdition($walkRoute);
         $walkRoute->deletePdf();
 
         return redirect()->route('intouch.walk-routes.edit', $walkRoute)->with('status', 'PDF verwijderd.');
@@ -171,6 +176,8 @@ class WalkRouteController extends Controller
     public function pdf(WalkRoute $walkRoute)
     {
         $this->authorize('routes_view');
+
+        $this->ensureWalkRouteBelongsToCurrentEdition($walkRoute);
 
         if (! $walkRoute->pdf_path || ! \Storage::disk('public')->exists($walkRoute->pdf_path)) {
             abort(404);
@@ -181,6 +188,14 @@ class WalkRouteController extends Controller
             basename($walkRoute->pdf_path),
             ['Content-Type' => 'application/pdf']
         );
+    }
+
+    private function ensureWalkRouteBelongsToCurrentEdition(WalkRoute $walkRoute): void
+    {
+        $edition = Edition::current();
+        if (! $edition || $walkRoute->edition_id !== $edition->id) {
+            abort(404);
+        }
     }
 
     /** Leeg of alle dagen → null (actief op alle dagen). */
