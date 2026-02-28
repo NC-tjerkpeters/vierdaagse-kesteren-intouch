@@ -58,7 +58,11 @@ class RegistrationController extends Controller
                 $registration->last_name,
                 $distance->kilometers
             ),
-            'redirectUrl' => route('inschrijven.thankyou', ['registration' => $registration->id]),
+            'redirectUrl' => \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                'inschrijven.thankyou',
+                now()->addHours(48),
+                ['registration' => $registration]
+            ),
             'metadata' => [
                 'registration_id' => $registration->id,
             ],

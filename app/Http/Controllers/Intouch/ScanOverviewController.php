@@ -18,6 +18,7 @@ class ScanOverviewController extends Controller
         $currentDay = EventDay::getCurrent();
 
         $registrationIds = Registration::query()
+            ->forActiveEdition()
             ->where('mollie_payment_status', 'paid')
             ->whereNotNull('qr_code')
             ->pluck('id');

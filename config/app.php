@@ -63,6 +63,8 @@ return [
 
     'noodnummers' => env('APP_NOODNUMMERS', '06 52 44 16 10, 06 40 89 37 40'),
 
+    'scanner_allow_numeric_id_fallback' => env('SCANNER_ALLOW_NUMERIC_ID_FALLBACK', true),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

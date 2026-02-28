@@ -26,5 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Illuminate\Routing\Exceptions\InvalidSignatureException $e, $request) {
+            if ($request->is('bedankt') || $request->is('bedankt/*')) {
+                return redirect()->route('inschrijven.create')
+                    ->with('info', 'De link is verlopen. Heb je al betaald? Controleer je e-mail voor het ticket.');
+            }
+        });
     })->create();

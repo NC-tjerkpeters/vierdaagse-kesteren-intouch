@@ -23,16 +23,20 @@ Route::domain(config('app.inschrijven_domain'))
             ->name('inschrijven.create');
 
         Route::post('/', [RegistrationController::class, 'store'])
+            ->middleware('throttle:10,1')
             ->name('inschrijven.store');
 
         Route::get('/bedankt/{registration}', [RegistrationController::class, 'thankyou'])
+            ->middleware('signed')
             ->name('inschrijven.thankyou');
 
         Route::post('/vrienden/aanmelden', [\App\Http\Controllers\Inschrijven\SponsorRegistrationController::class, 'store'])
+            ->middleware('throttle:10,1')
             ->name('inschrijven.sponsors.store');
     });
 
 Route::post('/webhooks/mollie/sponsors', \App\Http\Controllers\Inschrijven\SponsorWebhookController::class)
+    ->middleware('throttle:60,1')
     ->name('webhooks.mollie.sponsors');
 
 Route::domain(config('app.intouch_domain'))

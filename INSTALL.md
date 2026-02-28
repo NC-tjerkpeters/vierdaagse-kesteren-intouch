@@ -160,6 +160,8 @@ php artisan db:seed --class=PermissionSeeder --force
 
 ## Stap 7: Storage-link, rechten en cache
 
+> **Na beveiligingsupdates:** Zie [docs/PRODUCTIE_INSTRUCTIES.md](docs/PRODUCTIE_INSTRUCTIES.md) voor instructies.
+
 ```bash
 php artisan storage:link
 chmod -R 775 storage bootstrap/cache

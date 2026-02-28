@@ -220,14 +220,10 @@ class ScanController extends Controller
                 if ($reg && $reg->qr_code === $qrData) {
                     return $reg;
                 }
-                return Registration::query()
-                    ->where('id', $id)
-                    ->where('mollie_payment_status', 'paid')
-                    ->whereNotNull('qr_code')
-                    ->first();
+                return null;
             }
         }
-        if (ctype_digit($qrData)) {
+        if (config('app.scanner_allow_numeric_id_fallback', true) && ctype_digit($qrData)) {
             return Registration::query()
                 ->where('id', (int) $qrData)
                 ->where('mollie_payment_status', 'paid')

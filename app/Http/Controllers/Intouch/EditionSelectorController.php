@@ -10,6 +10,8 @@ class EditionSelectorController extends Controller
 {
     public function set(Request $request)
     {
+        $this->authorize('dashboard_view');
+
         $editionId = $request->input('edition_id');
         if ($editionId !== null && $editionId !== '') {
             $request->validate(['edition_id' => ['exists:editions,id']]);
