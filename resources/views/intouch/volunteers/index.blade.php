@@ -34,6 +34,7 @@
                     <th>E-mail</th>
                     <th>Telefoon</th>
                     <th>Beschikbaar</th>
+                    <th>Verkeer</th>
                     <th>Ingepland</th>
                     <th></th>
                 </tr>
@@ -51,6 +52,7 @@
                         {{ $v->availabilities->sortBy(fn($a) => $a->eventDay?->sort_order)->map(fn($a) => $a->eventDay?->name)->filter()->join(', ') }}
                         @endif
                     </td>
+                    <td>@if($v->can_regulate_traffic)<span class="badge bg-success">Bevoegd</span>@else<span class="text-muted">–</span>@endif</td>
                     <td>{{ $v->slots_count }}x</td>
                     <td>
                         @can('vrijwilligers_manage')
@@ -65,7 +67,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-muted">Nog geen vrijwilligers. @can('vrijwilligers_manage')<a href="{{ route('intouch.volunteers.create') }}">Voeg er een toe</a>.@endcan</td>
+                    <td colspan="7" class="text-muted">Nog geen vrijwilligers. @can('vrijwilligers_manage')<a href="{{ route('intouch.volunteers.create') }}">Voeg er een toe</a>.@endcan</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -125,13 +127,24 @@
 @elseif($tab === 'verkeersregelaars')
 <div class="card">
     <div class="card-body">
-        <p class="text-muted">Verkeersregelaars staan langs de route. Plan ze per route in.</p>
+        <p class="text-muted mb-3">Verkeersregelaars staan langs de route. Plan ze per route in. Alleen bevoegde vrijwilligers die beschikbaar zijn op de dag(en) van de route worden getoond. <span class="text-warning">⚠️</span> = dubbel gepland (op meerdere routes).</p>
         @forelse($walkRoutes as $route)
+        @php
+            $routeDayIds = $eventDaysByRoute[$route->id] ?? [];
+            $routeDayNames = $eventDays->whereIn('id', $routeDayIds)->sortBy('sort_order')->pluck('name')->implode(', ') ?: 'alle dagen';
+            $availableIds = $availableVerkeersregelaarsByRoute[$route->id] ?? [];
+            $assignedIds = $route->volunteerRouteAssignments->pluck('volunteer_id')->toArray();
+            $selectableVolunteers = $volunteers->whereIn('id', $availableIds)->whereNotIn('id', $assignedIds);
+        @endphp
         <div class="border rounded p-3 mb-3">
             <strong>{{ $route->distance?->name ?? '-' }} – {{ $route->title ?: 'Route' }}</strong>
+            <span class="text-muted small">({{ $routeDayNames }})</span>
             <ul class="mb-2 mt-2">
                 @foreach($route->volunteerRouteAssignments as $ass)
                 <li>
+                    @if(($volunteerRouteCounts[$ass->volunteer_id] ?? 0) >= 2)
+                    <span class="text-warning" title="Dubbel gepland – controleer of dit qua tijd haalbaar is">⚠️</span>
+                    @endif
                     {{ $ass->volunteer?->name ?? '-' }}
                     @can('vrijwilligers_manage')
                     <form method="post" action="{{ route('intouch.volunteers.remove-verkeersregelaar') }}" class="d-inline">
@@ -148,15 +161,19 @@
             <form method="post" action="{{ route('intouch.volunteers.assign-verkeersregelaar') }}" class="d-flex gap-2 align-items-center">
                 @csrf
                 <input type="hidden" name="walk_route_id" value="{{ $route->id }}">
-                @php $assignedIds = $route->volunteerRouteAssignments->pluck('volunteer_id')->toArray(); @endphp
-                <select name="volunteer_id" class="form-select form-select-sm" style="max-width: 200px;">
+                <select name="volunteer_id" class="form-select form-select-sm" style="max-width: 220px;">
                     <option value="">– kies vrijwilliger –</option>
-                    @foreach($volunteers->whereNotIn('id', $assignedIds) as $v)
+                    @foreach($selectableVolunteers as $v)
                     <option value="{{ $v->id }}">{{ $v->name }}</option>
                     @endforeach
                 </select>
                 <button type="submit" class="btn btn-sm btn-vierdaagse">Toevoegen</button>
             </form>
+            @if($selectableVolunteers->isEmpty() && !empty($assignedIds))
+            <p class="text-muted small mb-0 mt-1">Alle beschikbare verkeersregelaars zijn al toegewezen.</p>
+            @elseif($selectableVolunteers->isEmpty())
+            <p class="text-muted small mb-0 mt-1">Geen bevoegde vrijwilligers beschikbaar op {{ $routeDayNames }}. <a href="{{ route('intouch.volunteers.create') }}">Voeg vrijwilligers toe</a> en vink "Bevoegd verkeersregelaar" aan.</p>
+            @endif
             @endcan
         </div>
         @empty

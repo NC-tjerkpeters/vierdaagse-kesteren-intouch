@@ -14,7 +14,15 @@ class Volunteer extends Model
         'email',
         'phone',
         'notes',
+        'can_regulate_traffic',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'can_regulate_traffic' => 'boolean',
+        ];
+    }
 
     public function edition(): BelongsTo
     {

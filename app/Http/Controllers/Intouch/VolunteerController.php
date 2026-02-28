@@ -64,6 +64,37 @@ class VolunteerController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        // Per route: event days waarop de route loopt
+        $eventDaysByRoute = [];
+        foreach ($walkRoutes as $route) {
+            $orders = $route->event_day_sort_orders;
+            if (empty($orders)) {
+                $eventDaysByRoute[$route->id] = $eventDays->pluck('id')->toArray();
+            } else {
+                $eventDaysByRoute[$route->id] = $eventDays
+                    ->whereIn('sort_order', array_map('intval', $orders))
+                    ->pluck('id')
+                    ->toArray();
+            }
+        }
+
+        // Per route: beschikbare verkeersregelaars (bevoegd + beschikbaar op route-dagen)
+        $availableVerkeersregelaarsByRoute = [];
+        foreach ($walkRoutes as $route) {
+            $routeDayIds = $eventDaysByRoute[$route->id] ?? [];
+            $availableVerkeersregelaarsByRoute[$route->id] = $volunteers
+                ->filter(fn ($v) => $v->can_regulate_traffic && ! empty(array_intersect($routeDayIds, $v->availabilities->pluck('event_day_id')->toArray())))
+                ->pluck('id')
+                ->toArray();
+        }
+
+        // Vrijwilligers die op meerdere routes staan (dubbel gepland)
+        $volunteerRouteCounts = VolunteerRouteAssignment::query()
+            ->whereIn('walk_route_id', $walkRoutes->pluck('id'))
+            ->selectRaw('volunteer_id, COUNT(*) as cnt')
+            ->groupBy('volunteer_id')
+            ->pluck('cnt', 'volunteer_id');
+
         return view('intouch.volunteers.index', [
             'edition' => $edition,
             'volunteers' => $volunteers,
@@ -72,6 +103,9 @@ class VolunteerController extends Controller
             'roles' => $roles,
             'slotsByDayRole' => $slotsByDayRole,
             'availabilityByVolunteer' => $availabilityByVolunteer,
+            'eventDaysByRoute' => $eventDaysByRoute,
+            'availableVerkeersregelaarsByRoute' => $availableVerkeersregelaarsByRoute,
+            'volunteerRouteCounts' => $volunteerRouteCounts,
             'tab' => $tab,
         ]);
     }
@@ -109,11 +143,13 @@ class VolunteerController extends Controller
             'email' => ['required', 'email'],
             'phone' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'can_regulate_traffic' => ['nullable', 'boolean'],
             'available_days' => ['nullable', 'array'],
             'available_days.*' => ['integer', 'exists:event_days,id'],
         ]);
 
         $data['edition_id'] = $edition->id;
+        $data['can_regulate_traffic'] = (bool) ($data['can_regulate_traffic'] ?? false);
         $availableDays = $data['available_days'] ?? [];
         unset($data['available_days']);
 
@@ -166,10 +202,12 @@ class VolunteerController extends Controller
             'email' => ['required', 'email'],
             'phone' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'can_regulate_traffic' => ['nullable', 'boolean'],
             'available_days' => ['nullable', 'array'],
             'available_days.*' => ['integer', 'exists:event_days,id'],
         ]);
 
+        $data['can_regulate_traffic'] = (bool) ($data['can_regulate_traffic'] ?? false);
         $availableDays = $data['available_days'] ?? [];
         unset($data['available_days']);
 
@@ -273,6 +311,22 @@ class VolunteerController extends Controller
         $volunteer = Volunteer::findOrFail($data['volunteer_id']);
         if ($volunteer->edition_id !== $edition->id) {
             return redirect()->route('intouch.volunteers.index')->with('error', 'Vrijwilliger niet gevonden.');
+        }
+        if (! $volunteer->can_regulate_traffic) {
+            return redirect()->route('intouch.volunteers.index', ['tab' => 'verkeersregelaars'])
+                ->with('error', 'Deze vrijwilliger is niet bevoegd om verkeer te regelen.');
+        }
+        $routeDayIds = $walkRoute->event_day_sort_orders
+            ? EventDay::query()
+                ->where('edition_id', $edition->id)
+                ->whereIn('sort_order', array_map('intval', $walkRoute->event_day_sort_orders))
+                ->pluck('id')
+                ->toArray()
+            : EventDay::query()->where('edition_id', $edition->id)->pluck('id')->toArray();
+        $volunteerDayIds = $volunteer->availabilities()->pluck('event_day_id')->toArray();
+        if (empty(array_intersect($routeDayIds, $volunteerDayIds))) {
+            return redirect()->route('intouch.volunteers.index', ['tab' => 'verkeersregelaars'])
+                ->with('error', 'Deze vrijwilliger is niet beschikbaar op de dag(en) waarop deze route loopt.');
         }
 
         VolunteerRouteAssignment::firstOrCreate([

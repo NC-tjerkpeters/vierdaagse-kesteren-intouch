@@ -37,6 +37,14 @@
             </div>
 
             <div class="mb-3">
+                <div class="form-check">
+                    <input type="checkbox" id="can_regulate_traffic" name="can_regulate_traffic" class="form-check-input" value="1"
+                        @checked(old('can_regulate_traffic', $volunteer?->can_regulate_traffic ?? false))>
+                    <label class="form-check-label" for="can_regulate_traffic">Bevoegd verkeersregelaar (mag verkeer regelen langs de route)</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
                 <label class="form-label">Beschikbaar op</label>
                 <p class="text-muted small mb-2">Op welke avonden is deze vrijwilliger beschikbaar?</p>
                 <div class="d-flex flex-wrap gap-3">
