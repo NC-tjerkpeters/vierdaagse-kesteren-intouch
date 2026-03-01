@@ -34,6 +34,9 @@ class RegistrationController extends Controller
             'distance_id' => ['required', 'exists:distances,id'],
             'wants_medal' => ['nullable', 'boolean'],
             'medal_number' => ['nullable', 'integer'],
+            'privacy_consent' => ['required', 'accepted'],
+        ], [
+            'privacy_consent.accepted' => 'U moet akkoord gaan met de privacyverklaring om door te gaan.',
         ]);
 
         $validated['wants_medal'] = (bool) $request->boolean('wants_medal');
@@ -41,9 +44,13 @@ class RegistrationController extends Controller
         $distance = Distance::query()->findOrFail($validated['distance_id']);
 
         $edition = \App\Models\Edition::active();
-        $registration = Registration::create(array_merge($validated, [
-            'edition_id' => $edition?->id,
-        ]));
+        $registration = Registration::create(array_merge(
+            collect($validated)->except(['privacy_consent'])->all(),
+            [
+                'edition_id' => $edition?->id,
+                'privacy_consent_at' => now(),
+            ]
+        ));
 
         $amountValue = number_format($distance->price, 2, '.', '');
 

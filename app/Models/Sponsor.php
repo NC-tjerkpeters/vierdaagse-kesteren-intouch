@@ -22,12 +22,14 @@ class Sponsor extends Model
         'betaalstatus',
         'invoice_id',
         'betaling_id',
+        'privacy_consent_at',
     ];
 
     protected function casts(): array
     {
         return [
             'bedrag' => 'decimal:2',
+            'privacy_consent_at' => 'datetime',
         ];
     }
 

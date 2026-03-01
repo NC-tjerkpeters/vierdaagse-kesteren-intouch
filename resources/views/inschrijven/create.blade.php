@@ -103,6 +103,19 @@
                                    class="form-control" min="1">
                         </div>
 
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input @error('privacy_consent') is-invalid @enderror"
+                                   id="privacy_consent" name="privacy_consent" value="1"
+                                   @checked(old('privacy_consent')) required>
+                            <label class="form-check-label" for="privacy_consent">
+                                Ik ga akkoord met de verwerking van mijn gegevens conform de
+                                <a href="{{ route('inschrijven.privacy') }}" target="_blank" rel="noopener">privacyverklaring</a>.
+                            </label>
+                            @error('privacy_consent')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <button type="submit" class="btn btn-primary">
                             Inschrijven
                         </button>
@@ -110,6 +123,9 @@
                 </div>
             </div>
         </div>
+        <p class="text-center text-muted small mt-3">
+            <a href="{{ route('inschrijven.privacy') }}">Privacyverklaring</a>
+        </p>
     </div>
 </div>
 

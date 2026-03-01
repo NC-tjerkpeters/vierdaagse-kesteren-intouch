@@ -69,6 +69,14 @@ De route staat op het **inschrijven-domein**; CSRF is uitgeschakeld voor dit end
     <label for="bedrag">Bedrag (€)</label>
   </div>
 
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" name="privacy_consent" id="privacy_consent" value="1" required>
+    <label class="form-check-label" for="privacy_consent">
+      Ik ga akkoord met de verwerking van mijn gegevens conform de
+      <a href="https://inschrijven.vierdaagsekesteren.nl/privacy" target="_blank" rel="noopener">privacyverklaring</a>.
+    </label>
+  </div>
+
   <div class="d-grid">
     <button class="btn btn-primary btn-lg" type="submit"
             onclick="this.disabled=true; this.form.submit();">
@@ -78,12 +86,13 @@ De route staat op het **inschrijven-domein**; CSRF is uitgeschakeld voor dit end
 </form>
 ```
 
-**Let op:** `bedrijfsnaam` is optioneel (geen `required`). De overige velden zijn verplicht.
+**Let op:** `bedrijfsnaam` is optioneel (geen `required`). De overige velden zijn verplicht. Het veld `privacy_consent` (checkbox) is verplicht voor AVG-compliance; zonder akkoord wordt de aanmelding geweigerd.
 
 ## Configuratie (.env)
 
 | Variabele | Beschrijving |
 |-----------|--------------|
+| `SPONSORS_FORM_URL` | URL van het sponsorformulier (voor „terug”-link bij validatiefouten) |
 | `SPONSORS_REDIRECT_URL` | Waar de gebruiker na succesvolle betaling naartoe gaat (standaard: bedankpagina op vierdaagsekesteren.nl) |
 | `SPONSORS_WEBHOOK_URL` | Optioneel: volledige webhook-URL (anders: APP_URL + `/webhooks/mollie/sponsors`) |
 | `SPONSORS_RECEIPT_BCC` | BCC-adres voor ontvangstbevestiging per e-mail |

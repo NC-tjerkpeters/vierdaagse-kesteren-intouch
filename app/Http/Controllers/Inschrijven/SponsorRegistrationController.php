@@ -3,27 +3,15 @@
 namespace App\Http\Controllers\Inschrijven;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SponsorRegistrationRequest;
 use App\Models\Sponsor;
-use Illuminate\Http\Request;
 use Mollie\Laravel\Facades\Mollie;
 
 class SponsorRegistrationController extends Controller
 {
-    public function store(Request $request)
+    public function store(SponsorRegistrationRequest $request)
     {
-        $validated = $request->validate([
-            'bedrijfsnaam' => ['nullable', 'string', 'max:255'],
-            'voornaam' => ['required', 'string', 'max:255'],
-            'achternaam' => ['required', 'string', 'max:255'],
-            'postcode' => ['required', 'string', 'max:20', 'regex:/^[1-9][0-9]{3}\s?[A-Za-z]{2}$/i'],
-            'huisnummer' => ['required', 'string', 'max:20'],
-            'telefoonnummer' => ['required', 'string', 'max:30', 'regex:/^[0-9+\-\s]{6,20}$/'],
-            'email' => ['required', 'email'],
-            'bedrag' => ['required', 'numeric', 'min:1'],
-        ], [
-            'postcode.regex' => 'Voer een geldige postcode in (bijv. 1234 AB).',
-            'telefoonnummer.regex' => 'Voer een geldig telefoonnummer in.',
-        ]);
+        $validated = $request->validated();
 
         $bedrag = (float) str_replace(',', '.', (string) $validated['bedrag']);
         if ($bedrag < 0.01) {
@@ -43,6 +31,7 @@ class SponsorRegistrationController extends Controller
             'bedrag' => $amountValue,
             'betaalstatus' => 'open',
             'edition_id' => $edition?->id,
+            'privacy_consent_at' => now(),
         ]);
 
         $webhookUrl = config('sponsors.webhook_url') ?? (config('app.url') . config('sponsors.webhook_path'));

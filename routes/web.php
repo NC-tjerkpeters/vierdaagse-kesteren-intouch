@@ -22,6 +22,13 @@ Route::domain(config('app.inschrijven_domain'))
         Route::get('/', [RegistrationController::class, 'create'])
             ->name('inschrijven.create');
 
+        Route::get('/privacy', [\App\Http\Controllers\Inschrijven\PrivacyController::class, 'show'])
+            ->name('inschrijven.privacy');
+
+        Route::get('/vrienden/fout', fn (\Illuminate\Http\Request $r) => view('inschrijven.sponsors-error', [
+            'message' => $r->query('message', 'Controleer of u alle velden correct hebt ingevuld en akkoord bent gegaan met de privacyverklaring.'),
+        ]))->name('inschrijven.sponsors.error');
+
         Route::post('/', [RegistrationController::class, 'store'])
             ->middleware('throttle:10,1')
             ->name('inschrijven.store');

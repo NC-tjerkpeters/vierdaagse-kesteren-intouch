@@ -23,12 +23,14 @@ class Registration extends Model
         'qr_code',
         'usage_count',
         'last_scan_at',
+        'privacy_consent_at',
     ];
 
     protected function casts(): array
     {
         return [
             'last_scan_at' => 'datetime',
+            'privacy_consent_at' => 'datetime',
         ];
     }
 

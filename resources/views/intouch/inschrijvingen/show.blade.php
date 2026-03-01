@@ -72,6 +72,12 @@
                     <td><code class="small">{{ $registration->qr_code }}</code></td>
                 </tr>
             @endif
+            @if($registration->privacy_consent_at)
+                <tr>
+                    <th class="text-muted">Privacy akkoord</th>
+                    <td>{{ $registration->privacy_consent_at->format('d-m-Y H:i') }}</td>
+                </tr>
+            @endif
         </table>
     </div>
 </div>
