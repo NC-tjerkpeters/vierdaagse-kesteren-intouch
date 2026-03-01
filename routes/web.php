@@ -87,6 +87,7 @@ Route::domain(config('app.intouch_domain'))
             Route::post('edition/set', [\App\Http\Controllers\Intouch\EditionSelectorController::class, 'set'])->name('edition.set');
             Route::get('beheer/instellingen', [AppSettingsController::class, 'edit'])->name('beheer.instellingen.edit');
             Route::put('beheer/instellingen', [AppSettingsController::class, 'update'])->name('beheer.instellingen.update');
+            Route::get('beheer/status', \App\Http\Controllers\Intouch\HealthStatusController::class)->name('beheer.status');
             Route::get('beheer/edities', [EditionController::class, 'index'])->name('beheer.editions.index');
             Route::get('beheer/edities/aanmaken', [EditionController::class, 'create'])->name('beheer.editions.create');
             Route::post('beheer/edities', [EditionController::class, 'store'])->name('beheer.editions.store');

@@ -2,12 +2,17 @@
 
 namespace App\Providers;
 
+use App\Health\Checks\MollieCheck;
+use App\Health\Checks\MicrosoftGraphCheck;
 use App\Models\Edition;
 use App\Models\ParticipantEmailTemplate;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Health\Checks\Checks\CacheCheck;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,6 +23,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Health::checks([
+            DatabaseCheck::new(),
+            CacheCheck::new(),
+            MollieCheck::new()->name('mollie')->label('Mollie API'),
+            MicrosoftGraphCheck::new()->name('microsoft_graph')->label('Microsoft Graph (e-mail)'),
+        ]);
+
         Route::bind('template', fn ($value) => ParticipantEmailTemplate::findOrFail($value));
 
         // Gates voor alle permissions uit config

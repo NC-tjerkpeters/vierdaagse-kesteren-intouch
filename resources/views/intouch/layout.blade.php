@@ -114,6 +114,9 @@
                         @can('instellingen_edit')
                         <li><a class="dropdown-item" href="{{ route('intouch.beheer.instellingen.edit') }}">Instellingen</a></li>
                         @endcan
+                        @can('manage_users')
+                        <li><a class="dropdown-item" href="{{ route('intouch.beheer.status') }}">Status</a></li>
+                        @endcan
                     </ul>
                 </li>
                 @endif
