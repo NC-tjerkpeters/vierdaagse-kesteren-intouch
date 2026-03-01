@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Health\Checks\MollieCheck;
+use App\Health\Checks\MollieWebhookCheck;
 use App\Health\Checks\MicrosoftGraphCheck;
 use App\Models\Edition;
 use App\Models\ParticipantEmailTemplate;
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
             DatabaseCheck::new(),
             CacheCheck::new(),
             MollieCheck::new()->name('mollie')->label('Mollie API'),
+            MollieWebhookCheck::new()->name('mollie_webhook')->label('Mollie webhooks'),
             MicrosoftGraphCheck::new()->name('microsoft_graph')->label('Microsoft Graph (e-mail)'),
         ]);
 
