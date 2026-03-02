@@ -30,6 +30,7 @@ class AppSettingsController extends Controller
 
         $rules = [
             'sponsors_doelbedrag' => ['nullable', 'numeric', 'min:0'],
+            'sponsors_privacy_consent_required' => ['nullable', 'boolean'],
             'scanner_min_minutes' => ['nullable', 'integer', 'min:1', 'max:60'],
             'app_noodnummers' => ['nullable', 'string', 'max:500'],
         ];
