@@ -47,7 +47,8 @@ class AppSettingsController extends Controller
         $data = $request->validate($rules);
 
         Setting::set('sponsors.doelbedrag', (float) ($data['sponsors_doelbedrag'] ?? config('sponsors.doelbedrag', 1850)));
-        Setting::set('sponsors.privacy_consent_required', (bool) ($data['sponsors_privacy_consent_required'] ?? true));
+        $privacyRequired = filter_var($data['sponsors_privacy_consent_required'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        Setting::set('sponsors.privacy_consent_required', $privacyRequired ? '1' : '0');
 
         $fees = [];
         foreach (config('mollie_fees', []) as $method => $default) {
