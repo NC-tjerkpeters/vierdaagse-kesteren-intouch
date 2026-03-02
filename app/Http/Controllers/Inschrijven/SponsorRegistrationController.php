@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inschrijven;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SponsorRegistrationRequest;
 use App\Models\Sponsor;
+use App\Services\AppSettings;
 use Mollie\Laravel\Facades\Mollie;
 
 class SponsorRegistrationController extends Controller
@@ -31,7 +32,7 @@ class SponsorRegistrationController extends Controller
             'bedrag' => $amountValue,
             'betaalstatus' => 'open',
             'edition_id' => $edition?->id,
-            'privacy_consent_at' => now(),
+            'privacy_consent_at' => AppSettings::sponsorsPrivacyConsentRequired() ? now() : null,
         ]);
 
         $webhookUrl = config('sponsors.webhook_url') ?? (config('app.url') . config('sponsors.webhook_path'));

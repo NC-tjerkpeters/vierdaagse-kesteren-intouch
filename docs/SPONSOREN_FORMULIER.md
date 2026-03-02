@@ -86,7 +86,7 @@ De route staat op het **inschrijven-domein**; CSRF is uitgeschakeld voor dit end
 </form>
 ```
 
-**Let op:** `bedrijfsnaam` is optioneel (geen `required`). De overige velden zijn verplicht. Het veld `privacy_consent` (checkbox) is verplicht voor AVG-compliance; zonder akkoord wordt de aanmelding geweigerd.
+**Let op:** `bedrijfsnaam` is optioneel (geen `required`). De overige velden zijn verplicht. Het veld `privacy_consent` (checkbox) is verplicht als de optie in Intouch → Beheer → Instellingen is ingeschakeld (standaard aan). Als u het externe formulier niet kunt aanpassen, schakel dan in Instellingen „AVG-privacycheckbox verplicht bij sponsoraanmelding” uit.
 
 ## Configuratie (.env)
 

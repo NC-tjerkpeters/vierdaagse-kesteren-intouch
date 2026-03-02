@@ -3,6 +3,8 @@
 return [
     'doelbedrag' => (float) env('SPONSORS_DOELBEDRAG', 1850.00),
 
+    'privacy_consent_required' => env('SPONSORS_PRIVACY_CONSENT_REQUIRED', true),
+
     'form_url' => env(
         'SPONSORS_FORM_URL',
         'https://vierdaagsekesteren.nl/vrienden-van-de-vierdaagse-kesteren/aanmelden/'

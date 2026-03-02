@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Services\AppSettings;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -11,7 +12,7 @@ class SponsorRegistrationRequest extends FormRequest
 {
     public function rules(): array
     {
-        return [
+        $rules = [
             'bedrijfsnaam' => ['nullable', 'string', 'max:255'],
             'voornaam' => ['required', 'string', 'max:255'],
             'achternaam' => ['required', 'string', 'max:255'],
@@ -20,8 +21,13 @@ class SponsorRegistrationRequest extends FormRequest
             'telefoonnummer' => ['required', 'string', 'max:30', 'regex:/^[0-9+\-\s]{6,20}$/'],
             'email' => ['required', 'email'],
             'bedrag' => ['required', 'numeric', 'min:1'],
-            'privacy_consent' => ['required', 'accepted'],
         ];
+
+        if (AppSettings::sponsorsPrivacyConsentRequired()) {
+            $rules['privacy_consent'] = ['required', 'accepted'];
+        }
+
+        return $rules;
     }
 
     public function messages(): array

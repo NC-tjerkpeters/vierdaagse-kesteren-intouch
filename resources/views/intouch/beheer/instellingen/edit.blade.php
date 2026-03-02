@@ -21,6 +21,16 @@
                             placeholder="1850">
                         <small class="text-muted">Gebruikt voor de voortgangsbalk op het dashboard</small>
                     </div>
+                    <div class="form-check">
+                        <input type="hidden" name="sponsors_privacy_consent_required" value="0">
+                        <input type="checkbox" class="form-check-input" name="sponsors_privacy_consent_required"
+                            id="sponsors_privacy_consent_required" value="1"
+                            @checked(old('sponsors_privacy_consent_required', $sponsorsPrivacyConsentRequired ?? true))>
+                        <label class="form-check-label" for="sponsors_privacy_consent_required">
+                            AVG-privacycheckbox verplicht bij sponsoraanmelding
+                        </label>
+                        <small class="form-text text-muted d-block">Uitgeschakeld: het externe sponsorformulier hoeft geen privacy-checkbox te tonen (handig als u daar geen invloed op heeft).</small>
+                    </div>
                 </div>
             </div>
         </div>

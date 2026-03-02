@@ -15,6 +15,7 @@ class AppSettingsController extends Controller
 
         return view('intouch.beheer.instellingen.edit', [
             'sponsorsDoelbedrag' => AppSettings::sponsorsDoelbedrag(),
+            'sponsorsPrivacyConsentRequired' => AppSettings::sponsorsPrivacyConsentRequired(),
             'mollieFees' => AppSettings::mollieFeesAll(),
             'scannerMinMinutes' => AppSettings::scannerMinMinutes(),
             'scannerPointNames' => AppSettings::scannerPointNames(),
@@ -45,6 +46,7 @@ class AppSettingsController extends Controller
         $data = $request->validate($rules);
 
         Setting::set('sponsors.doelbedrag', (float) ($data['sponsors_doelbedrag'] ?? config('sponsors.doelbedrag', 1850)));
+        Setting::set('sponsors.privacy_consent_required', (bool) ($data['sponsors_privacy_consent_required'] ?? true));
 
         $fees = [];
         foreach (config('mollie_fees', []) as $method => $default) {

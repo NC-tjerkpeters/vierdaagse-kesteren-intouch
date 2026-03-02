@@ -22,6 +22,13 @@ class AppSettings
         return (float) static::get('sponsors.doelbedrag', config('sponsors.doelbedrag', 1850));
     }
 
+    public static function sponsorsPrivacyConsentRequired(): bool
+    {
+        $val = static::get('sponsors.privacy_consent_required', '__none__');
+
+        return $val === '__none__' ? (bool) config('sponsors.privacy_consent_required', true) : (bool) $val;
+    }
+
     public static function mollieFees(string $method = 'default'): array
     {
         $all = static::get('mollie_fees');
