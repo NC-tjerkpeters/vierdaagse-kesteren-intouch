@@ -113,8 +113,8 @@
                     value="{{ old('mail_subject', $evaluation?->mail_subject ?? 'Jouw mening over de Vierdaagse Kesteren ' . $edition->name) }}">
             </div>
             <div class="mb-3">
-                <label for="mail_body" class="form-label">Mailtekst (gebruik {{ '{{link}}' }} voor de persoonlijke link)</label>
-                <textarea id="mail_body" name="mail_body" class="form-control" rows="4">{{ old('mail_body', $evaluation?->mail_body ?? "Bedankt voor je deelname! Vul onderstaande enquête in:\n\n{{link}}") }}</textarea>
+                <label for="mail_body" class="form-label">Mailtekst (gebruik @verbatim {{link}} @endverbatim voor de persoonlijke link)</label>
+                <textarea id="mail_body" name="mail_body" class="form-control" rows="4">{{ old('mail_body', $evaluation?->mail_body ?? "Bedankt voor je deelname! Vul onderstaande enquête in:\n\n" . '{{' . 'link}}') }}</textarea>
             </div>
         </div>
     </div>
