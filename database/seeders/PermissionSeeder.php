@@ -50,6 +50,7 @@ class PermissionSeeder extends Seeder
                 'dashboard_view', 'afstanden_view', 'afstanden_create', 'afstanden_edit', 'afstanden_delete',
                 'inschrijvingen_view', 'inschrijvingen_edit', 'inschrijvingen_export', 'inschrijvingen_medal_overview',
                 'communicatie_view', 'communicatie_send', 'communicatie_templates',
+                'evaluatie_view', 'evaluatie_send', 'evaluatie_manage',
                 'loopoverzicht_view',
                 'sponsors_view', 'sponsors_create', 'sponsors_edit', 'sponsors_delete',
                 'manage_users', 'manage_roles', 'instellingen_edit', 'editions_manage', 'finances_view', 'finances_edit',
@@ -62,6 +63,7 @@ class PermissionSeeder extends Seeder
         if ($viewer) {
             $syncIfEmpty($viewer, [
                 'dashboard_view', 'afstanden_view', 'inschrijvingen_view', 'inschrijvingen_medal_overview', 'communicatie_view',
+                'evaluatie_view',
                 'loopoverzicht_view', 'sponsors_view', 'instellingen_edit', 'finances_view', 'vrijwilligers_view',
             ]);
         }
@@ -76,11 +78,12 @@ class PermissionSeeder extends Seeder
             'checklist_view',
             'routes_view', 'routes_manage',
             'communicatie_view', 'communicatie_send', 'communicatie_templates',
+            'evaluatie_view', 'evaluatie_send', 'evaluatie_manage',
             'vrijwilligers_view', 'vrijwilligers_manage',
         ]);
 
         // Nieuwe permissies toevoegen aan bestaande rollen (zonder andere rechten te verwijderen)
-        $extraPermissions = Permission::whereIn('slug', ['communicatie_view', 'communicatie_send', 'communicatie_templates', 'vrijwilligers_view', 'vrijwilligers_manage'])->pluck('id');
+        $extraPermissions = Permission::whereIn('slug', ['communicatie_view', 'communicatie_send', 'communicatie_templates', 'evaluatie_view', 'evaluatie_send', 'evaluatie_manage', 'vrijwilligers_view', 'vrijwilligers_manage'])->pluck('id');
         foreach ([$admin, $superAdmin, $werkgroep] as $role) {
             if ($role && $role->permissions()->count() > 0) {
                 $role->permissions()->syncWithoutDetaching($extraPermissions);
@@ -88,7 +91,7 @@ class PermissionSeeder extends Seeder
         }
         if ($viewer) {
             $viewer->permissions()->syncWithoutDetaching(
-                Permission::whereIn('slug', ['communicatie_view', 'vrijwilligers_view'])->pluck('id')
+                Permission::whereIn('slug', ['communicatie_view', 'evaluatie_view', 'vrijwilligers_view'])->pluck('id')
             );
         }
     }

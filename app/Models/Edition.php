@@ -112,4 +112,9 @@ class Edition extends Model
     {
         return $this->hasMany(EditionChecklistItem::class)->orderBy('sort_order');
     }
+
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(Evaluation::class);
+    }
 }

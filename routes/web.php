@@ -40,6 +40,13 @@ Route::domain(config('app.inschrijven_domain'))
         Route::post('/vrienden/aanmelden', [\App\Http\Controllers\Inschrijven\SponsorRegistrationController::class, 'store'])
             ->middleware('throttle:10,1')
             ->name('inschrijven.sponsors.store');
+
+        Route::get('/evaluatie/{evaluation}/{registration}', [\App\Http\Controllers\Inschrijven\EvaluationFormController::class, 'show'])
+            ->middleware('signed')
+            ->name('inschrijven.evaluatie.form');
+        Route::post('/evaluatie/{evaluation}/{registration}', [\App\Http\Controllers\Inschrijven\EvaluationFormController::class, 'store'])
+            ->middleware('signed', 'throttle:10,1')
+            ->name('inschrijven.evaluatie.submit');
     });
 
 Route::post('/webhooks/mollie/sponsors', \App\Http\Controllers\Inschrijven\SponsorWebhookController::class)
@@ -79,6 +86,16 @@ Route::domain(config('app.intouch_domain'))
             Route::get('inschrijvingen/communicatie/templates/{template}', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'edit'])->name('registrations.communicatie.templates.edit');
             Route::put('inschrijvingen/communicatie/templates/{template}', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'update'])->name('registrations.communicatie.templates.update');
             Route::delete('inschrijvingen/communicatie/templates/{template}', [\App\Http\Controllers\Intouch\ParticipantEmailTemplateController::class, 'destroy'])->name('registrations.communicatie.templates.destroy');
+            Route::get('inschrijvingen/evaluatie', [\App\Http\Controllers\Intouch\EvaluationController::class, 'index'])->name('registrations.evaluatie.index');
+            Route::get('inschrijvingen/evaluatie/aanmaken', [\App\Http\Controllers\Intouch\EvaluationController::class, 'create'])->name('registrations.evaluatie.create');
+            Route::post('inschrijvingen/evaluatie', [\App\Http\Controllers\Intouch\EvaluationController::class, 'store'])->name('registrations.evaluatie.store');
+            Route::get('inschrijvingen/evaluatie/{evaluation}', [\App\Http\Controllers\Intouch\EvaluationController::class, 'show'])->name('registrations.evaluatie.show');
+            Route::get('inschrijvingen/evaluatie/{evaluation}/bewerken', [\App\Http\Controllers\Intouch\EvaluationController::class, 'edit'])->name('registrations.evaluatie.edit');
+            Route::put('inschrijvingen/evaluatie/{evaluation}', [\App\Http\Controllers\Intouch\EvaluationController::class, 'update'])->name('registrations.evaluatie.update');
+            Route::post('inschrijvingen/evaluatie/{evaluation}/versturen', [\App\Http\Controllers\Intouch\EvaluationController::class, 'send'])->name('registrations.evaluatie.send');
+            Route::get('inschrijvingen/evaluatie/{evaluation}/resultaten', [\App\Http\Controllers\Intouch\EvaluationController::class, 'results'])->name('registrations.evaluatie.results');
+            Route::get('inschrijvingen/evaluatie/{evaluation}/export', [\App\Http\Controllers\Intouch\EvaluationController::class, 'export'])->name('registrations.evaluatie.export');
+            Route::delete('inschrijvingen/evaluatie/{evaluation}', [\App\Http\Controllers\Intouch\EvaluationController::class, 'destroy'])->name('registrations.evaluatie.destroy');
             Route::get('inschrijvingen/{registration}', [IntouchRegistrationController::class, 'show'])->name('registrations.show');
             Route::put('inschrijvingen/{registration}/medaille', [IntouchRegistrationController::class, 'updateMedal'])->name('registrations.update-medal');
             Route::post('sponsors/{sponsor}/resend-receipt', [SponsorController::class, 'resendReceipt'])->name('sponsors.resend-receipt');

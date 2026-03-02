@@ -67,6 +67,9 @@
                         @can('communicatie_view')
                         <li><a class="dropdown-item" href="{{ route('intouch.registrations.communicatie') }}">Communicatie</a></li>
                         @endcan
+                        @can('evaluatie_view')
+                        <li><a class="dropdown-item" href="{{ route('intouch.registrations.evaluatie.index') }}">Evaluatie</a></li>
+                        @endcan
                     </ul>
                 </li>
                 @endcan
