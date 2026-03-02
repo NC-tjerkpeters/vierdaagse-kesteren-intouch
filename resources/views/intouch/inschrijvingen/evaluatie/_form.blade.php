@@ -107,14 +107,18 @@
     <div class="card mb-4">
         <div class="card-header">E-mail bij versturen</div>
         <div class="card-body">
+            @php
+                $linkPlaceholder = '{{link}}';
+                $mailBodyDefault = "Bedankt voor je deelname! Vul onderstaande enquête in:\n\n" . $linkPlaceholder;
+            @endphp
             <div class="mb-3">
                 <label for="mail_subject" class="form-label">Mailonderwerp *</label>
                 <input type="text" id="mail_subject" name="mail_subject" class="form-control" required
                     value="{{ old('mail_subject', $evaluation?->mail_subject ?? 'Jouw mening over de Vierdaagse Kesteren ' . $edition->name) }}">
             </div>
             <div class="mb-3">
-                <label for="mail_body" class="form-label">Mailtekst (gebruik @verbatim {{link}} @endverbatim voor de persoonlijke link)</label>
-                <textarea id="mail_body" name="mail_body" class="form-control" rows="4">{{ old('mail_body', $evaluation?->mail_body ?? "Bedankt voor je deelname! Vul onderstaande enquête in:\n\n" . '{{' . 'link}}') }}</textarea>
+                <label for="mail_body" class="form-label">Mailtekst (gebruik {{ $linkPlaceholder }} voor de persoonlijke link)</label>
+                <textarea id="mail_body" name="mail_body" class="form-control" rows="4">{{ old('mail_body', $evaluation?->mail_body ?? $mailBodyDefault) }}</textarea>
             </div>
         </div>
     </div>
