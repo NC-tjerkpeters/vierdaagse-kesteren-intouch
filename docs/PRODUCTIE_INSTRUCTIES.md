@@ -71,6 +71,16 @@ php artisan cache:clear
 
 ---
 
+---
+
+## Back-up en export
+
+- **Database:** Zorg voor regelmatige back-ups van de database (frequentie afhankelijk van hosting; minimaal dagelijks aanbevolen).
+- **Export per editie:** Via Intouch kun je inschrijvingen en evaluatieresultaten per editie exporteren (Inschrijvingen → Export; Evaluatie → Resultaten → Export CSV). Bewaar deze exports periodiek als archief.
+- **View-cache na deploy:** Na een deploy met wijzigingen in Blade-templates: `php artisan view:clear`.
+
+---
+
 ## Problemen?
 
 - **"Editie wisselen lukt niet"** – Controleer of de gebruiker de permission `dashboard_view` heeft

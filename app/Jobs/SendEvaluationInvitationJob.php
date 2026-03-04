@@ -77,6 +77,8 @@ class SendEvaluationInvitationJob implements ShouldQueue
             subject: $subject,
             htmlBody: $htmlBody,
         );
+
+        $evaluation->increment('invitations_sent_count');
     }
 
     protected function replacePlaceholders(string $text, Registration $registration, Edition $edition): string

@@ -31,10 +31,23 @@
                 @if($evaluation->sent_at)
                     <p class="mb-0 text-muted small">Verstuurd op {{ $evaluation->sent_at->format('d-m-Y H:i') }}</p>
                 @endif
+                @if($evaluation->closes_at)
+                    <p class="mb-0 text-muted small mt-1">Formulier sluit op {{ $evaluation->closes_at->format('d-m-Y H:i') }}</p>
+                @endif
+                @if($evaluation->reminder_days)
+                    <p class="mb-0 text-muted small">Herinnering na {{ $evaluation->reminder_days }} dag(en)</p>
+                @endif
             </div>
         </div>
     </div>
 </div>
+
+@if($evaluation->isSent() && $evaluation->invitations_total > 0 && $evaluation->invitations_sent_count < $evaluation->invitations_total)
+<div class="alert alert-info mb-4" id="send-progress" role="status">
+    <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+    <span id="send-progress-text">Verstuurd: <strong>{{ $evaluation->invitations_sent_count }}</strong> / {{ $evaluation->invitations_total }} uitnodiging(en)</span>
+</div>
+@endif
 
 <div class="d-flex gap-2 flex-wrap">
     @if(!$evaluation->isSent())
@@ -68,4 +81,33 @@
     @endif
     @endcan
 </div>
+
+@if($evaluation->isSent() && $evaluation->invitations_total > 0)
+@push('scripts')
+<script>
+(function() {
+    var progressEl = document.getElementById('send-progress');
+    if (!progressEl) return;
+    var total = {{ (int) $evaluation->invitations_total }};
+    var statusUrl = '{{ route('intouch.registrations.evaluatie.send-status', $evaluation) }}';
+
+    function poll() {
+        fetch(statusUrl, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var textEl = document.getElementById('send-progress-text');
+                if (textEl) textEl.innerHTML = 'Verstuurd: <strong>' + (data.sent || 0) + '</strong> / ' + (data.total || total) + ' uitnodiging(en)';
+                if (data.sent >= data.total && data.total > 0) {
+                    progressEl.innerHTML = '<span class="text-success">Alle uitnodigingen zijn verstuurd.</span>';
+                    return;
+                }
+                setTimeout(poll, 3000);
+            })
+            .catch(function() { setTimeout(poll, 5000); });
+    }
+    setTimeout(poll, 2000);
+})();
+</script>
+@endpush
+@endif
 @endsection

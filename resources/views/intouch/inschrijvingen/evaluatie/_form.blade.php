@@ -44,7 +44,7 @@
         <div class="card-body">
             <div id="questions-container">
                 @php
-                    $questions = old('questions', $evaluation?->questions ?? []);
+                    $questions = old('questions', $evaluation?->questions ?? ($initialQuestions ?? []));
                     if (empty($questions)) {
                         $questions = [['type' => 'nps', 'question_text' => '', 'is_required' => true, 'options' => []]];
                     }
@@ -119,6 +119,12 @@
             <div class="mb-3">
                 <label for="mail_body" class="form-label">Mailtekst (gebruik {{ $linkPlaceholder }} voor de persoonlijke link)</label>
                 <textarea id="mail_body" name="mail_body" class="form-control" rows="4">{{ old('mail_body', $evaluation?->mail_body ?? $mailBodyDefault) }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="reminder_days" class="form-label">Herinnering (dagen na versturen)</label>
+                <input type="number" id="reminder_days" name="reminder_days" class="form-control" min="0" max="90" step="1"
+                    value="{{ old('reminder_days', $evaluation?->reminder_days ?? '') }}" placeholder="0 = geen herinnering">
+                <small class="text-muted">Stuur na dit aantal dagen een herinnering naar deelnemers die nog niet hebben gereageerd. Laat leeg of 0 voor geen herinnering.</small>
             </div>
         </div>
     </div>

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Health\Checks\MollieCheck;
 use App\Health\Checks\MollieWebhookCheck;
 use App\Health\Checks\MicrosoftGraphCheck;
+use App\Health\Checks\QueueCheck;
 use App\Models\Edition;
 use App\Models\ParticipantEmailTemplate;
 use Illuminate\Support\Facades\Gate;
@@ -30,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
             MollieCheck::new()->name('mollie')->label('Mollie API'),
             MollieWebhookCheck::new()->name('mollie_webhook')->label('Mollie webhooks'),
             MicrosoftGraphCheck::new()->name('microsoft_graph')->label('Microsoft Graph (e-mail)'),
+            QueueCheck::new()->name('queue')->label('Queue (jobs & failed)'),
         ]);
 
         Route::bind('template', fn ($value) => ParticipantEmailTemplate::findOrFail($value));

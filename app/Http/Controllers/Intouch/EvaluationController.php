@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Intouch;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SendEvaluationInvitationJob;
+use App\Jobs\SendEvaluationReminderJob;
 use App\Models\Edition;
 use App\Models\Evaluation;
 use App\Models\EvaluationQuestion;
@@ -41,7 +42,7 @@ class EvaluationController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $this->authorize('evaluatie_send');
 
@@ -51,9 +52,14 @@ class EvaluationController extends Controller
                 ->with('info', 'Selecteer eerst een editie.');
         }
 
+        $initialQuestions = $request->boolean('template')
+            ? config('evaluation.default_questions', [])
+            : [];
+
         return view('intouch.inschrijvingen.evaluatie.create', [
             'edition' => $edition,
             'evaluation' => null,
+            'initialQuestions' => $initialQuestions,
         ]);
     }
 
@@ -73,6 +79,7 @@ class EvaluationController extends Controller
             'intro_text' => ['nullable', 'string', 'max:2000'],
             'thank_you_text' => ['nullable', 'string', 'max:500'],
             'closes_at' => ['nullable', 'date'],
+            'reminder_days' => ['nullable', 'integer', 'min:0', 'max:90'],
             'mail_subject' => ['required', 'string', 'max:255'],
             'mail_body' => ['nullable', 'string', 'max:2000'],
             'questions' => ['required', 'array', 'min:1'],
@@ -91,6 +98,7 @@ class EvaluationController extends Controller
             'intro_text' => $data['intro_text'] ?? null,
             'thank_you_text' => $data['thank_you_text'] ?? 'Bedankt voor je feedback!',
             'closes_at' => $data['closes_at'] ?? null,
+            'reminder_days' => ! empty($data['reminder_days']) ? (int) $data['reminder_days'] : null,
             'mail_subject' => $data['mail_subject'],
             'mail_body' => $data['mail_body'] ?? null,
             'created_by' => auth()->id(),
@@ -147,6 +155,7 @@ class EvaluationController extends Controller
             'intro_text' => ['nullable', 'string', 'max:2000'],
             'thank_you_text' => ['nullable', 'string', 'max:500'],
             'closes_at' => ['nullable', 'date'],
+            'reminder_days' => ['nullable', 'integer', 'min:0', 'max:90'],
             'mail_subject' => ['required', 'string', 'max:255'],
             'mail_body' => ['nullable', 'string', 'max:2000'],
             'questions' => ['required', 'array', 'min:1'],
@@ -164,6 +173,7 @@ class EvaluationController extends Controller
             'intro_text' => $data['intro_text'] ?? null,
             'thank_you_text' => $data['thank_you_text'] ?? null,
             'closes_at' => $data['closes_at'] ?? null,
+            'reminder_days' => ! empty($data['reminder_days']) ? (int) $data['reminder_days'] : null,
             'mail_subject' => $data['mail_subject'],
             'mail_body' => $data['mail_body'] ?? null,
         ]);
@@ -195,14 +205,46 @@ class EvaluationController extends Controller
                 ->with('error', 'Geen deelnemers in de doelgroep. Pas de doelgroep aan of wacht tot er inschrijvingen zijn.');
         }
 
-        foreach ($registrations as $registration) {
-            SendEvaluationInvitationJob::dispatch($evaluation->id, $registration->id);
+        $total = $registrations->count();
+
+        try {
+            $evaluation->update([
+                'sent_at' => now(),
+                'invitations_sent_count' => 0,
+                'invitations_total' => $total,
+            ]);
+
+            foreach ($registrations as $registration) {
+                SendEvaluationInvitationJob::dispatch($evaluation->id, $registration->id);
+            }
+
+            if ($evaluation->reminder_days > 0) {
+                SendEvaluationReminderJob::dispatch($evaluation->id)
+                    ->delay(now()->addDays($evaluation->reminder_days));
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()->route('intouch.registrations.evaluatie.show', $evaluation)
+                ->with('error', 'Uitnodigingen konden niet in de wachtrij worden gezet. Controleer of de queue-worker draait en probeer het opnieuw.');
         }
 
-        $evaluation->update(['sent_at' => now()]);
-
         return redirect()->route('intouch.registrations.evaluatie.show', $evaluation)
-            ->with('status', "{$registrations->count()} uitnodiging(en) worden op de achtergrond verstuurd.");
+            ->with('status', "{$total} uitnodiging(en) worden op de achtergrond verstuurd.");
+    }
+
+    public function sendStatus(Evaluation $evaluation)
+    {
+        $this->authorize('evaluatie_view');
+        $this->ensureEdition($evaluation);
+
+        $total = $evaluation->invitations_total ?? 0;
+        $sent = $evaluation->invitations_sent_count ?? 0;
+
+        return response()->json([
+            'sent' => (int) $sent,
+            'total' => (int) $total,
+        ]);
     }
 
     public function results(Evaluation $evaluation)
