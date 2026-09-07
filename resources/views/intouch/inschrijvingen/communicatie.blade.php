@@ -49,7 +49,7 @@
 </form>
 
 @can('communicatie_view')
-<form method="post" action="{{ route('intouch.registrations.communicatie.send') }}" id="send-form">
+<form method="post" action="{{ route('intouch.registrations.communicatie.send') }}" id="send-form" enctype="multipart/form-data">
     @csrf
     <input type="hidden" name="distance_id" value="{{ $filters['distance_id'] ?? '' }}">
     <input type="hidden" name="status" value="{{ $filters['status'] ?? '' }}">
@@ -218,16 +218,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     const sendForm = document.getElementById('send-form');
+    let sendConfirmed = false;
     if (sendForm) sendForm.addEventListener('submit', function(e) {
+        if (sendConfirmed) {
+            return;
+        }
+
+        e.preventDefault();
+
         if (recipientCount === 0) {
-            e.preventDefault();
             alert('Geen deelnemers geselecteerd.');
             return;
         }
-        const btn = document.getElementById('btn-send');
-        if (btn && !btn.disabled && !confirm('Weet je zeker dat je ' + recipientCount + ' e-mail(s) wilt versturen?')) {
-            e.preventDefault();
+
+        if (!confirm('Weet je zeker dat je ' + recipientCount + ' e-mail(s) wilt versturen?')) {
+            return;
         }
+
+        sendConfirmed = true;
+        const btn = document.getElementById('btn-send');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Bezig met versturen…';
+        }
+        sendForm.submit();
     });
 });
 </script>
