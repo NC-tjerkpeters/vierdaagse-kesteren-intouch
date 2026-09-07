@@ -68,4 +68,23 @@ class AppSettings
     {
         return (string) static::get('app.noodnummers', config('app.noodnummers', '06 52 44 16 10, 06 40 89 37 40'));
     }
+
+    public static function registrationsOpen(): bool
+    {
+        $val = static::get('inschrijving.open', '__none__');
+
+        return $val === '__none__' ? true : (bool) $val;
+    }
+
+    public static function registrationsClosedMessage(): string
+    {
+        $default = 'De inschrijving voor de Vierdaagse Kesteren is gesloten. Bedankt voor je interesse!';
+        $val = static::get('inschrijving.closed_message', '__none__');
+
+        if ($val === '__none__' || $val === null || $val === '') {
+            return $default;
+        }
+
+        return (string) $val;
+    }
 }

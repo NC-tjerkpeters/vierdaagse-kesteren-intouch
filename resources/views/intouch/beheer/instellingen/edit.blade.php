@@ -12,6 +12,33 @@
     <div class="row">
         <div class="col-lg-6 mb-4">
             <div class="card h-100">
+                <div class="card-header">Inschrijving</div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        <input type="hidden" name="inschrijving_open" value="0">
+                        <input type="checkbox" class="form-check-input" name="inschrijving_open"
+                            id="inschrijving_open" value="1"
+                            @checked(old('inschrijving_open', $registrationsOpen ?? true))>
+                        <label class="form-check-label" for="inschrijving_open">
+                            Inschrijving open
+                        </label>
+                        <small class="form-text text-muted d-block">
+                            Uitgeschakeld: bezoekers zien een gesloten-pagina en kunnen zich niet meer inschrijven.
+                            Je kunt dit ook snel wisselen via Inschrijvingen.
+                        </small>
+                    </div>
+                    <div class="mb-0">
+                        <label for="inschrijving_closed_message" class="form-label">Bericht bij gesloten inschrijving</label>
+                        <textarea name="inschrijving_closed_message" id="inschrijving_closed_message"
+                            class="form-control" rows="3"
+                            placeholder="De inschrijving voor de Vierdaagse Kesteren is gesloten. Bedankt voor je interesse!">{{ old('inschrijving_closed_message', $registrationsClosedMessage) }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
                 <div class="card-header">Sponsors</div>
                 <div class="card-body">
                     <div class="mb-3">

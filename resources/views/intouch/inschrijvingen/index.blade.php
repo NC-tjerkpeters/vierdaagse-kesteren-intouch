@@ -3,7 +3,35 @@
 @section('title', 'Inschrijvingen')
 
 @section('content')
-<h1 class="mb-4">Inschrijvingen</h1>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h1 class="mb-0">Inschrijvingen</h1>
+    <div class="d-flex align-items-center gap-2">
+        @if($registrationsOpen)
+            <span class="badge bg-success">Inschrijving open</span>
+        @else
+            <span class="badge bg-danger">Inschrijving gesloten</span>
+        @endif
+        @canany(['inschrijvingen_edit', 'instellingen_edit'])
+            <form method="post" action="{{ route('intouch.registrations.toggle-open') }}" class="d-inline">
+                @csrf
+                @if($registrationsOpen)
+                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                        onclick="return confirm('Inschrijving sluiten? Bezoekers kunnen zich daarna niet meer inschrijven.')">
+                        Inschrijving sluiten
+                    </button>
+                @else
+                    <button type="submit" class="btn btn-outline-success btn-sm"
+                        onclick="return confirm('Inschrijving weer openen?')">
+                        Inschrijving openen
+                    </button>
+                @endif
+            </form>
+        @endcanany
+        @can('instellingen_edit')
+            <a href="{{ route('intouch.beheer.instellingen.edit') }}" class="btn btn-outline-secondary btn-sm">Instellingen</a>
+        @endcan
+    </div>
+</div>
 
 <form method="get" action="{{ route('intouch.registrations.index') }}" class="card mb-4">
     <div class="card-body">

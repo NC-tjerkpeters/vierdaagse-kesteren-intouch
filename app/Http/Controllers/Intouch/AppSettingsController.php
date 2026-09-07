@@ -16,6 +16,8 @@ class AppSettingsController extends Controller
         return view('intouch.beheer.instellingen.edit', [
             'sponsorsDoelbedrag' => AppSettings::sponsorsDoelbedrag(),
             'sponsorsPrivacyConsentRequired' => AppSettings::sponsorsPrivacyConsentRequired(),
+            'registrationsOpen' => AppSettings::registrationsOpen(),
+            'registrationsClosedMessage' => AppSettings::registrationsClosedMessage(),
             'mollieFees' => AppSettings::mollieFeesAll(),
             'scannerMinMinutes' => AppSettings::scannerMinMinutes(),
             'scannerPointNames' => AppSettings::scannerPointNames(),
@@ -31,6 +33,8 @@ class AppSettingsController extends Controller
         $rules = [
             'sponsors_doelbedrag' => ['nullable', 'numeric', 'min:0'],
             'sponsors_privacy_consent_required' => ['nullable', 'boolean'],
+            'inschrijving_open' => ['nullable', 'boolean'],
+            'inschrijving_closed_message' => ['nullable', 'string', 'max:1000'],
             'scanner_min_minutes' => ['nullable', 'integer', 'min:1', 'max:60'],
             'app_noodnummers' => ['nullable', 'string', 'max:500'],
         ];
@@ -49,6 +53,10 @@ class AppSettingsController extends Controller
         Setting::set('sponsors.doelbedrag', (float) ($data['sponsors_doelbedrag'] ?? config('sponsors.doelbedrag', 1850)));
         $privacyRequired = filter_var($data['sponsors_privacy_consent_required'] ?? true, FILTER_VALIDATE_BOOLEAN);
         Setting::set('sponsors.privacy_consent_required', $privacyRequired ? '1' : '0');
+
+        $registrationsOpen = filter_var($data['inschrijving_open'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        Setting::set('inschrijving.open', $registrationsOpen ? '1' : '0');
+        Setting::set('inschrijving.closed_message', trim((string) ($data['inschrijving_closed_message'] ?? '')));
 
         $fees = [];
         foreach (config('mollie_fees', []) as $method => $default) {
