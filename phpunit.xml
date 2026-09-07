@@ -31,5 +31,9 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="INSCHRIJVEN_DOMAIN" value="inschrijven.test"/>
+        <env name="INTOUCH_DOMAIN" value="intouch.test"/>
+        <env name="SCANNER_DOMAIN" value="scanner.test"/>
+        <env name="ROUTES_DOMAIN" value="routes.test"/>
     </php>
 </phpunit>

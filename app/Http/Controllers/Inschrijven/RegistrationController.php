@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inschrijven;
 use App\Http\Controllers\Controller;
 use App\Models\Distance;
 use App\Models\Registration;
+use App\Services\AppSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Services\MicrosoftGraphMailService;
@@ -14,6 +15,12 @@ class RegistrationController extends Controller
 {
     public function create()
     {
+        if (! AppSettings::registrationsOpen()) {
+            return view('inschrijven.closed', [
+                'message' => AppSettings::registrationsClosedMessage(),
+            ]);
+        }
+
         $distances = Distance::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
@@ -24,6 +31,12 @@ class RegistrationController extends Controller
 
     public function store(Request $request)
     {
+        if (! AppSettings::registrationsOpen()) {
+            return redirect()
+                ->route('inschrijven.create')
+                ->with('status', AppSettings::registrationsClosedMessage());
+        }
+
         $validated = $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],

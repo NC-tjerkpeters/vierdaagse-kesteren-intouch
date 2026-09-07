@@ -26,6 +26,11 @@
                 <h5 class="card-title text-muted small">Inschrijvingen</h5>
                 <p class="mb-0 display-6">{{ $totalRegistrations }}</p>
                 <small class="text-muted">{{ $paidCount }} betaald</small>
+                @if(($registrationsOpen ?? true))
+                    <div><span class="badge bg-success mt-1">Open</span></div>
+                @else
+                    <div><span class="badge bg-danger mt-1">Gesloten</span></div>
+                @endif
             </div>
         </div>
     </div>

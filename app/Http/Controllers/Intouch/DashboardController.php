@@ -8,6 +8,7 @@ use App\Models\Edition;
 use App\Models\Registration;
 use App\Models\Sponsor;
 use App\Models\Distance;
+use App\Services\AppSettings;
 
 class DashboardController extends Controller
 {
@@ -32,6 +33,7 @@ class DashboardController extends Controller
                 'sponsorTotaal' => 0,
                 'sponsorDoel' => config('sponsors.doelbedrag', 1850),
                 'sponsorProgress' => 0,
+                'registrationsOpen' => AppSettings::registrationsOpen(),
             ]);
         }
 
@@ -78,12 +80,13 @@ class DashboardController extends Controller
             'distances' => Distance::query()->orderBy('sort_order')->get(['id', 'name']),
             'revenueDeelnemers' => $revenueDeelnemers,
             'revenueSponsors' => $revenueSponsors,
-'totalCosts' => $totalCosts,
-                'result' => $result,
-                'closingBalance' => $closingBalance,
+            'totalCosts' => $totalCosts,
+            'result' => $result,
+            'closingBalance' => $closingBalance,
             'sponsorTotaal' => $sponsorTotaal,
             'sponsorDoel' => $sponsorDoel,
             'sponsorProgress' => $sponsorProgress,
+            'registrationsOpen' => AppSettings::registrationsOpen(),
         ]);
     }
 }

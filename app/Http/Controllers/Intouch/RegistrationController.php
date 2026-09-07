@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Intouch;
 
 use App\Http\Controllers\Controller;
 use App\Models\Registration;
+use App\Models\Setting;
+use App\Services\AppSettings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RegistrationController extends Controller
@@ -50,6 +53,7 @@ class RegistrationController extends Controller
         return view('intouch.inschrijvingen.index', [
             'registrations' => $registrations,
             'distances' => $distances,
+            'registrationsOpen' => AppSettings::registrationsOpen(),
         ]);
     }
 
@@ -81,6 +85,24 @@ class RegistrationController extends Controller
         return redirect()
             ->route('intouch.registrations.show', $registration)
             ->with('status', 'Medaille-informatie bijgewerkt.');
+    }
+
+    public function toggleOpen()
+    {
+        if (! Gate::any(['inschrijvingen_edit', 'instellingen_edit'])) {
+            abort(403);
+        }
+
+        $open = ! AppSettings::registrationsOpen();
+        Setting::set('inschrijving.open', $open ? '1' : '0');
+
+        $status = $open
+            ? 'Inschrijving is weer geopend.'
+            : 'Inschrijving is gesloten. Nieuwe aanmeldingen zijn niet meer mogelijk.';
+
+        return redirect()
+            ->route('intouch.registrations.index')
+            ->with('status', $status);
     }
 
     public function export(Request $request): StreamedResponse

@@ -12,7 +12,7 @@
 - **Code vinden:** sectie "Relevante bestanden" onderaan + notities in de tabellen verwijzen naar controllers, views, jobs.
 - **Context van de app:** Laravel-project "Intouch Vierdaagse Kesteren" – inschrijvingen, sponsors, vrijwilligers, loopoverzicht, financiën, QR-scanner, evaluatiemodule. Intouch = beheeromgeving; inschrijven-domein = publiek. Zie ook `docs/EVALUATIE_MODULE.md`, `docs/ARCHITECTUUR.md`.
 
-**Laatst bijgewerkt:** 2026-03-04
+**Laatst bijgewerkt:** 2026-09-07
 
 ---
 
@@ -75,6 +75,14 @@
 
 ---
 
+## 6. Inschrijving open/dicht
+
+| # | Onderdeel | Status | Prioriteit | Notities |
+|---|-----------|--------|------------|----------|
+| 6.1 | **Inschrijving sluiten** – Toggle om publiek inschrijfformulier te sluiten | ✅ Gereed | Hoog | Setting `inschrijving.open` + closed_message; guard create/store; toggle op Inschrijvingen; Beheer → Instellingen. |
+
+---
+
 ## Voortgang log
 
 **Ontwikkelaar:** bij afronden van een punt of belangrijke beslissing hier een regel toevoegen. Helpt volgende sessies (en jou) om te zien wat er is gedaan.
@@ -89,6 +97,7 @@
 | 2026-03-04 | 3.1 Featuretests | EvaluationTest: send-status JSON, evaluatieformulier signed URL. |
 | 2026-03-04 | 3.2 Back-up doc | PRODUCTIE_INSTRUCTIES.md: sectie Back-up en export. |
 | 2026-03-04 | 5.1–5.3 | 5.1 al aanwezig; 5.2 sluitingsdatum + herinnering in show; 5.3 try/catch in send(). |
+| 2026-09-07 | 6.1 Inschrijving sluiten | AppSettings registrationsOpen/closedMessage; closed view; toggle + instellingen; RegistrationClosedTest. |
 
 ---
 
@@ -102,3 +111,4 @@
 - Permissies: `config/permissions.php`, `database/seeders/PermissionSeeder.php`
 - Checklist: `resources/views/intouch/editions/checklist.blade.php`
 - Layout: `resources/views/intouch/layout.blade.php`
+- Inschrijving open/dicht: `app/Services/AppSettings.php` (`registrationsOpen`, `registrationsClosedMessage`), `app/Http/Controllers/Inschrijven/RegistrationController.php`, `resources/views/inschrijven/closed.blade.php`, toggle via `intouch.registrations.toggle-open`
